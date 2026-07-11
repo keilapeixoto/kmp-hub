@@ -1,9 +1,7 @@
 # Supabase — KMP Hub
 
 Migrações da fatia de **identidade e acesso** (seção 4 do plano), entregue no Sprint 1
-(seção 10). Escritas e revisadas manualmente; **não aplicadas nem testadas neste
-ambiente** — não há Supabase CLI, Docker, psql nem Node.js instalados na máquina onde
-isso foi gerado, então nada aqui rodou contra um Postgres real ainda.
+(seção 10). Já aplicadas com sucesso no projeto Supabase de desenvolvimento.
 
 ## O que tem aqui
 
@@ -17,34 +15,38 @@ isso foi gerado, então nada aqui rodou contra um Postgres real ainda.
 - `seed.sql` — insere as 7 funções (`admin`, `director`, `consultant`, `operations`,
   `finance`, `partner`, `client`).
 - `tests/database/001_identity_access_rls.test.sql` — testes pgTAP simulando um
-  usuário de cada função e checando o que cada um consegue ler/escrever.
+  usuário de cada função e checando o que cada um consegue ler/escrever. Ainda não
+  rodados neste ambiente (sem Supabase CLI/Docker) — tratar como primeira versão a
+  validar com `supabase test db`, especialmente a mensagem exata de erro do
+  `throws_ok` no teste de autopromoção, que precisa bater com a mensagem lançada por
+  `prevent_self_role_escalation()` na migração de schema.
 
-## O que ficou fora do escopo desta entrega
+## Variáveis de ambiente
 
-Por decisão explícita (ambiente sem Node.js), **o scaffold do Next.js não foi criado
-nesta rodada**: nem a estrutura de rotas `(staff)`/`(portal)`, nem a tela de login,
-nem o código de autenticação em si. Isso fica para quando houver Node/npm disponíveis.
-O que existe aqui é só a parte de banco (schema + RLS + seed + testes), que não
-depende de Node.
+Este projeto usa o formato novo de chaves do Supabase (Settings > API Keys):
 
-## Antes de aplicar
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (`sb_publishable_...`) — substitui a antiga anon key.
+- `SUPABASE_SECRET_KEY` (`sb_secret_...`) — **somente servidor**, substitui a antiga
+  service role key.
 
-1. `supabase init` (se o projeto ainda não tiver `config.toml`) e `supabase link`
-   ao projeto de desenvolvimento.
-2. Conferir `.env.local` com `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   e `SUPABASE_SERVICE_ROLE_KEY` (essa última só em variável de servidor, nunca com
-   prefixo `NEXT_PUBLIC_`).
-3. `supabase db push` para aplicar as migrações no projeto de desenvolvimento — nunca
-   direto em produção sem revisar antes.
+Ver `.env.example` na raiz do repositório para o nome exato de cada variável.
 
 ## Rodando os testes de permissão
+
+**Sem instalar nada** — abra o projeto de dev no painel Supabase, vá em SQL
+Editor, cole o conteúdo de `tests/database/001_identity_access_rls.test.sql` e
+rode. O arquivo inteiro roda dentro de um `begin ... rollback`, então os
+usuários e dados de teste que ele cria somem ao final; nada fica gravado no
+banco. O resultado de cada `select is(...)`/`throws_ok(...)` aparece como uma
+linha de saída (`ok 1 - ...` / `not ok 2 - ...`).
+
+**Com Supabase CLI + Docker instalados**:
 
 ```
 supabase test db
 ```
 
-Isso recria o banco a partir das migrações + seed e roda os arquivos em
-`tests/database/`. Como esse comando não pôde ser executado aqui, trate os testes
-como uma primeira versão a validar — especialmente a mensagem exata de erro do
-`throws_ok` no teste de autopromoção, que precisa bater com a mensagem lançada por
-`prevent_self_role_escalation()` na migração de schema.
+Isso recria o banco do zero a partir das migrações + seed (num Postgres local
+descartável, não no projeto de dev) e roda todos os arquivos em
+`tests/database/`.

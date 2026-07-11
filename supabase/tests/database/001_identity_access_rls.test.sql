@@ -1,8 +1,12 @@
 -- KMP Hub · Testes de permissão por função (RLS) das tabelas de identidade e acesso.
 -- Referência: seção 5 (matriz de permissões) e seção 8, risco 1, do plano.
 --
--- Como rodar (requer Supabase CLI + Docker, não executado neste ambiente):
---   supabase test db
+-- Como rodar:
+--   1) Sem instalar nada: cole o conteúdo deste arquivo no SQL Editor do painel
+--      Supabase (projeto de dev) e rode. Tudo acontece dentro de um
+--      begin/rollback — nenhum dado de teste fica no banco depois.
+--   2) Com Supabase CLI + Docker instalados: `supabase test db` (roda contra um
+--      Postgres local descartável, criado a partir das migrações + seed).
 --
 -- Convenção: cada bloco simula um usuário autenticado com
 -- `set_config('request.jwt.claim.sub', <uuid>, true)` + `set local role authenticated`,
@@ -72,16 +76,22 @@ select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333
 select is((select count(*) from public.roles)::int, 0, 'consultor não lê a tabela roles');
 reset role;
 
--- capturado como postgres (fora de RLS) para usar dentro do teste abaixo,
--- já que o consultant não enxerga a tabela roles para resolver o id sozinho.
-select id as consultant_role_id from public.roles where nome = 'consultant' \gset
+-- capturado como postgres (fora de RLS) num GUC de transação, para usar dentro
+-- do teste abaixo já que o consultant não enxerga a tabela roles para
+-- resolver o id sozinho. set_config/current_setting é SQL puro (funciona
+-- tanto no SQL Editor do painel quanto via `supabase test db`/psql).
+select set_config(
+  'app.consultant_role_id',
+  (select id::text from public.roles where nome = 'consultant'),
+  true
+);
 
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '33333333-3333-3333-3333-333333333333', true);
 select throws_ok(
   format(
     $$ insert into public.permissions (role_id, modulo, acao) values (%L, 'equipe', 'read') $$,
-    :'consultant_role_id'
+    current_setting('app.consultant_role_id', true)
   ),
   'consultor não consegue inserir em permissions'
 );

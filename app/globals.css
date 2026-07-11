@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: var(--font-cormorant), serif;
+  --font-body: var(--font-outfit), sans-serif;
+
+  --color-kmp-orange: #f27b20;
+  --color-kmp-graphite: #2c2c2c;
+  --color-kmp-bg: #f8f7f5;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-kmp-bg);
+  color: var(--color-kmp-graphite);
+}

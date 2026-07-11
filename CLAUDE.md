@@ -21,7 +21,7 @@ Repositório e schema novos (não evolução do CRM atual) — motivo: RLS por f
 
 - **Schema em inglês, interface em português.** Todas as tabelas têm `id uuid`, `created_at`, `updated_at`, RLS ativado desde a primeira migração.
 - **Toda regra de permissão vive no banco via RLS.** A interface só esconde o que o usuário não deve ver; o banco garante que ele não acessa mesmo tentando via API direta.
-- **Nunca expor a service role key no cliente.** Só em código de servidor (Server Actions, Route Handlers, Edge Functions).
+- **Nunca expor a secret key (`SUPABASE_SECRET_KEY`) no cliente.** Só em código de servidor (Server Actions, Route Handlers, Edge Functions).
 - **Notas internas e riscos** ficam em colunas/tabelas separadas, com política RLS que exclui a função `client` incondicionalmente — nunca aparecem no portal.
 - **Documentos**: soft delete apenas (arquivamento), nunca exclusão permanente; só admin acessa arquivados.
 - **Fusos horários**: tudo em UTC no banco, conversão só na interface (BR, Sydney, Brisbane, fuso do cliente).
@@ -71,8 +71,8 @@ Cada sprint termina com deploy em preview na Vercel antes de avançar. A Fase 2 
 
 ## Variáveis de ambiente
 
-Ver `.env.local` (nunca versionado). Nomes esperados (padrão Supabase + Next.js):
+Ver `.env.local` (nunca versionado). Este projeto usa o formato novo de chaves do Supabase (`sb_publishable_...` / `sb_secret_...`, substitutas de `anon`/`service_role`; ver [Understanding API keys](https://supabase.com/docs/guides/api/api-keys)):
 
 - `NEXT_PUBLIC_SUPABASE_URL` — pública, pode ir ao cliente.
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — pública, respeita RLS.
-- `SUPABASE_SERVICE_ROLE_KEY` — **somente servidor**, nunca prefixo `NEXT_PUBLIC_`, nunca importada em componente client.
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — pública (`sb_publishable_...`), respeita RLS.
+- `SUPABASE_SECRET_KEY` — **somente servidor** (`sb_secret_...`), nunca prefixo `NEXT_PUBLIC_`, nunca importada em componente client. Ignora RLS — substitui a antiga service role key.

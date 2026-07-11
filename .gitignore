@@ -1,1 +1,14 @@
 .DS_Store
+
+# Node / Next.js (a criar no scaffold do app)
+node_modules/
+.next/
+
+# Segredos — nunca versionar
+.env
+.env.local
+.env.*.local
+
+# Supabase CLI local
+supabase/.branches
+supabase/.temp

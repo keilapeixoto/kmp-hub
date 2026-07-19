@@ -192,7 +192,7 @@ export async function inviteClientToPortal(
   }
 
   const admin = createAdminClient();
-  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/portal`;
+  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/auth/callback?next=/portal`;
 
   let userId: string | null = null;
   const { data: invited, error: inviteError } =

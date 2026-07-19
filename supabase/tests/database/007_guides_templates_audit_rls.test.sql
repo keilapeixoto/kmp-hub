@@ -5,9 +5,10 @@
 -- ou `supabase test db` com CLI + Docker.
 
 begin;
-select plan(11);
-
 create extension if not exists pgtap with schema extensions;
+set search_path = public, extensions;
+
+select plan(11);
 
 insert into auth.users
   (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_user_meta_data)

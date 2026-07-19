@@ -13,9 +13,10 @@
 -- que é como `auth.uid()` resolve o usuário sob RLS no Postgres do Supabase.
 
 begin;
-select plan(10);
-
 create extension if not exists pgtap with schema extensions;
+set search_path = public, extensions;
+
+select plan(10);
 
 -- ---------------------------------------------------------------------------
 -- Usuários de teste, um por função relevante neste sprint

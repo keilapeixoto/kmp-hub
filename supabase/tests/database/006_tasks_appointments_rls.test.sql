@@ -10,9 +10,10 @@
 --   2) Com Supabase CLI + Docker: `supabase test db`.
 
 begin;
-select plan(12);
-
 create extension if not exists pgtap with schema extensions;
+set search_path = public, extensions;
+
+select plan(12);
 
 -- ---------------------------------------------------------------------------
 -- Usuários de teste

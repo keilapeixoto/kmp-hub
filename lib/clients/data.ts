@@ -33,6 +33,17 @@ export async function getClient(id: string): Promise<Client | null> {
   return data as Client | null;
 }
 
+export async function getClientHasPortalAccess(id: string): Promise<boolean> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("client_access")
+    .select("id")
+    .eq("client_id", id)
+    .not("client_user_id", "is", null)
+    .maybeSingle();
+  return data !== null;
+}
+
 export async function getClientByLeadId(leadId: string): Promise<Client | null> {
   const supabase = await createSupabaseClient();
   const { data } = await supabase

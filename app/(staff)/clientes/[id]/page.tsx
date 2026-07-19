@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCurrentUserProfile } from "@/lib/auth";
+import { getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
 import { getConsultants } from "@/lib/leads/data";
 import {
   getClient,
+  getClientHasPortalAccess,
   getClientRelations,
   getDistinctClientValues,
   getIdentityDocuments,
@@ -18,6 +19,7 @@ import { ClientForm } from "../_components/client-form";
 import { ClientSummary } from "../_components/client-summary";
 import { ClientTabs } from "../_components/client-tabs";
 import { DependentsPanel } from "../_components/dependents-panel";
+import { PortalAccessCard } from "../_components/portal-access-card";
 import { DocumentsPanel } from "../_components/documents-panel";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -50,6 +52,7 @@ export default async function ClientDetailPage({
 
   const [
     profile,
+    role,
     consultants,
     paises,
     situacoes,
@@ -59,8 +62,10 @@ export default async function ClientDetailPage({
     serviceTypes,
     allStages,
     clientFiles,
+    hasPortalAccess,
   ] = await Promise.all([
     getCurrentUserProfile(),
+    getCurrentUserRole(),
     getConsultants(),
     getDistinctClientValues("pais"),
     getDistinctClientValues("situacao"),
@@ -70,6 +75,7 @@ export default async function ClientDetailPage({
     getServiceTypes(),
     getAllCaseStages(),
     getDocumentsByClient(id),
+    getClientHasPortalAccess(id),
   ]);
 
   const stagesById = Object.fromEntries(allStages.map((s) => [s.id, s]));
@@ -92,7 +98,15 @@ export default async function ClientDetailPage({
       <ClientTabs clientId={id} active={tab} />
 
       {tab === "resumo" ? (
-        <ClientSummary client={client} relations={relations} documents={documents} />
+        <div className="space-y-6">
+          <ClientSummary client={client} relations={relations} documents={documents} />
+          <PortalAccessCard
+            clientId={id}
+            hasEmail={Boolean(client.email)}
+            hasAccess={hasPortalAccess}
+            canInvite={role === "admin" || role === "director"}
+          />
+        </div>
       ) : null}
 
       {tab === "dados" ? (

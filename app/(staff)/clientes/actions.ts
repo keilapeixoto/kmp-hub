@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getCurrentUserRole } from "@/lib/auth";
 
 export type ClientFormState = {
   error: string | null;
@@ -145,6 +147,95 @@ export async function archiveIdentityDocument(
     .eq("id", documentId);
 
   revalidatePath(`/clientes/${clientId}`);
+}
+
+export type InvitePortalState = { error: string | null; success: boolean };
+
+/**
+ * Convida o cliente para o portal (Fase 2 antecipada): cria/recupera o
+ * usuário no Auth via API admin (secret key, só aqui) e vincula em
+ * client_access. O login em si é sempre por magic link — nunca criamos
+ * senha para cliente.
+ */
+export async function inviteClientToPortal(
+  clientId: string,
+  _prevState: InvitePortalState,
+): Promise<InvitePortalState> {
+  const role = await getCurrentUserRole();
+  if (role !== "admin" && role !== "director") {
+    return { error: "Só admin ou diretor pode convidar clientes.", success: false };
+  }
+
+  const supabase = await createClient();
+  const { data: client } = await supabase
+    .from("clients")
+    .select("id, email, nome")
+    .eq("id", clientId)
+    .maybeSingle();
+
+  if (!client?.email) {
+    return {
+      error: "Cadastre um e-mail para o cliente antes de convidar.",
+      success: false,
+    };
+  }
+
+  const { data: existingAccess } = await supabase
+    .from("client_access")
+    .select("id")
+    .eq("client_id", clientId)
+    .not("client_user_id", "is", null)
+    .maybeSingle();
+
+  if (existingAccess) {
+    return { error: "Este cliente já tem acesso ao portal.", success: false };
+  }
+
+  const admin = createAdminClient();
+  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/portal`;
+
+  let userId: string | null = null;
+  const { data: invited, error: inviteError } =
+    await admin.auth.admin.inviteUserByEmail(client.email, {
+      data: { nome: client.nome },
+      redirectTo,
+    });
+
+  if (invited?.user) {
+    userId = invited.user.id;
+  } else if (inviteError) {
+    const { data: existing } = await admin.auth.admin.listUsers({
+      perPage: 1000,
+    });
+    const match = existing?.users.find(
+      (u) => u.email?.toLowerCase() === client.email!.toLowerCase(),
+    );
+    if (!match) {
+      return {
+        error: "Não foi possível convidar este e-mail. Confira e tente de novo.",
+        success: false,
+      };
+    }
+    userId = match.id;
+  }
+
+  if (!userId) {
+    return { error: "Não foi possível convidar este cliente.", success: false };
+  }
+
+  const { error: accessError } = await supabase
+    .from("client_access")
+    .insert({ client_id: clientId, client_user_id: userId });
+
+  if (accessError) {
+    return {
+      error: "Convite enviado, mas o acesso não pôde ser vinculado.",
+      success: false,
+    };
+  }
+
+  revalidatePath(`/clientes/${clientId}`);
+  return { error: null, success: true };
 }
 
 export async function archiveClientFile(clientId: string, documentId: string) {

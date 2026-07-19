@@ -7,6 +7,7 @@ import {
   Briefcase,
   Calendar,
   CheckSquare,
+  ClipboardList,
   LayoutDashboard,
   MessageSquare,
   Settings,
@@ -51,6 +52,11 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/guias", label: "Guias", icon: BookOpen },
       { href: "/templates", label: "Templates", icon: MessageSquare },
+      {
+        href: "/configuracoes/checklists",
+        label: "Checklists",
+        icon: ClipboardList,
+      },
     ],
   },
   {

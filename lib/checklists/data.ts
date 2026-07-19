@@ -30,6 +30,29 @@ export async function getChecklistTemplateByServiceType(
   return data as ChecklistTemplate | null;
 }
 
+export async function getChecklistTemplates(): Promise<
+  (ChecklistTemplate & { service_type_nome: string | null; itens_count: number })[]
+> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("checklist_templates")
+    .select(
+      "*, service_types!checklist_templates_service_type_id_fkey(nome), checklist_template_items(count)",
+    )
+    .order("nome");
+  return (data ?? []).map((t) => ({
+    ...t,
+    service_type_nome: (t as { service_types?: { nome: string } | null })
+      .service_types?.nome ?? null,
+    itens_count:
+      (t as { checklist_template_items?: { count: number }[] })
+        .checklist_template_items?.[0]?.count ?? 0,
+  })) as (ChecklistTemplate & {
+    service_type_nome: string | null;
+    itens_count: number;
+  })[];
+}
+
 export async function getChecklistTemplateItems(
   templateId: string,
 ): Promise<ChecklistTemplateItem[]> {

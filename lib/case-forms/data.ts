@@ -6,6 +6,43 @@ import type {
   CaseFormTemplate,
 } from "./types";
 
+export async function getCaseFormTemplates(): Promise<
+  (CaseFormTemplate & {
+    service_type_nome: string | null;
+    etapas_count: number;
+    campos_count: number;
+  })[]
+> {
+  const supabase = await createSupabaseClient();
+  const { data: templates } = await supabase
+    .from("case_form_templates")
+    .select(
+      "*, service_types!case_form_templates_service_type_id_fkey(nome), case_form_steps(id, case_form_fields(count))",
+    )
+    .order("nome");
+
+  return (templates ?? []).map((t) => {
+    const steps =
+      (t as { case_form_steps?: { id: string; case_form_fields?: { count: number }[] }[] })
+        .case_form_steps ?? [];
+    const camposCount = steps.reduce(
+      (sum, s) => sum + (s.case_form_fields?.[0]?.count ?? 0),
+      0,
+    );
+    return {
+      ...t,
+      service_type_nome:
+        (t as { service_types?: { nome: string } | null }).service_types?.nome ?? null,
+      etapas_count: steps.length,
+      campos_count: camposCount,
+    };
+  }) as (CaseFormTemplate & {
+    service_type_nome: string | null;
+    etapas_count: number;
+    campos_count: number;
+  })[];
+}
+
 export async function getCaseFormTemplateForCase(
   caseId: string,
 ): Promise<CaseFormTemplate | null> {

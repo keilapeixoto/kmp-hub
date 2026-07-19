@@ -56,6 +56,31 @@ Implementação: função `get_user_role()` no Postgres + políticas RLS por tab
                      próprias (/portal/login, /portal, /portal/documentos, etc.)
 ```
 
+## Estado atual (julho/2026)
+
+Sprints 1–7 da Fase 1 construídos e aplicados no Supabase de dev: auth/RLS,
+leads (Kanban compartilhado entre consultores — decisão da cliente, diverge da
+seção 5), clientes (182 reais importados da pasta KEY MIGRATION), processos,
+checklists (5 templates importados do repo kmp-forms), documentos (bucket
+privado `documents`, ~2.9k arquivos reais), tarefas, agenda (fusos BR/SYD/BNE),
+guias versionados, templates de mensagem, dashboard, linha do tempo, auditoria
+(`audit_logs`, só admin) e busca global. Ver `supabase/README.md` para o
+detalhe de cada migração e as decisões assumidas.
+
+Pendências conhecidas: Sprint 8 (checklist da seção 32 do briefing — pedir à
+cliente; export do CRM antigo), 2 PDFs > 50 MB não importados (limite do plano
+Free do Supabase), projeto Supabase de produção ainda não criado, testes pgTAP
+(`supabase/tests/database/`) rodados manualmente via SQL Editor. Scripts de
+importação em `scripts/`; mapeamento com nomes reais em `import/` (fora do git).
+
+## Dados de demonstração
+
+Registros fictícios levam `is_demo = true` (migração
+`20260718120000_is_demo_flag.sql`). Criar: `node scripts/seed-demo.mjs`
+(idempotente — não duplica se já existir demo). Remover TODOS os dados demo
+sem tocar em dados reais: `node scripts/clean-demo.mjs` (imprime contagem de
+dados reais antes/depois como prova). Filhas caem em cascata pelas FKs.
+
 ## Plano de sprints da Fase 1 (seção 10)
 
 1. Setup: repo, Supabase dev/prod, migrações base, auth, funções, RLS inicial, layout KMP.

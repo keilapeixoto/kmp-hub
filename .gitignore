@@ -14,3 +14,6 @@ next-env.d.ts
 # Supabase CLI local
 supabase/.branches
 supabase/.temp
+
+# Dados reais de clientes (mapeamento de importação) — nunca versionar
+import/

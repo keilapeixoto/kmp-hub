@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { logout } from "./actions";
+import { HeaderBar } from "./_components/header-bar";
+import { Sidebar } from "./_components/sidebar";
 
 export default async function StaffLayout({
   children,
@@ -16,24 +17,12 @@ export default async function StaffLayout({
   }
 
   return (
-    <div className="min-h-screen bg-kmp-bg">
-      <header className="flex items-center justify-between border-b border-black/10 bg-white px-6 py-4">
-        <span className="font-heading text-xl text-kmp-graphite">
-          KMP Hub
-        </span>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-kmp-graphite/70">{user.email}</span>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="text-sm text-kmp-graphite/70 transition hover:text-kmp-orange"
-            >
-              Sair
-            </button>
-          </form>
-        </div>
-      </header>
-      <main className="mx-auto max-w-5xl px-6 py-8">{children}</main>
+    <div className="flex min-h-screen bg-kmp-bg">
+      <Sidebar />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <HeaderBar userEmail={user.email ?? ""} />
+        <main className="mx-auto w-full max-w-6xl px-6 py-8">{children}</main>
+      </div>
     </div>
   );
 }

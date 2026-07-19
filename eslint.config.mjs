@@ -5,6 +5,17 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    rules: {
+      // Server Actions bound with useActionState always receive (prevState,
+      // formData) even when an action doesn't need one of them (ex.:
+      // convertLead). Leading underscore marks it as intentionally unused.
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_" },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

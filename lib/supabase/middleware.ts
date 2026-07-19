@@ -39,6 +39,13 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
+
+  // /auth/callback troca o "code" do magic link por sessão — roda antes de
+  // qualquer sessão existir, então nunca pode cair no guard de autenticação.
+  if (pathname.startsWith("/auth/callback")) {
+    return supabaseResponse;
+  }
+
   const isPortalRoute = pathname.startsWith("/portal");
   const isPublicPath = isPortalRoute
     ? PORTAL_PUBLIC_PATHS.includes(pathname)

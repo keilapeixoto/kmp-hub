@@ -1,0 +1,83 @@
+import { createClient as createSupabaseClient } from "@/lib/supabase/server";
+import type {
+  CaseForm,
+  CaseFormField,
+  CaseFormStep,
+  CaseFormTemplate,
+} from "./types";
+
+export async function getCaseFormTemplateForCase(
+  caseId: string,
+): Promise<CaseFormTemplate | null> {
+  const supabase = await createSupabaseClient();
+  const { data: caseRow } = await supabase
+    .from("cases")
+    .select("service_type_id")
+    .eq("id", caseId)
+    .maybeSingle();
+  if (!caseRow) return null;
+
+  const { data: serviceType } = await supabase
+    .from("service_types")
+    .select("case_form_template_id")
+    .eq("id", caseRow.service_type_id)
+    .maybeSingle();
+  if (!serviceType?.case_form_template_id) return null;
+
+  const { data: template } = await supabase
+    .from("case_form_templates")
+    .select("*")
+    .eq("id", serviceType.case_form_template_id)
+    .maybeSingle();
+  return template as CaseFormTemplate | null;
+}
+
+export async function getCaseFormSteps(templateId: string): Promise<CaseFormStep[]> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("case_form_steps")
+    .select("*")
+    .eq("template_id", templateId)
+    .order("ordem");
+  return (data ?? []) as CaseFormStep[];
+}
+
+export async function getCaseFormFields(stepId: string): Promise<CaseFormField[]> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("case_form_fields")
+    .select("*")
+    .eq("step_id", stepId)
+    .order("ordem");
+  return (data ?? []) as CaseFormField[];
+}
+
+export async function getCaseForm(
+  caseId: string,
+  templateId: string,
+): Promise<CaseForm | null> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("case_forms")
+    .select("*")
+    .eq("case_id", caseId)
+    .eq("template_id", templateId)
+    .maybeSingle();
+  return data as CaseForm | null;
+}
+
+export async function getCaseFormResponses(
+  caseFormId: string,
+): Promise<Record<string, string>> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("case_form_responses")
+    .select("field_id, valor")
+    .eq("case_form_id", caseFormId);
+
+  const map: Record<string, string> = {};
+  for (const r of data ?? []) {
+    if (r.valor !== null) map[r.field_id] = r.valor;
+  }
+  return map;
+}

@@ -18,9 +18,17 @@ import {
 } from "@/lib/checklists/data";
 import { getDocumentsByCase } from "@/lib/documents/data";
 import type { Document } from "@/lib/documents/types";
+import {
+  getCaseForm,
+  getCaseFormFields,
+  getCaseFormResponses,
+  getCaseFormSteps,
+  getCaseFormTemplateForCase,
+} from "@/lib/case-forms/data";
 import { updateCase } from "../actions";
 import { ChecklistPanel } from "../_components/checklist-panel";
 import { CaseForm } from "../_components/case-form";
+import { CaseFormPanel, type StepWithFields } from "../_components/case-form-panel";
 import { CaseHistory } from "../_components/case-history";
 import { DeleteCaseButton } from "../_components/delete-case-button";
 
@@ -80,6 +88,22 @@ export default async function ProcessoDetailPage({
 
   const checklistItems = checklist ? await getChecklistItems(checklist.id) : [];
 
+  const dataFormTemplate = await getCaseFormTemplateForCase(id);
+  let dataFormSteps: StepWithFields[] = [];
+  let dataForm = null;
+  let dataFormResponses: Record<string, string> = {};
+  if (dataFormTemplate) {
+    const steps = await getCaseFormSteps(dataFormTemplate.id);
+    dataFormSteps = await Promise.all(
+      steps.map(async (step) => ({
+        ...step,
+        fields: await getCaseFormFields(step.id),
+      })),
+    );
+    dataForm = await getCaseForm(id, dataFormTemplate.id);
+    dataFormResponses = dataForm ? await getCaseFormResponses(dataForm.id) : {};
+  }
+
   const updateWithId = updateCase.bind(null, id);
 
   return (
@@ -137,6 +161,20 @@ export default async function ProcessoDetailPage({
           documentsByItem={groupDocumentsByItem(documents)}
         />
       </div>
+
+      {dataFormTemplate ? (
+        <div>
+          <h2 className="mb-4 font-heading text-lg text-kmp-graphite">
+            Formulário de Dados
+          </h2>
+          <CaseFormPanel
+            templateNome={dataFormTemplate.nome}
+            steps={dataFormSteps}
+            caseForm={dataForm}
+            responses={dataFormResponses}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

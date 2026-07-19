@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPortalCases } from "@/lib/portal/data";
+import { getCaseFormTemplateForCase } from "@/lib/case-forms/data";
 import { PortalHeader } from "./_components/portal-header";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -11,6 +12,9 @@ const STATUS_LABELS: Record<string, string> = {
 
 export default async function PortalHomePage() {
   const cases = await getPortalCases();
+  const hasForm = await Promise.all(
+    cases.map((c) => getCaseFormTemplateForCase(c.id)),
+  );
 
   return (
     <div className="min-h-screen bg-kmp-bg">
@@ -27,12 +31,8 @@ export default async function PortalHomePage() {
           </p>
         ) : (
           <div className="space-y-4">
-            {cases.map((c) => (
-              <Link
-                key={c.id}
-                href={`/portal/documentos?processo=${c.id}`}
-                className="block rounded-lg bg-white p-6 shadow-sm transition hover:shadow-md"
-              >
+            {cases.map((c, i) => (
+              <div key={c.id} className="rounded-lg bg-white p-6 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-heading text-lg text-kmp-graphite">
@@ -46,10 +46,23 @@ export default async function PortalHomePage() {
                     {STATUS_LABELS[c.status] ?? c.status}
                   </span>
                 </div>
-                <p className="mt-4 text-sm font-medium text-kmp-orange">
-                  Ver documentos e checklist →
-                </p>
-              </Link>
+                <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+                  <Link
+                    href={`/portal/documentos?processo=${c.id}`}
+                    className="text-sm font-medium text-kmp-orange hover:underline"
+                  >
+                    Ver documentos e checklist →
+                  </Link>
+                  {hasForm[i] ? (
+                    <Link
+                      href={`/portal/formulario?processo=${c.id}`}
+                      className="text-sm font-medium text-kmp-orange hover:underline"
+                    >
+                      Preencher formulário de dados →
+                    </Link>
+                  ) : null}
+                </div>
+              </div>
             ))}
           </div>
         )}

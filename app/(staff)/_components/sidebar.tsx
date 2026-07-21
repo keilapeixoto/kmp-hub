@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   BookOpen,
   Briefcase,
@@ -9,6 +9,7 @@ import {
   CheckSquare,
   ClipboardList,
   FileText,
+  Kanban,
   LayoutDashboard,
   MessageSquare,
   Settings,
@@ -39,6 +40,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/leads", label: "Leads", icon: Users },
       { href: "/clientes", label: "Clientes", icon: UserCircle },
       { href: "/processos", label: "Processos", icon: Briefcase },
+      { href: "/processos?view=kanban", label: "Pipeline", icon: Kanban },
     ],
   },
   {
@@ -77,12 +79,17 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-function isActive(pathname: string, href: string) {
-  return pathname === href || pathname.startsWith(`${href}/`);
+function isActive(pathname: string, currentView: string | null, href: string) {
+  const [hrefPath, hrefQuery] = href.split("?");
+  const pathMatches = pathname === hrefPath || pathname.startsWith(`${hrefPath}/`);
+  if (!pathMatches) return false;
+  const hrefView = new URLSearchParams(hrefQuery ?? "").get("view");
+  return hrefView === currentView;
 }
 
 export function Sidebar() {
   const pathname = usePathname();
+  const currentView = useSearchParams().get("view");
 
   return (
     <aside className="flex w-64 shrink-0 flex-col bg-kmp-graphite text-white">
@@ -100,7 +107,7 @@ export function Sidebar() {
             ) : null}
             <div className="space-y-1">
               {group.items.map((item) => {
-                const active = isActive(pathname, item.href);
+                const active = isActive(pathname, currentView, item.href);
                 const Icon = item.icon;
                 return (
                   <Link

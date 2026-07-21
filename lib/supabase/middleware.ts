@@ -59,7 +59,12 @@ export async function updateSession(request: NextRequest) {
 
   if (user && (pathname === "/login" || pathname === "/portal/login")) {
     const url = request.nextUrl.clone();
-    url.pathname = isPortalRoute ? "/portal" : "/dashboard";
+    if (isPortalRoute) {
+      url.pathname = "/portal";
+    } else {
+      url.pathname = "/processos";
+      url.search = "?view=kanban";
+    }
     return NextResponse.redirect(url);
   }
 

@@ -95,7 +95,7 @@ export default async function ProcessosPage({
               : "bg-white text-kmp-graphite/70 hover:text-kmp-orange"
           }`}
         >
-          Kanban
+          Pipeline
         </Link>
       </div>
 

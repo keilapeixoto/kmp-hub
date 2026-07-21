@@ -84,7 +84,7 @@ export default async function LeadsPage({
               : "bg-white text-kmp-graphite/70 hover:text-kmp-orange"
           }`}
         >
-          Kanban
+          Pipeline
         </Link>
       </div>
 

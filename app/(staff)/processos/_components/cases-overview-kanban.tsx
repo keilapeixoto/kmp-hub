@@ -20,7 +20,7 @@ const STATUS_COLUMN_STYLE: Record<string, string> = {
  * Visão geral arrastável de TODOS os processos, agrupada por status (não
  * por etapa — as etapas são específicas de cada tipo de serviço, então não
  * dá para misturar num board só). Para acompanhar etapa a etapa dentro de
- * um tipo específico, use o Kanban com o filtro "Tipo de serviço".
+ * um tipo específico, use a Pipeline com o filtro "Tipo de serviço".
  */
 export function CasesOverviewKanban({
   cases: initialCases,

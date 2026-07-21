@@ -32,7 +32,10 @@ type NavGroup = {
 const NAV_GROUPS: NavGroup[] = [
   {
     label: null,
-    items: [{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }],
+    items: [
+      { href: "/processos?view=kanban", label: "Pipeline", icon: Kanban },
+      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    ],
   },
   {
     label: "Comercial",
@@ -40,7 +43,6 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/leads", label: "Leads", icon: Users },
       { href: "/clientes", label: "Clientes", icon: UserCircle },
       { href: "/processos", label: "Processos", icon: Briefcase },
-      { href: "/processos?view=kanban", label: "Pipeline", icon: Kanban },
     ],
   },
   {

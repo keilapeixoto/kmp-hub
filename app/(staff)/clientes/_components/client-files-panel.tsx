@@ -1,9 +1,14 @@
 import { FileText } from "lucide-react";
 import type { Document } from "@/lib/documents/types";
-import { archiveClientFile } from "../actions";
+import { DocumentNameEditor } from "@/app/(staff)/_components/document-name-editor";
+import { archiveClientFile, renameClientFile } from "../actions";
 
 function fileName(storagePath: string): string {
   return storagePath.split("/").pop() ?? storagePath;
+}
+
+function displayName(doc: Document): string {
+  return doc.nome ?? fileName(doc.storage_path);
 }
 
 /**
@@ -50,20 +55,21 @@ export function ClientFilesPanel({
           <ul className="divide-y divide-black/5">
             {docs.map((doc) => {
               const archiveWithIds = archiveClientFile.bind(null, clientId, doc.id);
+              const renameWithIds = renameClientFile.bind(null, clientId, doc.id);
               return (
                 <li
                   key={doc.id}
                   className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm"
                 >
-                  <a
-                    href={`/api/documents/${doc.id}/download`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex min-w-0 items-center gap-2 text-kmp-graphite hover:text-kmp-orange"
-                  >
+                  <span className="flex min-w-0 flex-1 items-center gap-2">
                     <FileText className="h-4 w-4 shrink-0 text-kmp-graphite/40" />
-                    <span className="truncate">{fileName(doc.storage_path)}</span>
-                  </a>
+                    <DocumentNameEditor
+                      nome={displayName(doc)}
+                      href={`/api/documents/${doc.id}/download`}
+                      archived={false}
+                      onRename={renameWithIds}
+                    />
+                  </span>
                   <form action={archiveWithIds} className="shrink-0">
                     <button
                       type="submit"

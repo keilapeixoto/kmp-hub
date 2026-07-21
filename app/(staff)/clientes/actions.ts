@@ -238,6 +238,23 @@ export async function inviteClientToPortal(
   return { error: null, success: true };
 }
 
+export async function renameClientFile(
+  clientId: string,
+  documentId: string,
+  formData: FormData,
+) {
+  const nome = formData.get("nome");
+  if (typeof nome !== "string" || !nome.trim()) return;
+
+  const supabase = await createClient();
+  await supabase
+    .from("documents")
+    .update({ nome: nome.trim() })
+    .eq("id", documentId);
+
+  revalidatePath(`/clientes/${clientId}`);
+}
+
 export async function archiveClientFile(clientId: string, documentId: string) {
   const supabase = await createClient();
   await supabase

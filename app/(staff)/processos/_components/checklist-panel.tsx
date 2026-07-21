@@ -2,12 +2,18 @@ import { CHECKLIST_ITEM_STATUSES } from "@/lib/checklists/constants";
 import type { Checklist, ChecklistItem } from "@/lib/checklists/types";
 import type { Document } from "@/lib/documents/types";
 import { getSignedDocumentUrl } from "@/lib/documents/data";
+import { DocumentNameEditor } from "@/app/(staff)/_components/document-name-editor";
 import {
   archiveDocument,
   createChecklistFromTemplate,
+  renameDocument,
   updateChecklistItemStatus,
   uploadDocument,
 } from "../checklist-actions";
+
+function displayName(doc: Document): string {
+  return doc.nome ?? doc.storage_path.split("/").pop() ?? doc.storage_path;
+}
 
 async function ItemDocuments({
   clientId,
@@ -35,23 +41,18 @@ async function ItemDocuments({
         <ul className="space-y-1">
           {documentsWithUrls.map(({ doc, url }) => {
             const archiveWithIds = archiveDocument.bind(null, doc.id, caseId);
+            const renameWithIds = renameDocument.bind(null, doc.id, caseId);
             return (
               <li
                 key={doc.id}
-                className="flex items-center justify-between text-xs text-kmp-graphite/70"
+                className="flex items-center justify-between gap-2 text-xs text-kmp-graphite/70"
               >
-                {url ? (
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-kmp-orange hover:underline"
-                  >
-                    {doc.storage_path.split("/").pop()}
-                  </a>
-                ) : (
-                  <span>{doc.storage_path.split("/").pop()} (arquivado)</span>
-                )}
+                <DocumentNameEditor
+                  nome={displayName(doc)}
+                  href={url}
+                  archived={doc.arquivado}
+                  onRename={renameWithIds}
+                />
                 {!doc.arquivado ? (
                   <form action={archiveWithIds}>
                     <button

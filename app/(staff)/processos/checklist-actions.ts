@@ -127,6 +127,23 @@ export async function addDocumentVersion(
   revalidatePath(`/processos/${caseId}`);
 }
 
+export async function renameDocument(
+  documentId: string,
+  caseId: string,
+  formData: FormData,
+) {
+  const nome = formData.get("nome");
+  if (typeof nome !== "string" || !nome.trim()) return;
+
+  const supabase = await createClient();
+  await supabase
+    .from("documents")
+    .update({ nome: nome.trim() })
+    .eq("id", documentId);
+
+  revalidatePath(`/processos/${caseId}`);
+}
+
 export async function archiveDocument(documentId: string, caseId: string) {
   const supabase = await createClient();
   await supabase

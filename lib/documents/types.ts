@@ -4,6 +4,7 @@ export type Document = {
   case_id: string | null;
   checklist_item_id: string | null;
   categoria: string | null;
+  nome: string | null;
   storage_path: string;
   enviado_por: string | null;
   analisado_por: string | null;

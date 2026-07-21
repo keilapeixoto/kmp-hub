@@ -101,6 +101,12 @@ export async function updateCaseEtapa(id: string, etapaId: string) {
   revalidatePath("/processos");
 }
 
+export async function updateCaseStatusDrag(id: string, status: string) {
+  const supabase = await createClient();
+  await supabase.from("cases").update({ status }).eq("id", id);
+  revalidatePath("/processos");
+}
+
 export async function deleteCase(id: string) {
   const supabase = await createClient();
   await supabase.from("cases").delete().eq("id", id);

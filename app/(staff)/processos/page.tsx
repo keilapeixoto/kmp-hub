@@ -9,6 +9,7 @@ import {
 import type { CaseFilters } from "@/lib/cases/types";
 import { CasesFilters } from "./_components/cases-filters";
 import { CasesKanban } from "./_components/cases-kanban";
+import { CasesOverviewKanban } from "./_components/cases-overview-kanban";
 import { CasesTable } from "./_components/cases-table";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -107,10 +108,20 @@ export default async function ProcessosPage({
             consultants={consultants}
           />
         ) : (
-          <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
-            Escolha um tipo de serviço no filtro acima para ver o Kanban — as
-            etapas do pipeline são específicas de cada tipo de serviço.
-          </p>
+          <>
+            <p className="text-sm text-kmp-graphite/60">
+              Visão geral por status, com todos os tipos de serviço juntos —
+              arraste os cards entre as colunas. Para acompanhar etapa a
+              etapa de um tipo específico (485, Turista, etc.), escolha-o no
+              filtro &quot;Tipo de serviço&quot; acima.
+            </p>
+            <CasesOverviewKanban
+              cases={cases}
+              clients={clients}
+              consultants={consultants}
+              serviceTypes={serviceTypes}
+            />
+          </>
         )
       ) : (
         <CasesTable

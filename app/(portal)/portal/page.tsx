@@ -8,6 +8,7 @@ const STATUS_LABELS: Record<string, string> = {
   pausado: "Pausado",
   concluido: "Concluído",
   cancelado: "Cancelado",
+  arquivado: "Concluído",
 };
 
 export default async function PortalHomePage() {

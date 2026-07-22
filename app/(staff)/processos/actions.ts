@@ -113,3 +113,10 @@ export async function deleteCase(id: string) {
   revalidatePath("/processos");
   redirect("/processos");
 }
+
+export async function archiveCase(id: string) {
+  const supabase = await createClient();
+  await supabase.from("cases").update({ status: "arquivado" }).eq("id", id);
+  revalidatePath(`/processos/${id}`);
+  revalidatePath("/processos");
+}

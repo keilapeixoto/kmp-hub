@@ -6,6 +6,7 @@ import {
   getPortalChecklistItems,
   getPortalDocumentsByChecklistItem,
 } from "@/lib/portal/data";
+import { getDocumentCategories } from "@/lib/documents/data";
 import { CHECKLIST_ITEM_STATUS_LABELS } from "@/lib/checklists/constants";
 import { PortalHeader } from "../_components/portal-header";
 import { PortalUploadForm } from "../_components/portal-upload-form";
@@ -40,10 +41,11 @@ export default async function PortalDocumentosPage({
     caseId = cases[0].id;
   }
 
-  const [portalCase, items, documentsByItem] = await Promise.all([
+  const [portalCase, items, documentsByItem, categories] = await Promise.all([
     getPortalCase(caseId),
     getPortalChecklistItems(caseId),
     getPortalDocumentsByChecklistItem(caseId),
+    getDocumentCategories(),
   ]);
 
   if (!portalCase) notFound();
@@ -116,6 +118,7 @@ export default async function PortalDocumentosPage({
                     clientId={portalCase.client_id}
                     caseId={portalCase.id}
                     checklistItemId={item.id}
+                    categories={categories}
                   />
                 </div>
               );

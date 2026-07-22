@@ -31,6 +31,7 @@ import { CaseForm } from "../_components/case-form";
 import { CaseFormPanel, type StepWithFields } from "../_components/case-form-panel";
 import { CaseHistory } from "../_components/case-history";
 import { DeleteCaseButton } from "../_components/delete-case-button";
+import { ArchiveCaseButton } from "../_components/archive-case-button";
 
 function groupStages(stages: CaseStage[]): Record<string, CaseStage[]> {
   return stages.reduce<Record<string, CaseStage[]>>((acc, stage) => {
@@ -120,7 +121,14 @@ export default async function ProcessoDetailPage({
             {client?.nome ?? "Cliente"}
           </h1>
         </div>
-        {isStaffRole ? <DeleteCaseButton caseId={caseItem.id} /> : null}
+        {isStaffRole ? (
+          <div className="flex items-center gap-4">
+            {caseItem.status !== "arquivado" ? (
+              <ArchiveCaseButton caseId={caseItem.id} />
+            ) : null}
+            <DeleteCaseButton caseId={caseItem.id} />
+          </div>
+        ) : null}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

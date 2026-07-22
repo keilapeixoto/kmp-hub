@@ -1,8 +1,9 @@
 import { CHECKLIST_ITEM_STATUSES } from "@/lib/checklists/constants";
 import type { Checklist, ChecklistItem } from "@/lib/checklists/types";
-import type { Document } from "@/lib/documents/types";
-import { getSignedDocumentUrl } from "@/lib/documents/data";
+import type { Document, DocumentCategory } from "@/lib/documents/types";
+import { getDocumentCategories, getSignedDocumentUrl } from "@/lib/documents/data";
 import { DocumentNameEditor } from "@/app/(staff)/_components/document-name-editor";
+import { UploadDocumentForm } from "@/app/(staff)/_components/upload-document-form";
 import {
   archiveDocument,
   createChecklistFromTemplate,
@@ -20,11 +21,13 @@ async function ItemDocuments({
   caseId,
   itemId,
   documents,
+  categories,
 }: {
   clientId: string;
   caseId: string;
   itemId: string;
   documents: Document[];
+  categories: DocumentCategory[];
 }) {
   const uploadWithIds = uploadDocument.bind(null, clientId, caseId, itemId);
 
@@ -69,20 +72,7 @@ async function ItemDocuments({
         </ul>
       ) : null}
 
-      <form action={uploadWithIds} className="flex items-center gap-2">
-        <input
-          type="file"
-          name="file"
-          required
-          className="flex-1 text-xs text-kmp-graphite/70"
-        />
-        <button
-          type="submit"
-          className="rounded-md bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-graphite transition hover:bg-kmp-orange hover:text-white"
-        >
-          Enviar
-        </button>
-      </form>
+      <UploadDocumentForm action={uploadWithIds} categories={categories} />
     </div>
   );
 }
@@ -92,11 +82,13 @@ function ChecklistItemRow({
   item,
   documents,
   clientId,
+  categories,
 }: {
   caseId: string;
   item: ChecklistItem;
   documents: Document[];
   clientId: string;
+  categories: DocumentCategory[];
 }) {
   const updateWithIds = updateChecklistItemStatus.bind(null, caseId, item.id);
 
@@ -140,6 +132,7 @@ function ChecklistItemRow({
         caseId={caseId}
         itemId={item.id}
         documents={documents}
+        categories={categories}
       />
     </li>
   );
@@ -160,6 +153,8 @@ export async function ChecklistPanel({
   items: ChecklistItem[];
   documentsByItem: Record<string, Document[]>;
 }) {
+  const categories = await getDocumentCategories();
+
   if (!checklist) {
     if (!serviceTypeChecklistTemplateId) {
       return (
@@ -217,6 +212,7 @@ export async function ChecklistPanel({
             item={item}
             documents={documentsByItem[item.id] ?? []}
             clientId={clientId}
+            categories={categories}
           />
         ))}
       </ul>

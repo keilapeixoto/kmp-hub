@@ -3,6 +3,7 @@ export const CASE_STATUSES = [
   { slug: "pausado", label: "Pausado" },
   { slug: "concluido", label: "Concluído" },
   { slug: "cancelado", label: "Cancelado" },
+  { slug: "arquivado", label: "Arquivado" },
 ] as const;
 
 export type CaseStatus = (typeof CASE_STATUSES)[number]["slug"];

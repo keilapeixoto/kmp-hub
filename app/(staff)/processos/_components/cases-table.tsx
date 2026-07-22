@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  Archive,
   CheckCircle2,
   CircleDot,
   PauseCircle,
@@ -19,6 +20,7 @@ const STATUS_BADGE: Record<
   pausado: { icon: PauseCircle, className: "bg-amber-50 text-amber-700" },
   concluido: { icon: CheckCircle2, className: "bg-green-50 text-green-700" },
   cancelado: { icon: XCircle, className: "bg-red-50 text-red-700" },
+  arquivado: { icon: Archive, className: "bg-gray-100 text-kmp-graphite/70" },
 };
 
 function StatusBadge({ status }: { status: CaseStatus }) {

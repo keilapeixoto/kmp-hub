@@ -9,12 +9,14 @@ import {
   CheckSquare,
   ClipboardList,
   FileText,
+  HardDrive,
   Kanban,
   LayoutDashboard,
   MessageSquare,
   Settings,
   UserCircle,
   Users,
+  UsersRound,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -76,6 +78,16 @@ const NAV_GROUPS: NavGroup[] = [
         href: "/configuracoes/servicos",
         label: "Configurações",
         icon: Settings,
+      },
+      {
+        href: "/configuracoes/armazenamento",
+        label: "Armazenamento",
+        icon: HardDrive,
+      },
+      {
+        href: "/configuracoes/equipe",
+        label: "Equipe",
+        icon: UsersRound,
       },
     ],
   },

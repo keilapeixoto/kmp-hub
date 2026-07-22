@@ -14,6 +14,7 @@ const STATUS_COLUMN_STYLE: Record<string, string> = {
   pausado: "bg-amber-50",
   concluido: "bg-green-50",
   cancelado: "bg-red-50",
+  arquivado: "bg-gray-100",
 };
 
 /**

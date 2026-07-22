@@ -1,5 +1,5 @@
 import { FileText } from "lucide-react";
-import type { Document } from "@/lib/documents/types";
+import type { DocumentWithCategoryName } from "@/lib/documents/data";
 import { DocumentNameEditor } from "@/app/(staff)/_components/document-name-editor";
 import { archiveClientFile, renameClientFile } from "../actions";
 
@@ -7,7 +7,7 @@ function fileName(storagePath: string): string {
   return storagePath.split("/").pop() ?? storagePath;
 }
 
-function displayName(doc: Document): string {
+function displayName(doc: DocumentWithCategoryName): string {
   return doc.nome ?? fileName(doc.storage_path);
 }
 
@@ -21,7 +21,7 @@ export function ClientFilesPanel({
   documents,
 }: {
   clientId: string;
-  documents: Document[];
+  documents: DocumentWithCategoryName[];
 }) {
   const active = documents.filter((d) => !d.arquivado);
   const archived = documents.filter((d) => d.arquivado);
@@ -34,9 +34,9 @@ export function ClientFilesPanel({
     );
   }
 
-  const byCategoria = new Map<string, Document[]>();
+  const byCategoria = new Map<string, DocumentWithCategoryName[]>();
   for (const doc of active) {
-    const key = doc.categoria ?? "Sem categoria";
+    const key = doc.categoria_nome ?? doc.categoria ?? "Sem categoria";
     const list = byCategoria.get(key) ?? [];
     list.push(doc);
     byCategoria.set(key, list);

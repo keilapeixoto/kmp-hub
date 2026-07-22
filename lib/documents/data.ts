@@ -1,20 +1,29 @@
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
-import type { Document } from "./types";
+import type { Document, DocumentCategory } from "./types";
 
 export const DOCUMENTS_BUCKET = "documents";
 
 /** Curta duração (seção 1 do plano: "acesso somente por URLs assinadas de curta duração"). */
 const SIGNED_URL_EXPIRY_SECONDS = 300;
 
-export async function getDocumentsByClient(clientId: string): Promise<Document[]> {
+export type DocumentWithCategoryName = Document & {
+  categoria_nome: string | null;
+};
+
+export async function getDocumentsByClient(
+  clientId: string,
+): Promise<DocumentWithCategoryName[]> {
   const supabase = await createSupabaseClient();
   const { data } = await supabase
     .from("documents")
-    .select("*")
+    .select("*, document_categories(nome)")
     .eq("client_id", clientId)
-    .order("categoria")
     .order("storage_path");
-  return (data ?? []) as Document[];
+  return (data ?? []).map((d) => ({
+    ...d,
+    categoria_nome:
+      (d.document_categories as unknown as { nome: string } | null)?.nome ?? null,
+  })) as DocumentWithCategoryName[];
 }
 
 export async function getDocumentsByCase(caseId: string): Promise<Document[]> {
@@ -37,6 +46,15 @@ export async function getDocumentsByChecklistItem(
     .eq("checklist_item_id", checklistItemId)
     .order("created_at", { ascending: false });
   return (data ?? []) as Document[];
+}
+
+export async function getDocumentCategories(): Promise<DocumentCategory[]> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("document_categories")
+    .select("id, nome, sensivel, ordem")
+    .order("ordem");
+  return (data ?? []) as DocumentCategory[];
 }
 
 export async function getSignedDocumentUrl(

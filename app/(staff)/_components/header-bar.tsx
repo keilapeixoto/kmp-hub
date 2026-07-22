@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Bell } from "lucide-react";
 import { logout } from "../actions";
 import { GlobalSearchInput } from "./global-search-input";
@@ -15,7 +16,12 @@ export function HeaderBar({ userEmail }: { userEmail: string }) {
         >
           <Bell className="h-5 w-5" />
         </button>
-        <span className="text-sm text-kmp-graphite/70">{userEmail}</span>
+        <Link
+          href="/perfil"
+          className="text-sm text-kmp-graphite/70 transition hover:text-kmp-orange"
+        >
+          {userEmail}
+        </Link>
         <form action={logout}>
           <button
             type="submit"

@@ -6,6 +6,8 @@ import { createChecklistTemplate } from "../../checklists/actions";
 import { updateServiceType } from "../actions";
 import { CaseStagesPanel } from "../_components/case-stages-panel";
 import { ServiceTypeForm } from "../_components/service-type-form";
+import { ArchiveServiceTypeButton } from "../_components/archive-service-type-button";
+import { DuplicateServiceTypeButton } from "../_components/duplicate-service-type-button";
 
 export default async function ServiceTypeDetailPage({
   params,
@@ -34,9 +36,25 @@ export default async function ServiceTypeDetailPage({
         >
           ← Tipos de serviço
         </Link>
-        <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
-          {serviceType.nome}
-        </h1>
+        <div className="mt-1 flex items-center justify-between">
+          <h1 className="font-heading text-2xl text-kmp-graphite">
+            {serviceType.nome}
+            {serviceType.arquivado ? (
+              <span className="ml-3 rounded-full bg-black/5 px-2.5 py-0.5 align-middle text-xs font-medium text-kmp-graphite/60">
+                Arquivada
+              </span>
+            ) : null}
+          </h1>
+          {isAdmin ? (
+            <div className="flex items-center gap-4">
+              <DuplicateServiceTypeButton id={id} />
+              <ArchiveServiceTypeButton
+                id={id}
+                arquivado={serviceType.arquivado}
+              />
+            </div>
+          ) : null}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

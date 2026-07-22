@@ -2,18 +2,30 @@ import Link from "next/link";
 import { getCurrentUserRole } from "@/lib/auth";
 import { getServiceTypes } from "@/lib/cases/data";
 
-export default async function ServiceTypesPage() {
-  const [role, serviceTypes] = await Promise.all([
+export default async function ServiceTypesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ arquivados?: string }>;
+}) {
+  const sp = await searchParams;
+  const mostrarArquivados = sp.arquivados === "1";
+
+  const [role, allServiceTypes] = await Promise.all([
     getCurrentUserRole(),
     getServiceTypes(),
   ]);
   const isAdmin = role === "admin";
 
+  const serviceTypes = mostrarArquivados
+    ? allServiceTypes
+    : allServiceTypes.filter((st) => !st.arquivado);
+  const arquivadosCount = allServiceTypes.filter((st) => st.arquivado).length;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-heading text-2xl text-kmp-graphite">
-          Tipos de serviço
+          Tipos de serviço (pipelines)
         </h1>
         {isAdmin ? (
           <Link
@@ -24,6 +36,21 @@ export default async function ServiceTypesPage() {
           </Link>
         ) : null}
       </div>
+
+      {arquivadosCount > 0 ? (
+        <Link
+          href={
+            mostrarArquivados
+              ? "/configuracoes/servicos"
+              : "/configuracoes/servicos?arquivados=1"
+          }
+          className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+        >
+          {mostrarArquivados
+            ? "Esconder arquivadas"
+            : `Mostrar arquivadas (${arquivadosCount})`}
+        </Link>
+      ) : null}
 
       <div className="rounded-lg bg-white shadow-sm">
         {serviceTypes.length === 0 ? (
@@ -40,6 +67,11 @@ export default async function ServiceTypesPage() {
                 >
                   {st.nome}
                 </Link>
+                {st.arquivado ? (
+                  <span className="ml-2 rounded-full bg-black/5 px-2 py-0.5 text-xs font-medium text-kmp-graphite/60">
+                    Arquivada
+                  </span>
+                ) : null}
                 {st.descricao ? (
                   <p className="mt-1 text-kmp-graphite/60">{st.descricao}</p>
                 ) : null}

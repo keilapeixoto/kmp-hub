@@ -43,6 +43,8 @@ export type ChecklistItem = {
   observacao_equipe: string | null;
   observacao_cliente: string | null;
   motivo_rejeicao: string | null;
+  prazo: string | null;
+  parent_item_id: string | null;
   created_at: string;
   updated_at: string;
 };

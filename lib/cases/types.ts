@@ -6,6 +6,7 @@ export type ServiceType = {
   descricao: string | null;
   guia_id: string | null;
   checklist_template_id: string | null;
+  arquivado: boolean;
   created_at: string;
   updated_at: string;
 };

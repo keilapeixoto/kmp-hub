@@ -7,6 +7,7 @@ import { UploadDocumentForm } from "@/app/(staff)/_components/upload-document-fo
 import {
   archiveDocument,
   createChecklistFromTemplate,
+  createSubtask,
   renameDocument,
   updateChecklistItemStatus,
   uploadDocument,
@@ -77,15 +78,102 @@ async function ItemDocuments({
   );
 }
 
-function ChecklistItemRow({
+function formatPrazo(prazo: string | null): string {
+  if (!prazo) return "";
+  return prazo;
+}
+
+function SubtaskRow({
   caseId,
   item,
+}: {
+  caseId: string;
+  item: ChecklistItem;
+}) {
+  const updateWithIds = updateChecklistItemStatus.bind(null, caseId, item.id);
+
+  return (
+    <li className="ml-6 flex items-center justify-between gap-3 border-l-2 border-black/5 py-2 pl-3 text-sm">
+      <span className="text-kmp-graphite">{item.nome}</span>
+      <form action={updateWithIds} className="flex shrink-0 items-center gap-2">
+        <input
+          type="date"
+          name="prazo"
+          defaultValue={formatPrazo(item.prazo)}
+          className="rounded-md border border-black/10 px-2 py-1 text-xs text-kmp-graphite"
+        />
+        <select
+          name="status"
+          defaultValue={item.status}
+          className="rounded-md border border-black/10 px-2 py-1 text-xs text-kmp-graphite"
+        >
+          {CHECKLIST_ITEM_STATUSES.map((s) => (
+            <option key={s.slug} value={s.slug}>
+              {s.label}
+            </option>
+          ))}
+        </select>
+        <button
+          type="submit"
+          className="rounded-md bg-kmp-graphite/10 px-2 py-1 text-xs font-medium text-kmp-graphite transition hover:bg-kmp-orange hover:text-white"
+        >
+          Salvar
+        </button>
+      </form>
+    </li>
+  );
+}
+
+function AddSubtaskForm({
+  caseId,
+  checklistId,
+  parentItemId,
+}: {
+  caseId: string;
+  checklistId: string;
+  parentItemId: string;
+}) {
+  const createWithIds = createSubtask.bind(
+    null,
+    caseId,
+    checklistId,
+    parentItemId,
+  );
+
+  return (
+    <form
+      action={createWithIds}
+      className="ml-6 flex items-center gap-2 border-l-2 border-black/5 py-1.5 pl-3"
+    >
+      <input
+        type="text"
+        name="nome"
+        placeholder="Nova subtarefa…"
+        className="flex-1 rounded-md border border-black/10 px-2 py-1 text-xs text-kmp-graphite"
+      />
+      <button
+        type="submit"
+        className="text-xs font-medium text-kmp-graphite/60 hover:text-kmp-orange"
+      >
+        + Adicionar
+      </button>
+    </form>
+  );
+}
+
+function ChecklistItemRow({
+  caseId,
+  checklistId,
+  item,
+  subtasks,
   documents,
   clientId,
   categories,
 }: {
   caseId: string;
+  checklistId: string;
   item: ChecklistItem;
+  subtasks: ChecklistItem[];
   documents: Document[];
   clientId: string;
   categories: DocumentCategory[];
@@ -107,6 +195,13 @@ function ChecklistItemRow({
           action={updateWithIds}
           className="flex shrink-0 items-center gap-2"
         >
+          <input
+            type="date"
+            name="prazo"
+            defaultValue={formatPrazo(item.prazo)}
+            title="Prazo"
+            className="rounded-md border border-black/10 px-2 py-1 text-xs text-kmp-graphite"
+          />
           <select
             name="status"
             defaultValue={item.status}
@@ -125,6 +220,21 @@ function ChecklistItemRow({
             Salvar
           </button>
         </form>
+      </div>
+
+      {subtasks.length > 0 ? (
+        <ul className="mt-3 space-y-1">
+          {subtasks.map((sub) => (
+            <SubtaskRow key={sub.id} caseId={caseId} item={sub} />
+          ))}
+        </ul>
+      ) : null}
+      <div className="mt-2">
+        <AddSubtaskForm
+          caseId={caseId}
+          checklistId={checklistId}
+          parentItemId={item.id}
+        />
       </div>
 
       <ItemDocuments
@@ -205,16 +315,20 @@ export async function ChecklistPanel({
       </div>
 
       <ul className="space-y-3">
-        {items.map((item) => (
-          <ChecklistItemRow
-            key={item.id}
-            caseId={caseId}
-            item={item}
-            documents={documentsByItem[item.id] ?? []}
-            clientId={clientId}
-            categories={categories}
-          />
-        ))}
+        {items
+          .filter((item) => !item.parent_item_id)
+          .map((item) => (
+            <ChecklistItemRow
+              key={item.id}
+              caseId={caseId}
+              checklistId={checklist.id}
+              item={item}
+              subtasks={items.filter((i) => i.parent_item_id === item.id)}
+              documents={documentsByItem[item.id] ?? []}
+              clientId={clientId}
+              categories={categories}
+            />
+          ))}
       </ul>
     </div>
   );

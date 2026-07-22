@@ -26,6 +26,7 @@ export async function updateChecklistItemStatus(
   const status = formData.get("status");
   const observacaoEquipe = formData.get("observacao_equipe");
   const motivoRejeicao = formData.get("motivo_rejeicao");
+  const prazo = formData.get("prazo");
 
   if (typeof status !== "string" || !status.trim()) return;
 
@@ -42,8 +43,28 @@ export async function updateChecklistItemStatus(
         typeof motivoRejeicao === "string" && motivoRejeicao.trim()
           ? motivoRejeicao.trim()
           : null,
+      prazo: typeof prazo === "string" && prazo.trim() ? prazo.trim() : null,
     })
     .eq("id", itemId);
+
+  revalidatePath(`/processos/${caseId}`);
+}
+
+export async function createSubtask(
+  caseId: string,
+  checklistId: string,
+  parentItemId: string,
+  formData: FormData,
+) {
+  const nome = formData.get("nome");
+  if (typeof nome !== "string" || !nome.trim()) return;
+
+  const supabase = await createClient();
+  await supabase.from("checklist_items").insert({
+    checklist_id: checklistId,
+    parent_item_id: parentItemId,
+    nome: nome.trim(),
+  });
 
   revalidatePath(`/processos/${caseId}`);
 }

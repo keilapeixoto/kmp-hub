@@ -45,12 +45,18 @@ async function fetchPending(table) {
   return rows;
 }
 
-async function hashAndSize(path) {
-  const { data, error } = await s.storage.from("documents").download(path);
-  if (error) return null;
-  const buffer = Buffer.from(await data.arrayBuffer());
-  const hash = createHash("sha256").update(buffer).digest("hex");
-  return { size: buffer.length, hash };
+async function hashAndSize(path, tentativa = 1) {
+  try {
+    const { data, error } = await s.storage.from("documents").download(path);
+    if (error) return null;
+    const buffer = Buffer.from(await data.arrayBuffer());
+    const hash = createHash("sha256").update(buffer).digest("hex");
+    return { size: buffer.length, hash };
+  } catch (err) {
+    if (tentativa < 3) return hashAndSize(path, tentativa + 1);
+    console.error(`  falha ao baixar ${path}:`, err.message ?? err);
+    return null;
+  }
 }
 
 async function processTable(table) {
@@ -62,7 +68,7 @@ async function processTable(table) {
   let falhas = 0;
   let processados = 0;
 
-  const CONCURRENCY = 20;
+  const CONCURRENCY = 10;
   let cursor = 0;
 
   async function worker() {

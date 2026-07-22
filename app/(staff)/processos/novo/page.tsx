@@ -56,7 +56,7 @@ export default async function NovoProcessoPage({
         <CaseForm
           action={createCase}
           clients={clients}
-          serviceTypes={serviceTypes}
+          serviceTypes={serviceTypes.filter((st) => !st.arquivado)}
           stagesByServiceType={groupStages(allStages)}
           consultants={consultants}
           teamMembers={teamMembers}

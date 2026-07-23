@@ -24,6 +24,7 @@ type NavItem = {
   href: string;
   label: string;
   icon: ComponentType<{ className?: string }>;
+  exact?: boolean;
 };
 
 type NavGroup = {
@@ -59,6 +60,22 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/guias", label: "Guias", icon: BookOpen },
       { href: "/templates", label: "Templates", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Configurações",
+    items: [
+      {
+        href: "/configuracoes",
+        label: "Configurações",
+        icon: Settings,
+        exact: true,
+      },
+      {
+        href: "/configuracoes/servicos",
+        label: "Tipos de serviço",
+        icon: Briefcase,
+      },
       {
         href: "/configuracoes/checklists",
         label: "Checklists",
@@ -68,16 +85,6 @@ const NAV_GROUPS: NavGroup[] = [
         href: "/configuracoes/formularios",
         label: "Formulários",
         icon: FileText,
-      },
-    ],
-  },
-  {
-    label: "Configurações",
-    items: [
-      {
-        href: "/configuracoes/servicos",
-        label: "Configurações",
-        icon: Settings,
       },
       {
         href: "/configuracoes/armazenamento",
@@ -93,9 +100,16 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-function isActive(pathname: string, currentView: string | null, href: string) {
+function isActive(
+  pathname: string,
+  currentView: string | null,
+  href: string,
+  exact?: boolean,
+) {
   const [hrefPath, hrefQuery] = href.split("?");
-  const pathMatches = pathname === hrefPath || pathname.startsWith(`${hrefPath}/`);
+  const pathMatches = exact
+    ? pathname === hrefPath
+    : pathname === hrefPath || pathname.startsWith(`${hrefPath}/`);
   if (!pathMatches) return false;
   const hrefView = new URLSearchParams(hrefQuery ?? "").get("view");
   return hrefView === currentView;
@@ -121,7 +135,12 @@ export function Sidebar() {
             ) : null}
             <div className="space-y-1">
               {group.items.map((item) => {
-                const active = isActive(pathname, currentView, item.href);
+                const active = isActive(
+                  pathname,
+                  currentView,
+                  item.href,
+                  item.exact,
+                );
                 const Icon = item.icon;
                 return (
                   <Link

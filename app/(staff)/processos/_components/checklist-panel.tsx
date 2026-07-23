@@ -3,6 +3,7 @@ import type { Checklist, ChecklistItem } from "@/lib/checklists/types";
 import type { Document, DocumentCategory } from "@/lib/documents/types";
 import { getDocumentCategories, getSignedDocumentUrl } from "@/lib/documents/data";
 import { DocumentNameEditor } from "@/app/(staff)/_components/document-name-editor";
+import { PastaEditor } from "@/app/(staff)/_components/document-meta-controls";
 import { UploadDocumentForm } from "@/app/(staff)/_components/upload-document-form";
 import {
   archiveDocument,
@@ -10,6 +11,7 @@ import {
   createSubtask,
   renameDocument,
   updateChecklistItemStatus,
+  updateDocumentPasta,
   uploadDocument,
 } from "../checklist-actions";
 
@@ -46,17 +48,21 @@ async function ItemDocuments({
           {documentsWithUrls.map(({ doc, url }) => {
             const archiveWithIds = archiveDocument.bind(null, doc.id, caseId);
             const renameWithIds = renameDocument.bind(null, doc.id, caseId);
+            const pastaWithIds = updateDocumentPasta.bind(null, doc.id, caseId);
             return (
               <li
                 key={doc.id}
                 className="flex items-center justify-between gap-2 text-xs text-kmp-graphite/70"
               >
-                <DocumentNameEditor
-                  nome={displayName(doc)}
-                  href={url}
-                  archived={doc.arquivado}
-                  onRename={renameWithIds}
-                />
+                <span className="flex items-center gap-2">
+                  <DocumentNameEditor
+                    nome={displayName(doc)}
+                    href={url}
+                    archived={doc.arquivado}
+                    onRename={renameWithIds}
+                  />
+                  <PastaEditor pasta={doc.pasta} onSave={pastaWithIds} />
+                </span>
                 {!doc.arquivado ? (
                   <form action={archiveWithIds}>
                     <button

@@ -264,3 +264,35 @@ export async function archiveClientFile(clientId: string, documentId: string) {
 
   revalidatePath(`/clientes/${clientId}`);
 }
+
+export async function updateClientFilePasta(
+  clientId: string,
+  documentId: string,
+  formData: FormData,
+) {
+  const pasta = formData.get("pasta");
+  const supabase = await createClient();
+  await supabase
+    .from("documents")
+    .update({ pasta: typeof pasta === "string" && pasta.trim() ? pasta.trim() : null })
+    .eq("id", documentId);
+
+  revalidatePath(`/clientes/${clientId}`);
+}
+
+export async function updateClientFileStatusRevisao(
+  clientId: string,
+  documentId: string,
+  formData: FormData,
+) {
+  const status = formData.get("status_revisao");
+  if (typeof status !== "string" || !status.trim()) return;
+
+  const supabase = await createClient();
+  await supabase
+    .from("documents")
+    .update({ status_revisao: status })
+    .eq("id", documentId);
+
+  revalidatePath(`/clientes/${clientId}`);
+}

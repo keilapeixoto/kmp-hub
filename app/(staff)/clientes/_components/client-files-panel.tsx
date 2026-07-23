@@ -1,7 +1,16 @@
 import { FileText } from "lucide-react";
 import type { DocumentWithCategoryName } from "@/lib/documents/data";
 import { DocumentNameEditor } from "@/app/(staff)/_components/document-name-editor";
-import { archiveClientFile, renameClientFile } from "../actions";
+import {
+  PastaEditor,
+  StatusRevisaoSelect,
+} from "@/app/(staff)/_components/document-meta-controls";
+import {
+  archiveClientFile,
+  renameClientFile,
+  updateClientFilePasta,
+  updateClientFileStatusRevisao,
+} from "../actions";
 
 function fileName(storagePath: string): string {
   return storagePath.split("/").pop() ?? storagePath;
@@ -56,6 +65,12 @@ export function ClientFilesPanel({
             {docs.map((doc) => {
               const archiveWithIds = archiveClientFile.bind(null, clientId, doc.id);
               const renameWithIds = renameClientFile.bind(null, clientId, doc.id);
+              const pastaWithIds = updateClientFilePasta.bind(null, clientId, doc.id);
+              const statusWithIds = updateClientFileStatusRevisao.bind(
+                null,
+                clientId,
+                doc.id,
+              );
               return (
                 <li
                   key={doc.id}
@@ -69,15 +84,24 @@ export function ClientFilesPanel({
                       archived={false}
                       onRename={renameWithIds}
                     />
+                    <PastaEditor pasta={doc.pasta} onSave={pastaWithIds} />
                   </span>
-                  <form action={archiveWithIds} className="shrink-0">
-                    <button
-                      type="submit"
-                      className="text-xs text-kmp-graphite/50 transition hover:text-red-600"
-                    >
-                      Arquivar
-                    </button>
-                  </form>
+                  <span className="flex shrink-0 items-center gap-3">
+                    {!doc.checklist_item_id ? (
+                      <StatusRevisaoSelect
+                        status={doc.status_revisao}
+                        onSave={statusWithIds}
+                      />
+                    ) : null}
+                    <form action={archiveWithIds}>
+                      <button
+                        type="submit"
+                        className="text-xs text-kmp-graphite/50 transition hover:text-red-600"
+                      >
+                        Arquivar
+                      </button>
+                    </form>
+                  </span>
                 </li>
               );
             })}

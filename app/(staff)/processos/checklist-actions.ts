@@ -231,3 +231,35 @@ export async function archiveDocument(documentId: string, caseId: string) {
 
   revalidatePath(`/processos/${caseId}`);
 }
+
+export async function updateDocumentPasta(
+  documentId: string,
+  caseId: string,
+  formData: FormData,
+) {
+  const pasta = formData.get("pasta");
+  const supabase = await createClient();
+  await supabase
+    .from("documents")
+    .update({ pasta: typeof pasta === "string" && pasta.trim() ? pasta.trim() : null })
+    .eq("id", documentId);
+
+  revalidatePath(`/processos/${caseId}`);
+}
+
+export async function updateDocumentStatusRevisao(
+  documentId: string,
+  caseId: string,
+  formData: FormData,
+) {
+  const status = formData.get("status_revisao");
+  if (typeof status !== "string" || !status.trim()) return;
+
+  const supabase = await createClient();
+  await supabase
+    .from("documents")
+    .update({ status_revisao: status })
+    .eq("id", documentId);
+
+  revalidatePath(`/processos/${caseId}`);
+}

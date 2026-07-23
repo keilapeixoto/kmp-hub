@@ -14,8 +14,18 @@ export type Document = {
   tamanho_bytes: number | null;
   formato: string | null;
   hash_sha256: string | null;
+  pasta: string | null;
+  status_revisao: DocumentStatusRevisao;
   created_at: string;
   updated_at: string;
+};
+
+export type DocumentStatusRevisao = "pendente" | "aprovado" | "incorreto";
+
+export const DOCUMENT_STATUS_REVISAO_LABELS: Record<DocumentStatusRevisao, string> = {
+  pendente: "Pendente",
+  aprovado: "Aprovado",
+  incorreto: "Incorreto",
 };
 
 export type DocumentVersion = {

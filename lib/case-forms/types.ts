@@ -57,3 +57,10 @@ export const CASE_FORM_STATUS_LABELS: Record<CaseFormStatus, string> = {
   em_analise: "Em análise",
   aprovado: "Aprovado",
 };
+
+export type CaseFormView = {
+  id: string;
+  case_id: string;
+  template_id: string;
+  visualizado_em: string;
+};

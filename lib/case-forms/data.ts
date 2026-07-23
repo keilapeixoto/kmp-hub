@@ -4,6 +4,7 @@ import type {
   CaseFormField,
   CaseFormStep,
   CaseFormTemplate,
+  CaseFormView,
 } from "./types";
 
 export async function getCaseFormTemplates(): Promise<
@@ -117,4 +118,31 @@ export async function getCaseFormResponses(
     if (r.valor !== null) map[r.field_id] = r.valor;
   }
   return map;
+}
+
+export async function getCaseFormView(
+  caseId: string,
+  templateId: string,
+): Promise<CaseFormView | null> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("case_form_views")
+    .select("*")
+    .eq("case_id", caseId)
+    .eq("template_id", templateId)
+    .maybeSingle();
+  return data as CaseFormView | null;
+}
+
+/** Chamado pela página do formulário no portal — grava só na primeira vez (controle de formulários). */
+export async function markCaseFormViewed(
+  caseId: string,
+  templateId: string,
+): Promise<void> {
+  const supabase = await createSupabaseClient();
+  await supabase
+    .from("case_form_views")
+    .insert({ case_id: caseId, template_id: templateId })
+    .select()
+    .maybeSingle();
 }

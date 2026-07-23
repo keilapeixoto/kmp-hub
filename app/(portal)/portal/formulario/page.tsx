@@ -6,6 +6,7 @@ import {
   getCaseFormFields,
   getCaseForm,
   getCaseFormResponses,
+  markCaseFormViewed,
 } from "@/lib/case-forms/data";
 import { getPortalCase } from "@/lib/portal/data";
 import { PortalHeader } from "../_components/portal-header";
@@ -32,6 +33,8 @@ export default async function PortalFormularioPage({
   ]);
 
   if (!portalCase || !template) notFound();
+
+  await markCaseFormViewed(caseId, template.id);
 
   const steps = await getCaseFormSteps(template.id);
   if (steps.length === 0) notFound();

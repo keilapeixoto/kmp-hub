@@ -24,6 +24,7 @@ import {
   getCaseFormResponses,
   getCaseFormSteps,
   getCaseFormTemplateForCase,
+  getCaseFormView,
 } from "@/lib/case-forms/data";
 import { updateCase } from "../actions";
 import { ChecklistPanel } from "../_components/checklist-panel";
@@ -104,6 +105,9 @@ export default async function ProcessoDetailPage({
     dataForm = await getCaseForm(id, dataFormTemplate.id);
     dataFormResponses = dataForm ? await getCaseFormResponses(dataForm.id) : {};
   }
+  const dataFormView = dataFormTemplate
+    ? await getCaseFormView(id, dataFormTemplate.id)
+    : null;
 
   const updateWithId = updateCase.bind(null, id);
 
@@ -180,6 +184,11 @@ export default async function ProcessoDetailPage({
             steps={dataFormSteps}
             caseForm={dataForm}
             responses={dataFormResponses}
+            formView={dataFormView}
+            caseId={id}
+            clientNome={client?.nome ?? ""}
+            clientEmail={client?.email ?? null}
+            clientTelefone={client?.telefone ?? null}
           />
         </div>
       ) : null}

@@ -192,6 +192,24 @@ ordem, antes de testar `/tarefas` e `/agenda`.
   DEFINER).
 - `tests/database/007_guides_templates_audit_rls.test.sql` — testes pgTAP.
 
+## Validação de testes pgTAP (registro manual)
+
+Os testes de `tests/database/` são aplicados manualmente no SQL Editor do
+projeto de dev (ver seção abaixo) — não há execução automatizada em CI ainda
+(ver [13 — Riscos Arquiteturais](../docs/architecture/13-architectural-risks.md)).
+Este bloco registra as validações confirmadas:
+
+- `013_case_form_views_rls.test.sql` (migração
+  `20260722140000_case_form_views.sql`) — **validado em 2026-07-23, 5/5
+  testes ok**: cliente grava a própria visualização de formulário mas não
+  enxerga nenhuma linha da tabela (nem a própria); cliente sem acesso ao
+  processo é bloqueado por RLS (`42501`); admin vê o registro gravado;
+  `visualizado_em` é preenchido automaticamente. Rodado via bloco `DO $$ ... $$`
+  (ver nota abaixo sobre o motivo) em vez do `begin...rollback` original do
+  arquivo — os dados de teste sintéticos (e-mails `*.views@kmp.test`,
+  `Cliente A Views Teste`, `Serviço Views Teste`) foram removidos manualmente
+  após a validação.
+
 ## Variáveis de ambiente
 
 Este projeto usa o formato novo de chaves do Supabase (Settings > API Keys):
@@ -215,6 +233,30 @@ ao final; nada fica gravado no banco. O resultado de cada
 `select is(...)`/`throws_ok(...)` aparece como uma linha de saída
 (`ok 1 - ...` / `not ok 2 - ...`).
 
+**Risco conhecido do SQL Editor web com scripts longos**: ao validar o teste
+013 (2026-07-23), o `begin ... rollback` colado inteiro no SQL Editor falhou
+repetidamente com `relation "_test_results_scratch" does not exist`, mesmo em
+abas novas. Causa identificada por bisseção manual: quanto mais instruções o
+script tem, maior a chance de o SQL Editor não manter a mesma conexão física
+do início ao fim (compatível com o pooler em modo *transaction*, Supavisor,
+que pode reciclar a conexão entre statements) — o `create table` "acontece"
+numa conexão e a instrução seguinte não a enxerga. Scripts pequenos (3-5
+statements) não mostraram o problema; o arquivo completo de um teste (100+
+linhas) mostrou de forma consistente. **Contorno que funcionou**: reescrever
+o corpo do teste como um único bloco `do $$ ... $$` (PL/pgSQL) — do ponto de
+vista do Postgres isso é uma única instrução, então não há como o pooler
+fragmentá-la entre conexões diferentes. Dentro do bloco, `execute 'set local
+role ...'` e `perform set_config(...)` funcionam normalmente porque tudo roda
+na mesma transação implícita do bloco. A limitação prática: um bloco `DO` não
+retorna result set, então a tabela de resultados (`_test_results_scratch`)
+precisa ser criada **sem** `rollback` (fica commitada) — os dados de teste
+sintéticos devem ser apagados manualmente depois de ler o resultado numa
+segunda consulta (`select resultado from public._test_results_scratch order
+by n;`). Se um teste futuro apresentar o mesmo sintoma, converter para esse
+formato antes de assumir que é um bug no teste em si. Ver risco correspondente
+em [13 — Riscos Arquiteturais](../docs/architecture/13-architectural-risks.md)
+(pooling de conexão serverless).
+
 **Com Supabase CLI + Docker instalados**:
 
 ```
@@ -223,4 +265,5 @@ supabase test db
 
 Isso recria o banco do zero a partir das migrações + seed (num Postgres local
 descartável, não no projeto de dev) e roda todos os arquivos em
-`tests/database/`.
+`tests/database/`. Este caminho não sofre do problema acima (conexão direta,
+sem pooler) — preferível quando `psql`/Docker estiverem disponíveis.

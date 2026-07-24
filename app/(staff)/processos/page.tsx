@@ -4,6 +4,7 @@ import { getClients } from "@/lib/clients/data";
 import {
   getAllCaseStages,
   getCases,
+  getCaseStatusLabels,
   getServiceTypes,
 } from "@/lib/cases/data";
 import type { CaseFilters } from "@/lib/cases/types";
@@ -33,13 +34,14 @@ export default async function ProcessosPage({
     prioridade: firstValue(params.prioridade),
   };
 
-  const [cases, consultants, clients, serviceTypes, allStages] =
+  const [cases, consultants, clients, serviceTypes, allStages, statusLabels] =
     await Promise.all([
       getCases(filters),
       getConsultants(),
       getClients({}),
       getServiceTypes(),
       getAllCaseStages(),
+      getCaseStatusLabels(),
     ]);
 
   const stagesById = Object.fromEntries(allStages.map((s) => [s.id, s]));
@@ -120,6 +122,7 @@ export default async function ProcessosPage({
               clients={clients}
               consultants={consultants}
               serviceTypes={serviceTypes}
+              statusLabels={statusLabels}
             />
           </>
         )

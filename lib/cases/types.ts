@@ -54,3 +54,11 @@ export type CaseFilters = {
   status?: string;
   prioridade?: string;
 };
+
+export type CaseStatusLabel = {
+  id: string;
+  status_slug: CaseStatus;
+  label: string;
+  created_at: string;
+  updated_at: string;
+};

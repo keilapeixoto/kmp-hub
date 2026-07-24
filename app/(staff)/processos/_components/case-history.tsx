@@ -1,12 +1,17 @@
-import { CASE_STATUS_LABELS } from "@/lib/cases/constants";
+import { getCaseStatusLabels } from "@/lib/cases/data";
 import type { CaseStatusHistoryEntry } from "@/lib/cases/types";
 
-function displayValue(campo: "status" | "etapa", value: string | null) {
+function displayValue(
+  statusLabels: Record<string, string>,
+  campo: "status" | "etapa",
+  value: string | null,
+) {
   if (!value) return "—";
-  return campo === "status" ? (CASE_STATUS_LABELS[value] ?? value) : value;
+  return campo === "status" ? (statusLabels[value] ?? value) : value;
 }
 
-export function CaseHistory({ events }: { events: CaseStatusHistoryEntry[] }) {
+export async function CaseHistory({ events }: { events: CaseStatusHistoryEntry[] }) {
+  const statusLabels = await getCaseStatusLabels();
   if (events.length === 0) {
     return (
       <p className="text-sm text-kmp-graphite/60">
@@ -24,8 +29,8 @@ export function CaseHistory({ events }: { events: CaseStatusHistoryEntry[] }) {
             {new Date(event.created_at).toLocaleString("pt-BR")}
           </p>
           <p className="mt-0.5 text-sm text-kmp-graphite">
-            {displayValue(event.campo, event.de)} →{" "}
-            {displayValue(event.campo, event.para)}
+            {displayValue(statusLabels, event.campo, event.de)} →{" "}
+            {displayValue(statusLabels, event.campo, event.para)}
           </p>
         </li>
       ))}

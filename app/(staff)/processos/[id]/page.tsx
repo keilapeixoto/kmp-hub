@@ -7,6 +7,7 @@ import {
   getAllCaseStages,
   getCase,
   getCaseStatusHistory,
+  getCaseStatusLabels,
   getServiceType,
   getServiceTypes,
   getTeamMembers,
@@ -74,6 +75,7 @@ export default async function ProcessoDetailPage({
     serviceType,
     checklist,
     documents,
+    statusLabels,
   ] = await Promise.all([
     getCurrentUserProfile(),
     getConsultants(),
@@ -86,6 +88,7 @@ export default async function ProcessoDetailPage({
     getServiceType(caseItem.service_type_id),
     getChecklistByCase(id),
     getDocumentsByCase(id),
+    getCaseStatusLabels(),
   ]);
 
   const checklistItems = checklist ? await getChecklistItems(checklist.id) : [];
@@ -147,6 +150,7 @@ export default async function ProcessoDetailPage({
             teamMembers={teamMembers}
             canAssignConsultant={consultants.length > 0}
             currentUserNome={profile?.nome ?? ""}
+            statusLabels={statusLabels}
           />
         </div>
 

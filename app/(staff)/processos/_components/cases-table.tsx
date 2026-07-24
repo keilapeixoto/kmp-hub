@@ -6,8 +6,9 @@ import {
   PauseCircle,
   XCircle,
 } from "lucide-react";
-import { CASE_PRIORITY_LABELS, CASE_STATUS_LABELS } from "@/lib/cases/constants";
+import { CASE_PRIORITY_LABELS } from "@/lib/cases/constants";
 import type { CaseStatus } from "@/lib/cases/constants";
+import { getCaseStatusLabels } from "@/lib/cases/data";
 import type { Case, CaseStage, ServiceType } from "@/lib/cases/types";
 import type { ConsultantOption } from "@/lib/leads/types";
 import type { Client } from "@/lib/clients/types";
@@ -23,7 +24,13 @@ const STATUS_BADGE: Record<
   arquivado: { icon: Archive, className: "bg-gray-100 text-kmp-graphite/70" },
 };
 
-function StatusBadge({ status }: { status: CaseStatus }) {
+function StatusBadge({
+  status,
+  statusLabels,
+}: {
+  status: CaseStatus;
+  statusLabels: Record<string, string>;
+}) {
   const badge = STATUS_BADGE[status] ?? STATUS_BADGE.ativo;
   const Icon = badge.icon;
   return (
@@ -31,7 +38,7 @@ function StatusBadge({ status }: { status: CaseStatus }) {
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${badge.className}`}
     >
       <Icon className="h-3.5 w-3.5" />
-      {CASE_STATUS_LABELS[status] ?? status}
+      {statusLabels[status] ?? status}
     </span>
   );
 }
@@ -60,7 +67,7 @@ function EtapaBadge({
   );
 }
 
-export function CasesTable({
+export async function CasesTable({
   cases,
   clients,
   consultants,
@@ -73,6 +80,7 @@ export function CasesTable({
   serviceTypes: ServiceType[];
   stagesById: Record<string, CaseStage>;
 }) {
+  const statusLabels = await getCaseStatusLabels();
   const clientName = (id: string) =>
     clients.find((c) => c.id === id)?.nome ?? "—";
   const consultantName = (id: string) =>
@@ -159,7 +167,7 @@ export function CasesTable({
                         />
                       </td>
                       <td className="px-4 py-3">
-                        <StatusBadge status={c.status} />
+                        <StatusBadge status={c.status} statusLabels={statusLabels} />
                       </td>
                       <td className="px-4 py-3 text-kmp-graphite/80">
                         {CASE_PRIORITY_LABELS[c.prioridade] ?? c.prioridade}

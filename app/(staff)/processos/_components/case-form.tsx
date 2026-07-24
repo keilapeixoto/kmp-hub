@@ -25,6 +25,7 @@ export function CaseForm({
   canAssignConsultant,
   currentUserNome,
   lockedClientId,
+  statusLabels,
 }: {
   action: (prevState: CaseFormState, formData: FormData) => Promise<CaseFormState>;
   caseItem?: Case;
@@ -36,6 +37,7 @@ export function CaseForm({
   canAssignConsultant: boolean;
   currentUserNome: string;
   lockedClientId?: string;
+  statusLabels: Record<string, string>;
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
   const [serviceTypeId, setServiceTypeId] = useState(
@@ -128,7 +130,7 @@ export function CaseForm({
             >
               {CASE_STATUSES.map((s) => (
                 <option key={s.slug} value={s.slug}>
-                  {s.label}
+                  {statusLabels[s.slug] ?? s.label}
                 </option>
               ))}
             </select>

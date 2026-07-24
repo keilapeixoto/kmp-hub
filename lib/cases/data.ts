@@ -1,9 +1,11 @@
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
+import { CASE_STATUS_LABELS } from "./constants";
 import type {
   Case,
   CaseFilters,
   CaseStage,
   CaseStatusHistoryEntry,
+  CaseStatusLabel,
   ServiceType,
 } from "./types";
 
@@ -96,6 +98,29 @@ export async function getCasesByClient(clientId: string): Promise<Case[]> {
     .eq("client_id", clientId)
     .order("created_at", { ascending: false });
   return (data ?? []) as Case[];
+}
+
+/** Linhas cruas (com id) — usado só pelo formulário de edição em /configuracoes/processos. */
+export async function getCaseStatusLabelRows(): Promise<CaseStatusLabel[]> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("case_status_labels")
+    .select("*")
+    .order("status_slug");
+  return (data ?? []) as CaseStatusLabel[];
+}
+
+/**
+ * Mapa slug → texto exibido, com fallback para os rótulos padrão de
+ * lib/cases/constants.ts caso alguma linha ainda não exista no banco.
+ */
+export async function getCaseStatusLabels(): Promise<Record<string, string>> {
+  const rows = await getCaseStatusLabelRows();
+  if (rows.length === 0) return CASE_STATUS_LABELS;
+  return {
+    ...CASE_STATUS_LABELS,
+    ...Object.fromEntries(rows.map((r) => [r.status_slug, r.label])),
+  };
 }
 
 export async function getCaseStatusHistory(

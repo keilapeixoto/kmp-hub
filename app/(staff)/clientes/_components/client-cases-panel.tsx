@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { CASE_STATUS_LABELS } from "@/lib/cases/constants";
+import { getCaseStatusLabels } from "@/lib/cases/data";
 import type { Case, CaseStage, ServiceType } from "@/lib/cases/types";
 
-export function ClientCasesPanel({
+export async function ClientCasesPanel({
   clientId,
   cases,
   serviceTypes,
@@ -13,6 +13,7 @@ export function ClientCasesPanel({
   serviceTypes: ServiceType[];
   stagesById: Record<string, CaseStage>;
 }) {
+  const statusLabels = await getCaseStatusLabels();
   const serviceTypeName = (id: string) =>
     serviceTypes.find((st) => st.id === id)?.nome ?? "—";
 
@@ -48,7 +49,7 @@ export function ClientCasesPanel({
                   </p>
                 </div>
                 <span className="rounded-full bg-kmp-graphite/10 px-2.5 py-0.5 text-xs font-medium text-kmp-graphite">
-                  {CASE_STATUS_LABELS[c.status] ?? c.status}
+                  {statusLabels[c.status] ?? c.status}
                 </span>
               </li>
             ))}

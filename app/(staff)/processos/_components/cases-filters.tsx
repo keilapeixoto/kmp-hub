@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CASE_PRIORITIES, CASE_STATUSES } from "@/lib/cases/constants";
+import { getCaseStatusLabels } from "@/lib/cases/data";
 import type { ServiceType } from "@/lib/cases/types";
 import type { CaseFilters } from "@/lib/cases/types";
 import type { ConsultantOption } from "@/lib/leads/types";
@@ -8,7 +9,7 @@ const inputClass =
   "mt-1 w-full rounded-md border border-black/10 px-2 py-1.5 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
 const labelClass = "block text-xs font-medium text-kmp-graphite/70";
 
-export function CasesFilters({
+export async function CasesFilters({
   filters,
   view,
   consultants,
@@ -19,6 +20,7 @@ export function CasesFilters({
   consultants: ConsultantOption[];
   serviceTypes: ServiceType[];
 }) {
+  const statusLabels = await getCaseStatusLabels();
   return (
     <form
       method="GET"
@@ -70,7 +72,7 @@ export function CasesFilters({
           <option value="">Todos</option>
           {CASE_STATUSES.map((s) => (
             <option key={s.slug} value={s.slug}>
-              {s.label}
+              {statusLabels[s.slug] ?? s.label}
             </option>
           ))}
         </select>

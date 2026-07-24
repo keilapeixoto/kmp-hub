@@ -28,11 +28,13 @@ export function CasesOverviewKanban({
   clients,
   consultants,
   serviceTypes,
+  statusLabels,
 }: {
   cases: Case[];
   clients: Client[];
   consultants: ConsultantOption[];
   serviceTypes: ServiceType[];
+  statusLabels: Record<string, string>;
 }) {
   const [cases, setCases] = useState(initialCases);
   const [, startTransition] = useTransition();
@@ -71,7 +73,7 @@ export function CasesOverviewKanban({
             className={`flex w-72 shrink-0 flex-col rounded-lg p-3 ${STATUS_COLUMN_STYLE[statusOpt.slug] ?? "bg-black/5"}`}
           >
             <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-graphite">
-              {statusOpt.label}
+              {statusLabels[statusOpt.slug] ?? statusOpt.label}
               <span className="rounded-full bg-white px-2 py-0.5 text-xs text-kmp-graphite/60">
                 {statusCases.length}
               </span>

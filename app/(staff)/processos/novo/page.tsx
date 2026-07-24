@@ -4,6 +4,7 @@ import { getConsultants } from "@/lib/leads/data";
 import { getClients } from "@/lib/clients/data";
 import {
   getAllCaseStages,
+  getCaseStatusLabels,
   getServiceTypes,
   getTeamMembers,
 } from "@/lib/cases/data";
@@ -28,7 +29,7 @@ export default async function NovoProcessoPage({
     ? params.clientId[0]
     : params.clientId;
 
-  const [profile, consultants, clients, serviceTypes, allStages, teamMembers] =
+  const [profile, consultants, clients, serviceTypes, allStages, teamMembers, statusLabels] =
     await Promise.all([
       getCurrentUserProfile(),
       getConsultants(),
@@ -36,6 +37,7 @@ export default async function NovoProcessoPage({
       getServiceTypes(),
       getAllCaseStages(),
       getTeamMembers(),
+      getCaseStatusLabels(),
     ]);
 
   return (
@@ -63,6 +65,7 @@ export default async function NovoProcessoPage({
           canAssignConsultant={consultants.length > 0}
           currentUserNome={profile?.nome ?? ""}
           lockedClientId={clientIdParam}
+          statusLabels={statusLabels}
         />
       </div>
     </div>

@@ -4,6 +4,7 @@ import {
   ClipboardList,
   FileText,
   HardDrive,
+  Kanban,
   UsersRound,
 } from "lucide-react";
 import type { ComponentType } from "react";
@@ -36,6 +37,12 @@ const AREAS: SettingsArea[] = [
     nome: "Formulários",
     descricao: "Formulários de coleta de dados enviados aos clientes no portal.",
     icon: FileText,
+  },
+  {
+    href: "/configuracoes/processos",
+    nome: "Nomes de status de processos",
+    descricao: "Renomear as colunas da Pipeline (Ativo, Pausado, Concluído...).",
+    icon: Kanban,
   },
   {
     href: "/configuracoes/equipe",

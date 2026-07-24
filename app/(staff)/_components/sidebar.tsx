@@ -87,6 +87,11 @@ const NAV_GROUPS: NavGroup[] = [
         icon: FileText,
       },
       {
+        href: "/configuracoes/processos",
+        label: "Status de processos",
+        icon: Kanban,
+      },
+      {
         href: "/configuracoes/armazenamento",
         label: "Armazenamento",
         icon: HardDrive,

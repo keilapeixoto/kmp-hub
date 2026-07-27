@@ -92,6 +92,16 @@ Registros fictícios levam `is_demo = true` (migração
 sem tocar em dados reais: `node scripts/clean-demo.mjs` (imprime contagem de
 dados reais antes/depois como prova). Filhas caem em cascata pelas FKs.
 
+## Testes e2e (Playwright)
+
+Configurado, cobrindo login da equipe/navegação, o fluxo de processos e o
+portal do cliente. Login não é automatizado (senha da equipe e magic link
+do portal são gerados manualmente uma vez; a sessão fica salva em
+`playwright/.auth/*.json`, gitignored) — ver `playwright/setup/README.md`
+para o passo a passo. Rodar: `npm run test:e2e:login:staff` e
+`npm run test:e2e:login:portal` (uma vez, ou quando a sessão expirar),
+depois `npm run test:e2e`. Testes em `tests/e2e/{staff,portal}/`.
+
 ## Plano de sprints da Fase 1 (seção 10)
 
 1. Setup: repo, Supabase dev/prod, migrações base, auth, funções, RLS inicial, layout KMP.

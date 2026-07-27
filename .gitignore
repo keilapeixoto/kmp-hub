@@ -17,3 +17,9 @@ supabase/.temp
 
 # Dados reais de clientes (mapeamento de importação) — nunca versionar
 import/
+
+# Playwright — sessões de login (storageState) contêm tokens reais, nunca versionar
+playwright/.auth/
+playwright-report/
+test-results/
+blob-report/

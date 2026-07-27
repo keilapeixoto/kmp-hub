@@ -93,6 +93,16 @@ automatizada.
 - Geração de conteúdo assistida por IA — sempre com validação humana
   obrigatória e marcação explícita de conteúdo gerado, nunca automática sem
   revisão.
+- **Revisão de risco/completude do processo assistida por IA** — inspirado
+  em produtos de mercado como o [OneVisa](https://onevisa.ai) (captura
+  guiada de documentos, tradução automática, análise de risco de recusa
+  antes de submeter, preenchimento automático de portal oficial). A peça
+  que mais se encaixa na arquitetura já existente do KMP Hub é a análise de
+  completude/risco: construiria em cima do checklist já existente
+  (`checklist_items`, 10 status, percentual), não exigiria uma estrutura de
+  dados nova. Ainda assim, entra na mesma regra de IA acima (validação
+  humana obrigatória, conteúdo marcado) e só depois da Fase 1 validada —
+  registrado aqui como referência de produto, não como especificação.
 - Evolução para multi-tenant (ver
   [12 — Future Scalability](./12-future-scalability.md)) — só quando um
   segundo cliente real do produto existir, não especulativamente.

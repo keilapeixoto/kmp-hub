@@ -72,7 +72,7 @@ const TEMPLATES: Record<ReminderMilestone, { subject: string; corpo: string[] }>
     ],
   },
   1: {
-    subject: "Último aviso: Prazo vence amanhã!, {data_limite}",
+    subject: "Último aviso: Prazo vence amanhã, {data_limite}!",
     corpo: [
       "Olá {nome_estudante},",
       "Este é o último lembrete automático. O prazo para envio de {tipo_documento} vence amanhã, {data_limite}.",

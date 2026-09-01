@@ -2,9 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { VISA_ALERT_THRESHOLDS, type VisaUrgency } from "@/lib/clients/constants";
-
-export type VisaBucket = VisaUrgency | "sem_data";
+import { VISA_ALERT_THRESHOLDS } from "@/lib/clients/constants";
+import type { VisaBucket } from "@/lib/vencimentos/constants";
 
 /** Data representativa de cada coluna — não é a data exata do visto, só uma reclassificação rápida por arraste. */
 function targetDateForBucket(

@@ -1,11 +1,8 @@
 import { getClientsWithActiveVisa, type VisaPanelRow } from "@/lib/vencimentos/data";
 import { visaUrgency } from "@/lib/clients/utils";
+import { BUCKET_ORDER, type VisaBucket } from "@/lib/vencimentos/constants";
 import { VencimentosFilters } from "./_components/vencimentos-filters";
-import {
-  VencimentosKanban,
-  BUCKET_ORDER,
-} from "./_components/vencimentos-kanban";
-import type { VisaBucket } from "./actions";
+import { VencimentosKanban } from "./_components/vencimentos-kanban";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 

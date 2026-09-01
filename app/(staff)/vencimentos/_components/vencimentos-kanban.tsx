@@ -6,16 +6,8 @@ import { useState, useTransition } from "react";
 import type { VisaPanelRow } from "@/lib/vencimentos/data";
 import { daysUntil } from "@/lib/clients/utils";
 import { VISA_URGENCY_LABELS } from "@/lib/clients/constants";
-import { updateVisaBucketDrag, type VisaBucket } from "../actions";
-
-export const BUCKET_ORDER: VisaBucket[] = [
-  "vencido",
-  "critico",
-  "atencao",
-  "monitorar",
-  "sem_urgencia",
-  "sem_data",
-];
+import { BUCKET_ORDER, type VisaBucket } from "@/lib/vencimentos/constants";
+import { updateVisaBucketDrag } from "../actions";
 
 const BUCKET_LABELS: Record<VisaBucket, string> = {
   ...VISA_URGENCY_LABELS,

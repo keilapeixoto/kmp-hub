@@ -31,7 +31,7 @@ function assinaturaHtml(): string {
     : (process.env.NEXT_PUBLIC_SITE_URL ?? "");
   return [
     "<p>Atenciosamente,</p>",
-    `<img src="${siteUrl}/assinatura-keila.png" alt="Keila Peixoto — KMP Consulting" width="360" style="max-width:360px;height:auto;border:0;display:block;" />`,
+    `<img src="${siteUrl}/assinatura-keila.png" alt="Keila Peixoto — KMP Consulting" width="480" style="max-width:480px;height:auto;border:0;display:block;" />`,
   ].join("\n");
 }
 

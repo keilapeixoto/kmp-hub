@@ -131,7 +131,10 @@ export async function uploadAndClassifyDocument(
   let message: string;
 
   if ("error" in classification) {
-    message = `Arquivo salvo, mas a classificação automática falhou (${classification.error}) — revise o tipo manualmente.${duplicateNote}`;
+    // Detalhe técnico (ex.: chave de API não configurada) só no log do
+    // servidor — a equipe só precisa saber que tem que confirmar manualmente.
+    console.error(`Classificação automática falhou para ${storagePath}:`, classification.error);
+    message = `Arquivo salvo — confirme o tipo manualmente na lista abaixo.${duplicateNote}`;
   } else {
     documentType = classification.document_type;
     confidence = classification.confidence;
@@ -179,15 +182,24 @@ export async function uploadAndClassifyDocument(
 /**
  * Confirmação manual do tipo quando a classificação automática ficou abaixo
  * do limite de confiança (ou falhou) — a equipe escolhe o tipo certo e,
- * opcionalmente, o item do checklist correspondente.
+ * opcionalmente, o item do checklist correspondente. `nome_personalizado`
+ * deixa a equipe digitar o nome do arquivo direto, quando nenhum dos tipos
+ * da lista descreve bem o documento (ex.: um anexo que não é da imigração).
  */
-export async function confirmDocumentClassification(documentId: string, caseId: string, formData: FormData) {
+export async function confirmDocumentClassification(
+  documentId: string,
+  caseId: string,
+  formData: FormData,
+): Promise<{ ok: boolean }> {
   const checklistItemIdInput = formData.get("checklist_item_id");
   const documentTypeInput = formData.get("document_type");
+  const nomePersonalizadoInput = formData.get("nome_personalizado");
   const checklistItemId =
     typeof checklistItemIdInput === "string" && checklistItemIdInput ? checklistItemIdInput : null;
   const documentType =
     typeof documentTypeInput === "string" && documentTypeInput ? documentTypeInput : "outro";
+  const nomePersonalizado =
+    typeof nomePersonalizadoInput === "string" ? nomePersonalizadoInput.trim() : "";
 
   const supabase = await createClient();
   const { data: doc } = await supabase
@@ -196,7 +208,7 @@ export async function confirmDocumentClassification(documentId: string, caseId: 
     .eq("id", documentId)
     .maybeSingle();
 
-  if (!doc) return;
+  if (!doc) return { ok: false };
 
   const { data: client } = await supabase
     .from("clients")
@@ -208,15 +220,20 @@ export async function confirmDocumentClassification(documentId: string, caseId: 
   const ext = nomeOriginal.includes(".") ? (nomeOriginal.split(".").pop() as string) : "pdf";
   const hoje = new Date().toISOString().slice(0, 10);
 
-  await supabase
+  const nomeFinal =
+    nomePersonalizado || standardizedFilename(client?.nome ?? "cliente", documentType, hoje, ext);
+
+  const { error } = await supabase
     .from("documents")
     .update({
       checklist_item_id: checklistItemId,
       document_type: documentType,
       revisao_classificacao_pendente: false,
-      nome: standardizedFilename(client?.nome ?? "cliente", documentType, hoje, ext),
+      nome: nomeFinal,
     })
     .eq("id", documentId);
+
+  if (error) return { ok: false };
 
   if (checklistItemId) {
     await markChecklistItemReceived(checklistItemId);
@@ -224,4 +241,5 @@ export async function confirmDocumentClassification(documentId: string, caseId: 
   }
 
   revalidatePath(`/processos/${caseId}`);
+  return { ok: true };
 }

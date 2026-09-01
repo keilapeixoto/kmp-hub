@@ -16,6 +16,9 @@ export type Client = {
   objetivos: string | null;
   consultor_id: string;
   lead_id: string | null;
+  visto_atual_subclasse: string | null;
+  visto_atual_validade: string | null;
+  visto_alerta_limite_dias: number | null;
   created_at: string;
   updated_at: string;
 };

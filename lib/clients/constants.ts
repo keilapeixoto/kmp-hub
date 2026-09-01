@@ -13,3 +13,28 @@ export const CLIENT_RELATION_TYPE_LABELS: Record<string, string> = Object.fromEn
 
 /** Dias até o vencimento a partir dos quais um documento de identidade ganha alerta (ver wireframe da seção 7). */
 export const DOCUMENT_EXPIRY_THRESHOLD_DAYS = 90;
+
+/** Limites padrão (dias restantes) do painel de vencimento de vistos — ver docs/spec-vencimento-vistos.md. */
+export const VISA_ALERT_THRESHOLDS = {
+  critico: 30,
+  atencao: 60,
+  monitorar: 90,
+} as const;
+
+export type VisaUrgency = "vencido" | "critico" | "atencao" | "monitorar" | "sem_urgencia";
+
+export const VISA_URGENCY_LABELS: Record<VisaUrgency, string> = {
+  vencido: "Vencido",
+  critico: "Crítico",
+  atencao: "Atenção",
+  monitorar: "Monitorar",
+  sem_urgencia: "Sem urgência",
+};
+
+export const VISA_URGENCY_COLORS: Record<VisaUrgency, string> = {
+  vencido: "bg-red-800 text-white",
+  critico: "bg-red-100 text-red-700",
+  atencao: "bg-orange-100 text-orange-700",
+  monitorar: "bg-amber-100 text-amber-700",
+  sem_urgencia: "bg-kmp-graphite/10 text-kmp-graphite/60",
+};

@@ -6,6 +6,7 @@ import {
   BookOpen,
   Briefcase,
   Calendar,
+  CalendarClock,
   CheckSquare,
   ClipboardList,
   FileText,
@@ -46,6 +47,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/leads", label: "Leads", icon: Users },
       { href: "/clientes", label: "Clientes", icon: UserCircle },
       { href: "/processos", label: "Processos", icon: Briefcase },
+      { href: "/vencimentos", label: "Vencimentos", icon: CalendarClock },
     ],
   },
   {

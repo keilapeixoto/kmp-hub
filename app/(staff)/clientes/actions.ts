@@ -24,6 +24,9 @@ const TEXT_FIELDS = [
   "situacao",
   "objetivos",
   "consultor_id",
+  "visto_atual_subclasse",
+  "visto_atual_validade",
+  "visto_alerta_limite_dias",
 ] as const;
 
 function readClientFields(formData: FormData) {

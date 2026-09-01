@@ -30,11 +30,3 @@ export const VISA_URGENCY_LABELS: Record<VisaUrgency, string> = {
   monitorar: "Monitorar",
   sem_urgencia: "Sem urgência",
 };
-
-export const VISA_URGENCY_COLORS: Record<VisaUrgency, string> = {
-  vencido: "bg-red-800 text-white",
-  critico: "bg-red-100 text-red-700",
-  atencao: "bg-orange-100 text-orange-700",
-  monitorar: "bg-amber-100 text-amber-700",
-  sem_urgencia: "bg-kmp-graphite/10 text-kmp-graphite/60",
-};

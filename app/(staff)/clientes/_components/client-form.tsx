@@ -240,6 +240,60 @@ export function ClientForm({
         </div>
       </section>
 
+      <section>
+        <h2 className="font-heading text-lg text-kmp-graphite">
+          Visto atual
+        </h2>
+        <p className="mt-1 text-xs text-kmp-graphite/50">
+          O visto que o cliente já possui e está usando agora — não é o
+          processo em andamento. Alimenta o painel de{" "}
+          <a href="/vencimentos" className="underline hover:text-kmp-orange">
+            Vencimentos
+          </a>
+          .
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div>
+            <label htmlFor="visto_atual_subclasse" className={labelClass}>
+              Subclasse
+            </label>
+            <input
+              id="visto_atual_subclasse"
+              name="visto_atual_subclasse"
+              placeholder="ex.: 500"
+              defaultValue={client?.visto_atual_subclasse ?? ""}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label htmlFor="visto_atual_validade" className={labelClass}>
+              Vencimento
+            </label>
+            <input
+              id="visto_atual_validade"
+              name="visto_atual_validade"
+              type="date"
+              defaultValue={client?.visto_atual_validade ?? ""}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label htmlFor="visto_alerta_limite_dias" className={labelClass}>
+              Limite de alerta crítico (dias)
+            </label>
+            <input
+              id="visto_alerta_limite_dias"
+              name="visto_alerta_limite_dias"
+              type="number"
+              min={0}
+              placeholder="Padrão: 30"
+              defaultValue={client?.visto_alerta_limite_dias ?? ""}
+              className={inputClass}
+            />
+          </div>
+        </div>
+      </section>
+
       {state.error ? (
         <p role="alert" className="text-sm text-red-600">
           {state.error}

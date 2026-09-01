@@ -42,17 +42,18 @@ function toHtml(corpo: string[], vars: ReminderTemplateVars): string {
 
 const TEMPLATES: Record<ReminderMilestone, { subject: string; corpo: string[] }> = {
   14: {
-    subject: "Lembrete: documento pendente para sua aplicação de visto",
+    subject: "Lembrete: Documento pendente para sua aplicação de visto!",
     corpo: [
       "Olá {nome_estudante},",
       "Espero que esteja bem.",
-      "Este é um lembrete de que o Department of Home Affairs solicitou {tipo_documento} para o andamento da sua aplicação de visto. O prazo final para envio é {data_limite}.",
+      "Este é um lembrete de que o Department of Home Affairs solicitou {tipo_documento} para o andamento da sua aplicação de visto." 
+      "O prazo final para envio é {data_limite}.",
       "Peço que assim que possível você me envie esse documento, para garantir que tudo seja anexado à aplicação dentro do prazo.",
       "Qualquer dúvida sobre como obter ou enviar o documento, estou à disposição.",
     ],
   },
   7: {
-    subject: "Prazo se aproximando: documento ainda pendente",
+    subject: "Prazo se aproximando: Documento ainda pendente!",
     corpo: [
       "Olá {nome_estudante},",
       "Faltam {dias_restantes} dias para o prazo final de {data_limite} referente a {tipo_documento} da sua aplicação de visto.",
@@ -61,16 +62,17 @@ const TEMPLATES: Record<ReminderMilestone, { subject: string; corpo: string[] }>
     ],
   },
   3: {
-    subject: "Urgente: faltam {dias_restantes} dias para o prazo da sua aplicação",
+    subject: "Urgente: Faltam {dias_restantes} dias para o prazo da sua aplicação!",
     corpo: [
       "Olá {nome_estudante},",
       "Faltam apenas {dias_restantes} dias para o prazo final de {data_limite} referente a {tipo_documento}.",
-      "Este documento ainda não chegou até mim. Preciso que você envie hoje ou amanhã, porque perder esse prazo pode gerar consequências sérias para sua aplicação de visto, incluindo possível recusa.",
+      "Este documento ainda não chegou até mim." 
+      "Preciso que você envie hoje ou amanhã, porque perder esse prazo pode gerar consequências sérias para sua aplicação de visto, incluindo possível recusa.",
       "Se está com alguma dificuldade para obter o documento, me avise agora mesmo para vermos juntos uma solução antes que o prazo vença.",
     ],
   },
   1: {
-    subject: "Último aviso: prazo vence amanhã, {data_limite}",
+    subject: "Último aviso: Prazo vence amanhã!, {data_limite}",
     corpo: [
       "Olá {nome_estudante},",
       "Este é o último lembrete automático. O prazo para envio de {tipo_documento} vence amanhã, {data_limite}.",

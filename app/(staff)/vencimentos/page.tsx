@@ -3,6 +3,7 @@ import { visaUrgency } from "@/lib/clients/utils";
 import { BUCKET_ORDER, type VisaBucket } from "@/lib/vencimentos/constants";
 import { VencimentosFilters } from "./_components/vencimentos-filters";
 import { VencimentosKanban } from "./_components/vencimentos-kanban";
+import { VencimentosTabs } from "./_components/vencimentos-tabs";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -64,6 +65,8 @@ export default async function VencimentosPage({
           edite pelo cadastro do cliente.
         </p>
       </div>
+
+      <VencimentosTabs />
 
       <VencimentosFilters busca={busca} />
 

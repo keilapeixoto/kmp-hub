@@ -4,12 +4,19 @@ import { isDeadlineUrgent, needsExtensionLetterAlert } from "@/lib/case-deadline
 import { REQUEST_TYPE_LABELS } from "@/lib/case-deadlines/constants";
 import type { CaseDeadlineWithContext } from "@/lib/case-deadlines/types";
 import { DeadlineStatusSelect } from "./deadline-status-select";
+import { SendReminderControl } from "./send-reminder-control";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR", { timeZone: "UTC" });
 }
 
-export function DeadlinesList({ deadlines }: { deadlines: CaseDeadlineWithContext[] }) {
+export function DeadlinesList({
+  deadlines,
+  canSend,
+}: {
+  deadlines: CaseDeadlineWithContext[];
+  canSend: boolean;
+}) {
   if (deadlines.length === 0) {
     return (
       <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
@@ -29,6 +36,7 @@ export function DeadlinesList({ deadlines }: { deadlines: CaseDeadlineWithContex
             <th className="px-4 py-3 font-medium">Prazo final</th>
             <th className="px-4 py-3 font-medium">Dias restantes</th>
             <th className="px-4 py-3 font-medium">Status</th>
+            {canSend ? <th className="px-4 py-3 font-medium">Lembrete manual</th> : null}
           </tr>
         </thead>
         <tbody>
@@ -73,6 +81,15 @@ export function DeadlinesList({ deadlines }: { deadlines: CaseDeadlineWithContex
                 <td className="px-4 py-3">
                   <DeadlineStatusSelect id={d.id} status={d.status} />
                 </td>
+                {canSend ? (
+                  <td className="px-4 py-3">
+                    {d.status === "aguardando_documento" ? (
+                      <SendReminderControl deadlineId={d.id} />
+                    ) : (
+                      <span className="text-xs text-kmp-graphite/40">—</span>
+                    )}
+                  </td>
+                ) : null}
               </tr>
             );
           })}

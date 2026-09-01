@@ -37,7 +37,7 @@ export default async function PrazosPage() {
 
       <DeadlineForm cases={cases} />
 
-      <DeadlinesList deadlines={deadlines} />
+      <DeadlinesList deadlines={deadlines} canSend={canSend} />
     </div>
   );
 }

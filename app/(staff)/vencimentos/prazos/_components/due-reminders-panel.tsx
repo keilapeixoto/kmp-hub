@@ -1,28 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { daysUntil } from "@/lib/clients/utils";
-import { REQUEST_TYPE_LABELS } from "@/lib/case-deadlines/constants";
-import { getReminderEmail } from "@/lib/case-deadlines/email-templates";
 import type { DueReminder } from "@/lib/case-deadlines/types";
 import { sendReminderNow } from "../actions";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("pt-BR", { timeZone: "UTC" });
-}
 
 function DueReminderRow({ item, canSend }: { item: DueReminder; canSend: boolean }) {
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<{ ok: boolean; error: string | null } | null>(null);
 
-  const { deadline, milestone } = item;
-  const dias = daysUntil(deadline.prazo_final);
-  const preview = getReminderEmail(milestone, {
-    nome_estudante: deadline.client_nome,
-    tipo_documento: REQUEST_TYPE_LABELS[deadline.tipo_pedido] ?? deadline.tipo_pedido,
-    data_limite: formatDate(deadline.prazo_final),
-    dias_restantes: dias,
-  });
+  const { deadline, milestone, preview } = item;
 
   return (
     <div className="rounded-md border border-amber-200 bg-amber-50 p-3">

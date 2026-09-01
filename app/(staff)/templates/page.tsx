@@ -1,7 +1,9 @@
 import { getCurrentUserRole } from "@/lib/auth";
-import { CANAL_LABELS, getMessageTemplates } from "@/lib/message-templates/data";
+import { getMessageTemplates } from "@/lib/message-templates/data";
+import { CANAL_LABELS } from "@/lib/message-templates/constants";
 import { createMessageTemplate, deleteMessageTemplate } from "./actions";
 import { CopyTemplateButton } from "./_components/copy-template-button";
+import { EditTemplateForm } from "./_components/edit-template-form";
 
 const inputClass =
   "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
@@ -33,35 +35,41 @@ export default async function TemplatesPage() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {templates.map((template) => {
             const deleteWithId = deleteMessageTemplate.bind(null, template.id);
+            const isSystemTemplate = template.chave !== null;
             return (
               <div key={template.id} className="rounded-lg bg-white p-4 shadow-sm">
-                <div className="flex items-start justify-between gap-2">
+                {isAdmin ? (
+                  <EditTemplateForm template={template} />
+                ) : (
                   <div>
-                    <h2 className="text-sm font-medium text-kmp-graphite">
-                      {template.nome}
-                    </h2>
+                    <h2 className="text-sm font-medium text-kmp-graphite">{template.nome}</h2>
                     <p className="text-xs text-kmp-graphite/50">
                       {CANAL_LABELS[template.canal] ?? template.canal} ·{" "}
                       {template.idioma === "en" ? "English" : "Português"}
                     </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-2">
-                    <CopyTemplateButton corpo={template.corpo} />
-                    {isAdmin ? (
-                      <form action={deleteWithId}>
-                        <button
-                          type="submit"
-                          className="text-xs text-kmp-graphite/50 transition hover:text-red-600"
-                        >
-                          Excluir
-                        </button>
-                      </form>
+                    {template.assunto ? (
+                      <p className="mt-3 text-xs text-kmp-graphite/60">
+                        Assunto: <span className="font-medium">{template.assunto}</span>
+                      </p>
                     ) : null}
+                    <p className="mt-1 whitespace-pre-wrap rounded-md bg-black/5 p-3 text-xs text-kmp-graphite/80">
+                      {template.corpo}
+                    </p>
                   </div>
+                )}
+                <div className="mt-3 flex items-center gap-2">
+                  <CopyTemplateButton corpo={template.corpo} />
+                  {isAdmin && !isSystemTemplate ? (
+                    <form action={deleteWithId}>
+                      <button
+                        type="submit"
+                        className="text-xs text-kmp-graphite/50 transition hover:text-red-600"
+                      >
+                        Excluir
+                      </button>
+                    </form>
+                  ) : null}
                 </div>
-                <p className="mt-3 whitespace-pre-wrap rounded-md bg-black/5 p-3 text-xs text-kmp-graphite/80">
-                  {template.corpo}
-                </p>
               </div>
             );
           })}
@@ -101,6 +109,12 @@ export default async function TemplatesPage() {
                 <option value="pt">Português</option>
                 <option value="en">English</option>
               </select>
+            </div>
+            <div className="sm:col-span-3">
+              <label className="block text-sm font-medium text-kmp-graphite">
+                Assunto (só usado em e-mail)
+              </label>
+              <input name="assunto" className={inputClass} />
             </div>
             <div className="sm:col-span-3">
               <label className="block text-sm font-medium text-kmp-graphite">

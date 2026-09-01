@@ -110,7 +110,7 @@ export async function sendReminderNow(
   }
 
   const dias = daysUntil(deadline.prazo_final as string);
-  const { subject, html } = getReminderEmail(milestone, {
+  const { subject, html } = await getReminderEmail(milestone, {
     nome_estudante: cliente.nome,
     tipo_documento:
       REQUEST_TYPE_LABELS[deadline.tipo_pedido as string] ?? (deadline.tipo_pedido as string),

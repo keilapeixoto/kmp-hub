@@ -39,4 +39,5 @@ export type ActiveCaseOption = {
 export type DueReminder = {
   deadline: CaseDeadlineWithContext;
   milestone: ReminderMilestone;
+  preview: { subject: string; paragraphs: string[] };
 };

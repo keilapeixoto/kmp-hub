@@ -1,5 +1,8 @@
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
+import { daysUntil } from "@/lib/clients/utils";
 import { dueMilestoneToday } from "./utils";
+import { getReminderEmail } from "./email-templates";
+import { REQUEST_TYPE_LABELS, type ReminderMilestone } from "./constants";
 import type {
   ActiveCaseOption,
   CaseDeadlineReminder,
@@ -82,7 +85,8 @@ export async function getDueReminders(): Promise<DueReminder[]> {
     .filter((d) => d.status === "aguardando_documento")
     .map((d) => ({ deadline: d, milestone: dueMilestoneToday(d.prazo_final) }))
     .filter(
-      (c): c is DueReminder => c.milestone !== null,
+      (c): c is { deadline: CaseDeadlineWithContext; milestone: ReminderMilestone } =>
+        c.milestone !== null,
     );
 
   if (candidates.length === 0) return [];
@@ -101,8 +105,23 @@ export async function getDueReminders(): Promise<DueReminder[]> {
     (sentLogs ?? []).map((r) => `${r.case_deadline_id}:${r.marco_dias}`),
   );
 
-  return candidates.filter(
+  const due = candidates.filter(
     (c) => !sentSet.has(`${c.deadline.id}:${c.milestone}`),
+  );
+
+  return Promise.all(
+    due.map(async (c): Promise<DueReminder> => {
+      const dias = daysUntil(c.deadline.prazo_final);
+      const { subject, paragraphs } = await getReminderEmail(c.milestone, {
+        nome_estudante: c.deadline.client_nome,
+        tipo_documento: REQUEST_TYPE_LABELS[c.deadline.tipo_pedido] ?? c.deadline.tipo_pedido,
+        data_limite: new Date(c.deadline.prazo_final).toLocaleDateString("pt-BR", {
+          timeZone: "UTC",
+        }),
+        dias_restantes: dias,
+      });
+      return { ...c, preview: { subject, paragraphs } };
+    }),
   );
 }
 

@@ -18,9 +18,17 @@ function substitute(text: string, vars: ReminderTemplateVars): string {
 /** Fallback em texto puro (preview no painel e clientes de e-mail que bloqueiam imagem). */
 const ASSINATURA_TEXTO = ["Atenciosamente,", "Keila Mayara Peixoto", "KMP Consulting"];
 
-/** Imagem hospedada como asset público do próprio Hub — funciona em qualquer cliente de e-mail. */
+/**
+ * Imagem hospedada como asset público do próprio Hub. Usa VERCEL_URL (o
+ * domínio exato do deploy que está rodando agora) em vez de
+ * NEXT_PUBLIC_SITE_URL — esse aponta pro domínio de produção mesmo rodando
+ * num preview de branch, e a imagem só existe onde o código dela foi
+ * deployado, então a URL de produção 404 até esta branch virar produção.
+ */
 function assinaturaHtml(): string {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const siteUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? "");
   return [
     "<p>Atenciosamente,</p>",
     `<img src="${siteUrl}/assinatura-keila.png" alt="Keila Peixoto — KMP Consulting" width="360" style="max-width:360px;height:auto;border:0;display:block;" />`,

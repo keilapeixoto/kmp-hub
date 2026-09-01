@@ -5,7 +5,7 @@
  */
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 // Precisa ser um domínio verificado no Resend (ver RESEND_FROM_EMAIL no .env.local).
-const FROM_ADDRESS = process.env.RESEND_FROM_EMAIL ?? "KMP Hub <onboarding@resend.dev>";
+const FROM_ADDRESS = process.env.RESEND_FROM_EMAIL ?? "KMP Consulting <onboarding@resend.dev>";
 
 export async function sendEmail(
   to: string[],

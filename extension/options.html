@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>KMP Hub — WhatsApp · Configuração</title>
+    <style>
+      body {
+        font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+        max-width: 480px;
+        margin: 40px auto;
+        color: #2c2c2c;
+      }
+      label {
+        display: block;
+        margin-top: 16px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 6px;
+        font-size: 13px;
+        box-sizing: border-box;
+      }
+      button {
+        margin-top: 20px;
+        background: #f27b20;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 16px;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      p.hint {
+        color: rgba(44, 44, 44, 0.6);
+        font-size: 12px;
+      }
+      #saved {
+        color: #15803d;
+        font-size: 12px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Configuração — KMP Hub WhatsApp</h1>
+    <p class="hint">
+      As duas informações abaixo são <strong>públicas</strong> (as mesmas usadas no navegador do
+      Hub) — não são segredo. Copie de <code>.env.local</code>:
+      <code>NEXT_PUBLIC_SUPABASE_URL</code> e <code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code>.
+    </p>
+    <form id="config-form">
+      <label for="url">URL do projeto Supabase</label>
+      <input id="url" type="text" placeholder="https://xxxxx.supabase.co" required />
+
+      <label for="key">Chave publicável (sb_publishable_...)</label>
+      <input id="key" type="text" placeholder="sb_publishable_..." required />
+
+      <button type="submit">Salvar</button>
+      <span id="saved">Salvo.</span>
+    </form>
+    <script src="options.js" type="module"></script>
+  </body>
+</html>

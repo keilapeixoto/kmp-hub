@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>KMP Hub — WhatsApp</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <div id="login-view" class="view">
+      <h1>KMP Hub</h1>
+      <p class="hint">Entre com seu usuário do Hub.</p>
+      <form id="login-form">
+        <input type="email" id="login-email" placeholder="E-mail" required />
+        <input type="password" id="login-password" placeholder="Senha" required />
+        <button type="submit">Entrar</button>
+      </form>
+      <p id="login-error" class="error" hidden></p>
+      <p class="hint">
+        Sem configuração ainda? <a href="options.html" target="_blank">Abrir opções</a>
+      </p>
+    </div>
+
+    <div id="app-view" class="view" hidden>
+      <div id="list-pane">
+        <div class="topbar">
+          <span id="user-email"></span>
+          <button id="logout-btn" class="link-btn">Sair</button>
+        </div>
+        <ul id="conversation-list"></ul>
+      </div>
+
+      <div id="thread-pane" hidden>
+        <div class="topbar">
+          <button id="back-btn" class="link-btn">← Conversas</button>
+          <span id="thread-title"></span>
+        </div>
+        <ul id="message-list"></ul>
+        <form id="compose-form">
+          <select id="template-select">
+            <option value="">Template…</option>
+          </select>
+          <textarea id="compose-text" placeholder="Escreva uma mensagem…" rows="2"></textarea>
+          <button type="submit">Enviar</button>
+        </form>
+        <p id="send-error" class="error" hidden></p>
+      </div>
+    </div>
+
+    <script src="sidepanel.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,169 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: #2c2c2c;
+  background: #f8f7f5;
+  font-size: 14px;
+}
+
+.view {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#login-view {
+  padding: 24px;
+  justify-content: center;
+}
+
+#login-view h1 {
+  font-size: 18px;
+  margin: 0 0 4px;
+}
+
+.hint {
+  color: rgba(44, 44, 44, 0.6);
+  font-size: 12px;
+}
+
+.error {
+  color: #b91c1c;
+  font-size: 12px;
+}
+
+#login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+input,
+textarea,
+select {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+button {
+  background: #f27b20;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.link-btn {
+  background: none;
+  color: #f27b20;
+  padding: 0;
+  font-size: 12px;
+}
+
+#app-view {
+  flex-direction: row;
+}
+
+#list-pane,
+#thread-pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 12px;
+}
+
+#conversation-list,
+#message-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+#conversation-list li {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+#conversation-list li:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+#conversation-list .nome {
+  font-weight: 500;
+}
+
+#conversation-list .preview {
+  color: rgba(44, 44, 44, 0.6);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#conversation-list .unread-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f27b20;
+  margin-left: 4px;
+}
+
+#message-list {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#message-list li {
+  max-width: 85%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+#message-list li.recebida {
+  background: white;
+  align-self: flex-start;
+}
+
+#message-list li.enviada {
+  background: #dcf8c6;
+  align-self: flex-end;
+}
+
+#compose-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}

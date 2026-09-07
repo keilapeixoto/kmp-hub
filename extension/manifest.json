@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "KMP Hub — WhatsApp",
+  "version": "0.1.0",
+  "description": "Liga o WhatsApp Web às conversas do KMP Hub. Precisa de uma aba do WhatsApp Web aberta (pode ficar fixada) para funcionar.",
+  "permissions": ["storage", "sidePanel", "tabs"],
+  "host_permissions": ["https://web.whatsapp.com/*", "https://*.supabase.co/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["content-script.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "action": {
+    "default_title": "KMP Hub — WhatsApp"
+  },
+  "options_page": "options.html"
+}

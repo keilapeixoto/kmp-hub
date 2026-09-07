@@ -49,6 +49,30 @@ async function realCounts() {
 const before = await realCounts();
 console.log("Dados reais ANTES:", JSON.stringify(before));
 
+// documents não tem is_demo (o schema original nunca previu documento demo),
+// mas pode acabar vinculado a um case demo se alguém testar upload de
+// verdade num processo de demonstração (ex.: classificação automática de
+// documentos). documents.case_id não tem "on delete cascade", então isso
+// bloqueia a exclusão do case até limpar aqui primeiro.
+{
+  const { data: demoCases } = await s
+    .from("cases")
+    .select("id")
+    .eq("is_demo", true);
+  const demoCaseIds = (demoCases ?? []).map((c) => c.id);
+  if (demoCaseIds.length > 0) {
+    const { count, error } = await s
+      .from("documents")
+      .delete({ count: "exact" })
+      .in("case_id", demoCaseIds);
+    if (error) {
+      console.error(`documents (vinculados a cases demo): ERRO — ${error.message}`);
+      process.exit(1);
+    }
+    console.log(`documents (vinculados a cases demo): ${count ?? 0} registros removidos`);
+  }
+}
+
 for (const t of TABLES) {
   const { count, error } = await s
     .from(t)

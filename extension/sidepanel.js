@@ -5,6 +5,7 @@ const loginError = document.getElementById("login-error");
 const userEmailEl = document.getElementById("user-email");
 const logoutBtn = document.getElementById("logout-btn");
 
+const appError = document.getElementById("app-error");
 const listPane = document.getElementById("list-pane");
 const threadPane = document.getElementById("thread-pane");
 const conversationList = document.getElementById("conversation-list");
@@ -26,13 +27,27 @@ function send(message) {
 }
 
 async function checkSession() {
-  const res = await send({ type: "GET_SESSION" }).catch(() => ({ session: null }));
+  const res = await send({ type: "GET_SESSION" }).catch((err) => {
+    console.error("GET_SESSION falhou:", err);
+    return { session: null };
+  });
   if (res.session) {
     userEmailEl.textContent = res.session.email;
     loginView.hidden = true;
     appView.hidden = false;
-    await loadConversations();
-    await loadTemplates();
+    appError.hidden = true;
+    try {
+      await loadConversations();
+    } catch (err) {
+      console.error("Falha ao carregar conversas:", err);
+      appError.textContent = `Não foi possível carregar as conversas: ${err.message}`;
+      appError.hidden = false;
+    }
+    try {
+      await loadTemplates();
+    } catch (err) {
+      console.error("Falha ao carregar templates:", err);
+    }
   } else {
     loginView.hidden = false;
     appView.hidden = true;
@@ -48,6 +63,7 @@ loginForm.addEventListener("submit", async (e) => {
     await send({ type: "LOGIN", email, password });
     await checkSession();
   } catch (err) {
+    console.error("Login falhou:", err);
     loginError.textContent = err.message;
     loginError.hidden = false;
   }

@@ -311,4 +311,54 @@ for (const [nome, canal, idioma, corpo] of [
 }
 console.log("3 guias + 5 templates");
 
+// --- conversas de WhatsApp (Kanban) -----------------------------------------
+
+const CONVERSATIONS = [
+  ["Júlia Fontes Demo", "+55 11 91234-0001", "novo_contato", -1, "Oi! Vi o anúncio de vocês no Instagram, queria saber mais sobre visto de estudante.", true],
+  ["Otávio Ramos Demo", "+61 400 000 003", "aguardando_resposta_cliente", -2, "Perfeito, te mando o checklist ainda hoje!", false],
+  ["Bruno Farias Demo", "+55 85 94444-0014", "aguardando_resposta_equipe", 0, "Consegui o extrato bancário, já te mando por aqui.", true],
+  ["Carolina Mota Demo", "+61 466 000 015", "pendencia_documento", -1, "Ainda não recebi o police check do Miguel, você pode verificar?", true],
+  ["Patrick O'Neill Demo", "+61 477 000 018", "agendamento", -3, "Combinado, nos falamos quinta às 14h então!", false],
+  ["Helena Vasconcelos Demo", "+61 488 000 019", "resolvido", -10, "Muito obrigada pela ajuda com tudo!", true],
+];
+
+const conversationIds = {};
+for (const [nome, telefone, etapa, offsetDays, preview, naoLida] of CONVERSATIONS) {
+  const { data, error } = await s
+    .from("whatsapp_conversations")
+    .insert({
+      client_id: clientIds[nome] ?? null,
+      telefone,
+      nome_contato: nome,
+      etapa,
+      ultima_mensagem_em: iso(offsetDays, 15),
+      ultima_mensagem_preview: preview,
+      nao_lida: naoLida,
+      is_demo: true,
+    })
+    .select("id")
+    .single();
+  if (error) throw new Error(`whatsapp_conversation ${nome}: ${error.message}`);
+  conversationIds[nome] = data.id;
+
+  await s.from("whatsapp_messages").insert({
+    conversation_id: data.id,
+    direcao: naoLida ? "recebida" : "enviada",
+    tipo: "texto",
+    conteudo: preview,
+    is_demo: true,
+  });
+}
+console.log("6 conversas de WhatsApp (uma por etapa do Kanban)");
+
+// --- templates de WhatsApp (texto) ------------------------------------------
+
+for (const [nome, conteudo] of [
+  ["[DEMO] Confirmação de consulta", "Oi {{nome_cliente}}! Confirmando nossa consulta {{data_consulta}} às {{hora_consulta}}."],
+  ["[DEMO] Lembrete de documento pendente", "Oi {{nome_cliente}}, só lembrando que ainda falta o {{documento}} no seu checklist — pode me mandar quando conseguir?"],
+]) {
+  await s.from("whatsapp_templates").insert({ nome, tipo: "texto", conteudo, is_demo: true });
+}
+console.log("2 templates de WhatsApp");
+
 console.log("\nSeed de demonstração concluído. Remoção: node scripts/clean-demo.mjs");

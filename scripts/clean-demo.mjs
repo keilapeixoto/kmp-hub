@@ -24,12 +24,14 @@ const s = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SECRET_KEY, {
 const TABLES = [
   "appointments",
   "tasks",
+  "whatsapp_conversations",
   "cases",
   "clients",
   "leads",
   "service_types",
   "guides",
   "message_templates",
+  "whatsapp_templates",
 ];
 
 async function realCounts() {

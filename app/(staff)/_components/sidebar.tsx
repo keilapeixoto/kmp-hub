@@ -13,6 +13,7 @@ import {
   HardDrive,
   Kanban,
   LayoutDashboard,
+  MessageCircle,
   MessageSquare,
   Settings,
   UserCircle,
@@ -48,6 +49,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/clientes", label: "Clientes", icon: UserCircle },
       { href: "/processos", label: "Processos", icon: Briefcase },
       { href: "/vencimentos", label: "Vencimentos", icon: CalendarClock },
+      { href: "/whatsapp", label: "WhatsApp", icon: MessageCircle },
     ],
   },
   {

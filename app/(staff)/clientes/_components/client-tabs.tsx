@@ -6,6 +6,7 @@ const TABS = [
   { slug: "documentos", label: "Documentos" },
   { slug: "dependentes", label: "Dependentes" },
   { slug: "processos", label: "Processos" },
+  { slug: "fichas", label: "Fichas" },
   { slug: "linha-do-tempo", label: "Linha do tempo" },
 ] as const;
 

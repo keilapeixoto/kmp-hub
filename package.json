@@ -13,6 +13,7 @@
     "test:e2e:login:portal": "playwright test playwright/setup/portal.setup.ts --project=setup --headed"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.110.2",
     "lucide-react": "^1.24.0",

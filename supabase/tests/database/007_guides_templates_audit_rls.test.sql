@@ -8,7 +8,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(11);
+select plan(13);
 
 insert into auth.users
   (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
@@ -154,6 +154,28 @@ select is(
   (select count(*)::int from public.audit_logs),
   0,
   'consultora não lê a auditoria (só admin)'
+);
+reset role;
+
+-- ---------------------------------------------------------------------------
+-- bucket "guides" (storage.objects) — migração 20260727120000, mesmas
+-- condições de guides_manage_admin/guides_select_staff, só sem escopo de
+-- cliente (guias nunca são específicos de um cliente).
+-- ---------------------------------------------------------------------------
+
+set local role authenticated;
+select set_config('request.jwt.claim.sub', 'f1000000-0000-0000-0000-000000000001', true);
+select lives_ok(
+  $$ insert into storage.objects (bucket_id, name) values ('guides', current_setting('app.guide_id', true) || '/passo-a-passo.pdf') $$,
+  'admin consegue subir PDF no bucket guides'
+);
+reset role;
+
+set local role authenticated;
+select set_config('request.jwt.claim.sub', 'f1000000-0000-0000-0000-000000000002', true);
+select throws_ok(
+  $$ insert into storage.objects (bucket_id, name) values ('guides', 'outro.pdf') $$,
+  '42501', null, 'consultora não consegue subir PDF no bucket guides'
 );
 reset role;
 

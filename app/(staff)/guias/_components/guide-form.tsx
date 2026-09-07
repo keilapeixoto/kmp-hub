@@ -22,7 +22,7 @@ export function GuideForm({
   const [state, formAction, pending] = useActionState(action, initialState);
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form action={formAction} encType="multipart/form-data" className="space-y-4">
       <div>
         <label htmlFor="titulo" className="block text-sm font-medium text-kmp-graphite">
           Título *
@@ -73,6 +73,24 @@ export function GuideForm({
         <p className="mt-1 text-xs text-kmp-graphite/50">
           Cada salvamento com conteúdo alterado gera uma nova versão
           automaticamente — o histórico fica ao lado.
+        </p>
+      </div>
+
+      <div>
+        <label htmlFor="pdf" className="block text-sm font-medium text-kmp-graphite">
+          Anexar PDF pronto (opcional)
+        </label>
+        <input
+          id="pdf"
+          name="pdf"
+          type="file"
+          accept="application/pdf"
+          className="mt-1 w-full text-sm text-kmp-graphite file:mr-3 file:rounded-md file:border-0 file:bg-kmp-orange file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white"
+        />
+        <p className="mt-1 text-xs text-kmp-graphite/50">
+          {guide?.pdf_storage_path
+            ? "Já existe um PDF anexado — enviar um novo substitui o atual."
+            : "Ex.: um guia explicativo já pronto que você manda por e-mail. Máx. 20 MB."}
         </p>
       </div>
 

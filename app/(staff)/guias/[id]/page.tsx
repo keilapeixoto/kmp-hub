@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getCurrentUserRole } from "@/lib/auth";
 import { getServiceTypes } from "@/lib/cases/data";
 import { getGuide, getGuideVersions } from "@/lib/guides/data";
-import { archiveGuide, updateGuide } from "../actions";
+import { archiveGuide, removeGuidePdf, updateGuide } from "../actions";
 import { GuideForm } from "../_components/guide-form";
 
 export default async function GuiaDetailPage({
@@ -55,6 +55,27 @@ export default async function GuiaDetailPage({
           </form>
         ) : null}
       </div>
+
+      {guide.pdf_storage_path ? (
+        <div className="flex items-center justify-between rounded-lg bg-white p-4 shadow-sm">
+          <a
+            href={`/api/guides/${guide.id}/download`}
+            className="text-sm font-medium text-kmp-orange hover:underline"
+          >
+            Baixar PDF anexado
+          </a>
+          {isAdmin ? (
+            <form action={removeGuidePdf.bind(null, guide.id)}>
+              <button
+                type="submit"
+                className="text-xs text-kmp-graphite/60 transition hover:text-red-600"
+              >
+                Remover PDF
+              </button>
+            </form>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="rounded-lg bg-white p-6 shadow-sm lg:col-span-2">

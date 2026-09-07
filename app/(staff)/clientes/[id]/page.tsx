@@ -10,6 +10,7 @@ import {
   getIdentityDocuments,
 } from "@/lib/clients/data";
 import { getAllCaseStages, getCasesByClient, getServiceTypes } from "@/lib/cases/data";
+import { getConsultationFormsByClient } from "@/lib/consultation-forms/data";
 import { getDocumentsByClient } from "@/lib/documents/data";
 import { getClientTimeline } from "@/lib/timeline/data";
 import { updateClientRecord } from "../actions";
@@ -19,6 +20,7 @@ import { ClientForm } from "../_components/client-form";
 import { ClientSummary } from "../_components/client-summary";
 import { ClientTabs } from "../_components/client-tabs";
 import { DependentsPanel } from "../_components/dependents-panel";
+import { FichasPanel } from "../_components/fichas-panel";
 import { PortalAccessCard } from "../_components/portal-access-card";
 import { DocumentsPanel } from "../_components/documents-panel";
 
@@ -30,6 +32,7 @@ const VALID_TABS = [
   "documentos",
   "dependentes",
   "processos",
+  "fichas",
   "linha-do-tempo",
 ] as const;
 
@@ -63,6 +66,7 @@ export default async function ClientDetailPage({
     allStages,
     clientFiles,
     hasPortalAccess,
+    fichas,
   ] = await Promise.all([
     getCurrentUserProfile(),
     getCurrentUserRole(),
@@ -76,6 +80,7 @@ export default async function ClientDetailPage({
     getAllCaseStages(),
     getDocumentsByClient(id),
     getClientHasPortalAccess(id),
+    getConsultationFormsByClient(id),
   ]);
 
   const stagesById = Object.fromEntries(allStages.map((s) => [s.id, s]));
@@ -152,6 +157,8 @@ export default async function ClientDetailPage({
           stagesById={stagesById}
         />
       ) : null}
+
+      {tab === "fichas" ? <FichasPanel clientId={id} fichas={fichas} /> : null}
 
       {tab === "linha-do-tempo" ? <ClientTimeline clientId={id} leadId={client.lead_id} /> : null}
     </div>

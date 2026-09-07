@@ -17,6 +17,80 @@ const PENDING_CHECKLIST_STATUSES = [
   "aguardando_aprovacao",
 ];
 
+export type CaseRadarEntry = {
+  caseId: string;
+  clientNome: string;
+  serviceTypeNome: string;
+  prazo: string | null;
+  percentual: number;
+  pendingItems: string[];
+};
+
+type CaseRadarRow = {
+  id: string;
+  prazo: string | null;
+  clients: { nome: string } | { nome: string }[] | null;
+  service_types: { nome: string } | { nome: string }[] | null;
+  checklists: { percentual: number; checklist_items: { nome: string; status: string }[] }[] | null;
+};
+
+function firstOf<T>(value: T | T[] | null): T | null {
+  if (Array.isArray(value)) return value[0] ?? null;
+  return value;
+}
+
+/**
+ * "Radar de pendências" do dashboard — um processo ativo por linha, com o
+ * que ainda falta no checklist (qualquer item com status != aprovado,
+ * incluindo subtarefas). "Pagamento" entra aqui como item comum do
+ * checklist (adicionado pelo admin no template do tipo de serviço), não
+ * como um campo financeiro à parte — o módulo financeiro em si é Fase 3.
+ * RLS de cases/checklists/checklist_items já escopa por função sozinha
+ * (consultor só vê os próprios), então não há filtro explícito de posse
+ * aqui.
+ */
+export async function getCaseRadar(): Promise<CaseRadarEntry[]> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("cases")
+    .select(
+      `id, prazo,
+       clients!cases_client_id_fkey (nome),
+       service_types!cases_service_type_id_fkey (nome),
+       checklists (percentual, checklist_items (nome, status))`,
+    )
+    .eq("status", "ativo")
+    .returns<CaseRadarRow[]>();
+
+  const entries: CaseRadarEntry[] = [];
+  for (const c of data ?? []) {
+    const checklist = firstOf(c.checklists);
+    if (!checklist) continue;
+    const pendingItems = checklist.checklist_items
+      .filter((i) => i.status !== "aprovado")
+      .map((i) => i.nome);
+    if (pendingItems.length === 0) continue;
+
+    entries.push({
+      caseId: c.id,
+      clientNome: firstOf(c.clients)?.nome ?? "—",
+      serviceTypeNome: firstOf(c.service_types)?.nome ?? "—",
+      prazo: c.prazo,
+      percentual: checklist.percentual,
+      pendingItems,
+    });
+  }
+
+  entries.sort((a, b) => {
+    if (a.prazo && b.prazo) return a.prazo.localeCompare(b.prazo);
+    if (a.prazo) return -1;
+    if (b.prazo) return 1;
+    return a.percentual - b.percentual;
+  });
+
+  return entries;
+}
+
 export type DashboardMetrics = {
   novosLeads30d: number;
   conversaoPct: number | null;

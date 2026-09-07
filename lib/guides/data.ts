@@ -1,10 +1,13 @@
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 
+export const GUIDES_BUCKET = "guides";
+
 export type Guide = {
   id: string;
   service_type_id: string | null;
   titulo: string;
   conteudo: string;
+  pdf_storage_path: string | null;
   versao: number;
   atualizado_por: string | null;
   status: "ativo" | "arquivado";

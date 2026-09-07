@@ -1,4 +1,4 @@
-# CLAUDE.md — KMP Hub
+# AGENTS.md — KMP Hub
 
 Guia de contexto para trabalhar neste repositório. Baseado em [kmp-hub-plano.md](kmp-hub-plano.md).
 
@@ -8,7 +8,7 @@ A referência técnica permanente do projeto — visão de produto, arquitetura
 de software, estrutura de pastas, banco de dados, design system, padrões de
 API, segurança, coding standards, guia para IA, roadmap e escalabilidade
 futura (multi-tenant) — vive em [`docs/architecture/`](docs/architecture/README.md).
-Este `CLAUDE.md` documenta o **estado em movimento** (o que foi feito, o que
+Este `AGENTS.md` documenta o **estado em movimento** (o que foi feito, o que
 está pendente); `docs/architecture/` documenta a **estrutura estável** (como
 o sistema é organizado e por quê). Leia `docs/architecture/10-ai-development-guide.md`
 antes de qualquer tarefa que mude schema, componente ou padrão de código.

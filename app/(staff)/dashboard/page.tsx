@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUserProfile } from "@/lib/auth";
 import { formatTimesInAllZones } from "@/lib/appointments/timezones";
 import { getTeamMembersStaff } from "@/lib/cases/data";
-import { getDashboardMetrics, STALLED_CASE_DAYS } from "@/lib/dashboard/data";
+import { getCaseRadar, getDashboardMetrics, STALLED_CASE_DAYS } from "@/lib/dashboard/data";
 import { getWorkload } from "@/lib/tasks/data";
 import { createClient } from "@/lib/supabase/server";
 
@@ -43,11 +43,12 @@ export default async function DashboardPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [profile, metrics, workload, staff] = await Promise.all([
+  const [profile, metrics, workload, staff, radar] = await Promise.all([
     getCurrentUserProfile(),
     getDashboardMetrics(),
     getWorkload(),
     getTeamMembersStaff(),
+    getCaseRadar(),
   ]);
 
   const staffName = (id: string) =>
@@ -194,6 +195,44 @@ export default async function DashboardPage() {
             Itens de checklist aguardando envio, análise ou correção.
           </p>
         </div>
+      </div>
+
+      <div className="rounded-lg bg-white p-4 shadow-sm">
+        <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
+          Radar de pendências ({radar.length})
+        </h2>
+        {radar.length === 0 ? (
+          <p className="text-sm text-kmp-graphite/60">
+            Nenhum processo ativo com pendência no checklist.
+          </p>
+        ) : (
+          <ul className="divide-y divide-black/5">
+            {radar.map((r) => (
+              <li key={r.caseId} className="py-3">
+                <Link
+                  href={`/processos/${r.caseId}`}
+                  className="flex flex-wrap items-center justify-between gap-2"
+                >
+                  <div>
+                    <span className="font-medium text-kmp-graphite hover:text-kmp-orange">
+                      {r.clientNome}
+                    </span>
+                    <span className="text-kmp-graphite/50"> · {r.serviceTypeNome}</span>
+                    {r.prazo ? (
+                      <span className="ml-2 text-xs text-kmp-orange">
+                        prazo {new Date(r.prazo).toLocaleDateString("pt-BR")}
+                      </span>
+                    ) : null}
+                  </div>
+                  <span className="text-xs text-kmp-graphite/50">{r.percentual}% completo</span>
+                </Link>
+                <p className="mt-1 text-xs text-kmp-graphite/60">
+                  Pendente: {r.pendingItems.join(", ")}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

@@ -5,6 +5,8 @@ import {
   getConversations,
   getMessages,
   getTemplates,
+  createTemplate,
+  importConversations,
   updateConversationEtapa,
   recordIncomingMessage,
   recordOutgoingMessage,
@@ -73,6 +75,20 @@ async function handleMessage(message, sender) {
     case "GET_TEMPLATES": {
       const templates = await getTemplates();
       return { ok: true, templates };
+    }
+
+    case "CREATE_TEMPLATE": {
+      const template = await createTemplate({
+        nome: message.nome,
+        tipo: message.tipo,
+        conteudo: message.conteudo,
+      });
+      return { ok: true, template };
+    }
+
+    case "IMPORT_CONVERSATIONS": {
+      const result = await importConversations(message.nomes ?? []);
+      return { ok: true, ...result };
     }
 
     case "UPDATE_ETAPA": {

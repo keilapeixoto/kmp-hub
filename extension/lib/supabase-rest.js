@@ -132,7 +132,10 @@ async function authedFetch(path, options = {}) {
   }
 
   if (res.status === 204) return null;
-  return res.json();
+  // POST com "Prefer: return=minimal" volta 201 com corpo vazio — .json()
+  // direto quebraria nesse caso.
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
 export async function getConversations() {
@@ -201,6 +204,38 @@ export async function insertMessage({ conversationId, direcao, tipo, conteudo })
 
 export async function getTemplates() {
   return authedFetch("/rest/v1/whatsapp_templates?select=*&order=nome");
+}
+
+export async function createTemplate({ nome, tipo, conteudo }) {
+  const rows = await authedFetch("/rest/v1/whatsapp_templates", {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({ nome, tipo: tipo ?? "texto", conteudo }),
+  });
+  return rows[0];
+}
+
+/**
+ * Cria uma conversa por nome de contato pra cada um que ainda não existe
+ * (comparando pelo campo telefone, que hoje guarda o nome de exibição do
+ * WhatsApp — ver limitação conhecida no README). Usado pelo botão "Importar
+ * conversas" do Kanban injetado, pra trazer de uma vez os contatos que já
+ * existem no WhatsApp Web em vez de esperar mensagem por mensagem.
+ */
+export async function importConversations(nomes) {
+  const existing = await getConversations();
+  const existingSet = new Set(existing.map((c) => c.telefone));
+  const novos = [...new Set(nomes)].filter((n) => n && !existingSet.has(n));
+  if (novos.length === 0) return { imported: 0 };
+
+  await authedFetch("/rest/v1/whatsapp_conversations", {
+    method: "POST",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify(
+      novos.map((nome) => ({ telefone: nome, nome_contato: nome, etapa: "novo_contato" })),
+    ),
+  });
+  return { imported: novos.length };
 }
 
 /**

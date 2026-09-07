@@ -22,6 +22,10 @@ const SELECTORS = {
   composeBox: "[data-testid='compose-box-input'], div[contenteditable='true'][data-tab='10']",
   // Botão de enviar.
   sendButton: "[data-testid='send'], button[aria-label='Enviar'], span[data-icon='send']",
+  // Cada linha da lista de conversas na barra lateral do WhatsApp Web.
+  chatListItem: "[data-testid='cell-frame-container'], div[role='listitem']",
+  // Nome do contato/grupo dentro de uma linha da lista.
+  chatListItemTitle: "[data-testid='cell-frame-title'], span[dir='auto']",
 };
 
 // Precisa bater com CONVERSATION_STAGES em lib/whatsapp/constants.ts — duplicado
@@ -34,7 +38,7 @@ const KANBAN_STAGES = [
   { slug: "agendamento", label: "Agendamento" },
   { slug: "resolvido", label: "Resolvido" },
 ];
-const KANBAN_BAR_HEIGHT = 96;
+const KANBAN_BAR_HEIGHT = 122;
 
 const seenMessages = new WeakSet();
 let currentObserver = null;
@@ -199,6 +203,17 @@ function requestFromBackground(message) {
   });
 }
 
+/** Lê os nomes de todas as conversas visíveis na lista lateral do WhatsApp Web. */
+function scanChatList() {
+  const names = [];
+  document.querySelectorAll(SELECTORS.chatListItem).forEach((item) => {
+    const titleEl = item.querySelector(SELECTORS.chatListItemTitle);
+    const nome = titleEl?.getAttribute("title") ?? titleEl?.textContent?.trim();
+    if (nome) names.push(nome);
+  });
+  return names;
+}
+
 let kanbanShadow = null;
 
 function buildKanbanBar() {
@@ -216,13 +231,12 @@ function buildKanbanBar() {
       :host { all: initial; }
       .bar {
         display: flex;
-        gap: 8px;
+        flex-direction: column;
         height: ${KANBAN_BAR_HEIGHT}px;
         padding: 8px 10px;
         background: #f8f7f5;
         border-bottom: 2px solid #f27b20;
         font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-        overflow-x: auto;
         box-sizing: border-box;
       }
       .col {
@@ -236,6 +250,30 @@ function buildKanbanBar() {
       }
       .col.dragover {
         outline: 2px dashed #f27b20;
+      }
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 2px 6px;
+      }
+      .import-btn {
+        background: #f27b20;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-size: 11px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .import-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      .import-status {
+        font-size: 10px;
+        color: rgba(44, 44, 44, 0.6);
       }
       .col h4 {
         margin: 0 0 4px;
@@ -257,17 +295,111 @@ function buildKanbanBar() {
         text-overflow: ellipsis;
       }
       .card:active { cursor: grabbing; }
+      .template-btn {
+        background: white;
+        color: #f27b20;
+        border: 1px solid #f27b20;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-size: 11px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000000;
+      }
+      .modal {
+        background: white;
+        border-radius: 8px;
+        padding: 16px;
+        width: 320px;
+        font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      }
+      .modal h3 {
+        margin: 0 0 10px;
+        font-size: 14px;
+        color: #2c2c2c;
+      }
+      .modal input,
+      .modal textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 6px;
+        padding: 6px 8px;
+        font-size: 12px;
+        font-family: inherit;
+        margin-bottom: 8px;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+      .modal-actions button {
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .modal-save {
+        background: #f27b20;
+        color: white;
+      }
+      .modal-cancel {
+        background: rgba(0, 0, 0, 0.08);
+        color: #2c2c2c;
+      }
     </style>
     <div class="bar">
-      ${KANBAN_STAGES.map(
-        (s) => `
-        <div class="col" data-etapa="${s.slug}">
-          <h4>${s.label} <span class="count"></span></h4>
-          <div class="cards"></div>
-        </div>`,
-      ).join("")}
+      <div class="toolbar">
+        <button class="import-btn" id="import-btn">Importar conversas</button>
+        <button class="template-btn" id="template-btn">+ Template</button>
+        <span class="import-status" id="import-status"></span>
+      </div>
+      <div class="cols-row" style="display:flex;gap:8px;flex:1;overflow-x:auto;">
+        ${KANBAN_STAGES.map(
+          (s) => `
+          <div class="col" data-etapa="${s.slug}">
+            <h4>${s.label} <span class="count"></span></h4>
+            <div class="cards"></div>
+          </div>`,
+        ).join("")}
+      </div>
     </div>
   `;
+
+  kanbanShadow.querySelector("#import-btn").addEventListener("click", async () => {
+    const btn = kanbanShadow.querySelector("#import-btn");
+    const status = kanbanShadow.querySelector("#import-status");
+    btn.disabled = true;
+    status.textContent = "Importando…";
+    try {
+      const nomes = scanChatList();
+      const { imported } = await requestFromBackground({
+        type: "IMPORT_CONVERSATIONS",
+        nomes,
+      });
+      status.textContent = `${imported} nova(s) conversa(s) importada(s) de ${nomes.length} encontradas.`;
+      await refreshKanbanBar();
+    } catch (err) {
+      console.error("Falha ao importar conversas:", err);
+      status.textContent = `Erro: ${err.message}`;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  kanbanShadow.querySelector("#template-btn").addEventListener("click", () => {
+    openTemplateModal();
+  });
 
   for (const col of kanbanShadow.querySelectorAll(".col")) {
     col.addEventListener("dragover", (e) => {
@@ -288,6 +420,50 @@ function buildKanbanBar() {
   }
 
   refreshKanbanBar();
+}
+
+/** Formulário rápido pra salvar um template de texto sem precisar abrir o painel lateral. */
+function openTemplateModal() {
+  if (!kanbanShadow) return;
+  if (kanbanShadow.querySelector(".modal-backdrop")) return;
+
+  const backdrop = document.createElement("div");
+  backdrop.className = "modal-backdrop";
+  backdrop.innerHTML = `
+    <div class="modal">
+      <h3>Novo template</h3>
+      <input id="tpl-nome" placeholder="Nome (ex.: Confirmação de consulta)" />
+      <textarea id="tpl-conteudo" rows="5" placeholder="Texto da mensagem…"></textarea>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="tpl-cancel">Cancelar</button>
+        <button class="modal-save" id="tpl-save">Salvar</button>
+      </div>
+    </div>
+  `;
+  kanbanShadow.appendChild(backdrop);
+
+  const close = () => backdrop.remove();
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) close();
+  });
+  backdrop.querySelector("#tpl-cancel").addEventListener("click", close);
+  backdrop.querySelector("#tpl-save").addEventListener("click", async () => {
+    const nome = backdrop.querySelector("#tpl-nome").value.trim();
+    const conteudo = backdrop.querySelector("#tpl-conteudo").value.trim();
+    if (!nome || !conteudo) return;
+    const saveBtn = backdrop.querySelector("#tpl-save");
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Salvando…";
+    try {
+      await requestFromBackground({ type: "CREATE_TEMPLATE", nome, tipo: "texto", conteudo });
+      close();
+    } catch (err) {
+      console.error("Falha ao salvar template:", err);
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Salvar";
+      alert(`Não foi possível salvar: ${err.message}`);
+    }
+  });
 }
 
 async function refreshKanbanBar() {

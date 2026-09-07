@@ -24,6 +24,18 @@ const SELECTORS = {
   sendButton: "[data-testid='send'], button[aria-label='Enviar'], span[data-icon='send']",
 };
 
+// Precisa bater com CONVERSATION_STAGES em lib/whatsapp/constants.ts — duplicado
+// aqui porque o content script não é um módulo ES (não dá pra importar direto).
+const KANBAN_STAGES = [
+  { slug: "novo_contato", label: "Novo contato" },
+  { slug: "aguardando_resposta_cliente", label: "Aguardando cliente" },
+  { slug: "aguardando_resposta_equipe", label: "Aguardando equipe" },
+  { slug: "pendencia_documento", label: "Pendência doc." },
+  { slug: "agendamento", label: "Agendamento" },
+  { slug: "resolvido", label: "Resolvido" },
+];
+const KANBAN_BAR_HEIGHT = 96;
+
 const seenMessages = new WeakSet();
 let currentObserver = null;
 
@@ -171,3 +183,149 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true;
   }
 });
+
+// ---------------------------------------------------------------------------
+// Kanban injetado no topo da página do WhatsApp Web (pedido da Keila depois
+// de ver como o waTidy faz isso). Usa Shadow DOM pra não vazar estilo nosso
+// pra página nem sofrer com o CSS do WhatsApp — mais seguro que tentar
+// encaixar dentro da estrutura de layout deles, que muda com frequência.
+// Empurra o app do WhatsApp pra baixo com uma margem no topo do body.
+// ---------------------------------------------------------------------------
+
+function requestFromBackground(message) {
+  return chrome.runtime.sendMessage(message).then((res) => {
+    if (!res?.ok) throw new Error(res?.error ?? "Erro desconhecido");
+    return res;
+  });
+}
+
+let kanbanShadow = null;
+
+function buildKanbanBar() {
+  if (document.getElementById("kmp-hub-kanban-host")) return;
+
+  const host = document.createElement("div");
+  host.id = "kmp-hub-kanban-host";
+  host.style.cssText = `position:fixed;top:0;left:0;right:0;height:${KANBAN_BAR_HEIGHT}px;z-index:999999;`;
+  document.body.prepend(host);
+  document.body.style.marginTop = `${KANBAN_BAR_HEIGHT}px`;
+
+  kanbanShadow = host.attachShadow({ mode: "open" });
+  kanbanShadow.innerHTML = `
+    <style>
+      :host { all: initial; }
+      .bar {
+        display: flex;
+        gap: 8px;
+        height: ${KANBAN_BAR_HEIGHT}px;
+        padding: 8px 10px;
+        background: #f8f7f5;
+        border-bottom: 2px solid #f27b20;
+        font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+        overflow-x: auto;
+        box-sizing: border-box;
+      }
+      .col {
+        flex: 1;
+        min-width: 130px;
+        background: white;
+        border-radius: 6px;
+        padding: 6px 8px;
+        box-sizing: border-box;
+        overflow-y: auto;
+      }
+      .col.dragover {
+        outline: 2px dashed #f27b20;
+      }
+      .col h4 {
+        margin: 0 0 4px;
+        font-size: 11px;
+        color: #2c2c2c;
+        display: flex;
+        justify-content: space-between;
+      }
+      .card {
+        font-size: 11px;
+        background: #f8f7f5;
+        border-radius: 4px;
+        padding: 4px 6px;
+        margin-bottom: 4px;
+        cursor: grab;
+        color: #2c2c2c;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .card:active { cursor: grabbing; }
+    </style>
+    <div class="bar">
+      ${KANBAN_STAGES.map(
+        (s) => `
+        <div class="col" data-etapa="${s.slug}">
+          <h4>${s.label} <span class="count"></span></h4>
+          <div class="cards"></div>
+        </div>`,
+      ).join("")}
+    </div>
+  `;
+
+  for (const col of kanbanShadow.querySelectorAll(".col")) {
+    col.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      col.classList.add("dragover");
+    });
+    col.addEventListener("dragleave", () => col.classList.remove("dragover"));
+    col.addEventListener("drop", (e) => {
+      e.preventDefault();
+      col.classList.remove("dragover");
+      const conversationId = e.dataTransfer.getData("text/kmp-conversation-id");
+      const etapa = col.dataset.etapa;
+      if (!conversationId) return;
+      requestFromBackground({ type: "UPDATE_ETAPA", conversationId, etapa })
+        .then(refreshKanbanBar)
+        .catch((err) => console.error("Falha ao mover conversa de etapa:", err));
+    });
+  }
+
+  refreshKanbanBar();
+}
+
+async function refreshKanbanBar() {
+  if (!kanbanShadow) return;
+  let conversations;
+  try {
+    ({ conversations } = await requestFromBackground({ type: "GET_CONVERSATIONS" }));
+  } catch (err) {
+    console.error("Kanban: falha ao carregar conversas:", err);
+    return;
+  }
+
+  for (const stage of KANBAN_STAGES) {
+    const col = kanbanShadow.querySelector(`.col[data-etapa="${stage.slug}"]`);
+    if (!col) continue;
+    const rows = conversations.filter((c) => c.etapa === stage.slug);
+    col.querySelector(".count").textContent = `(${rows.length})`;
+    const cardsEl = col.querySelector(".cards");
+    cardsEl.innerHTML = "";
+    for (const c of rows) {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.title = `${c.nome_contato} — ${c.ultima_mensagem_preview ?? ""}`;
+      card.textContent = c.nome_contato;
+      card.draggable = true;
+      card.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/kmp-conversation-id", c.id);
+      });
+      card.addEventListener("click", () => {
+        const digits = onlyDigits(c.telefone);
+        if (digits) {
+          window.location.href = `https://web.whatsapp.com/send?phone=${digits}`;
+        }
+      });
+      cardsEl.appendChild(card);
+    }
+  }
+}
+
+buildKanbanBar();
+setInterval(refreshKanbanBar, 15_000);

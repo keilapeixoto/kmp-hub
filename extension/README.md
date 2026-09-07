@@ -33,6 +33,11 @@ oficial da Meta, riscos, etc.).
   em enviar.
 - Ao receber uma mensagem na conversa que está aberta na aba do WhatsApp
   Web, a extensão detecta e grava no Hub.
+- **Kanban injetado no topo da própria página do WhatsApp Web** (pedido da
+  Keila, inspirado no waTidy): uma barra fixa mostrando as conversas
+  agrupadas por etapa, arrastável entre colunas — direto na aba do WhatsApp
+  Web, sem precisar abrir o painel lateral. Implementado com Shadow DOM pra
+  não vazar estilo pra página nem sofrer com o CSS do WhatsApp.
 
 ## Limitações conhecidas da primeira versão (esperado precisar ajustar)
 
@@ -58,6 +63,11 @@ oficial da Meta, riscos, etc.).
   por não precisar de servidor/custo extra).
 - **Mensagens enviadas direto pelo WhatsApp Web** (sem passar pelo painel da
   extensão) não são registradas no Hub — só as enviadas pelo painel lateral.
+- **Kanban injetado**: empurra o conteúdo do WhatsApp Web pra baixo com uma
+  margem no `body` — não testado ao vivo, então é o ponto mais provável de
+  precisar ajuste de layout (ex.: se o WhatsApp usa um elemento com posição
+  fixa própria que a margem do body não desloca, a barra pode sobrepor o
+  topo da página em vez de empurrar).
 
 ## Debugar
 

@@ -16,6 +16,16 @@ body {
   flex-direction: column;
 }
 
+/*
+ * O atributo HTML "hidden" e a classe ".view" têm a mesma especificidade
+ * CSS — sem esta regra, ".view { display: flex }" vence e o elemento
+ * continua visível mesmo com hidden="true" (bug real: a tela de login nunca
+ * sumia de verdade, mesmo com o JS "escondendo" ela certinho).
+ */
+.view[hidden] {
+  display: none;
+}
+
 #login-view {
   padding: 24px;
   justify-content: center;
@@ -85,6 +95,12 @@ button:hover {
   flex-direction: column;
   flex: 1;
   min-width: 0;
+}
+
+/* Mesmo problema de especificidade de .view[hidden] — ver comentário lá em cima. */
+#list-pane[hidden],
+#thread-pane[hidden] {
+  display: none;
 }
 
 .topbar {

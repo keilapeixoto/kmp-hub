@@ -16,6 +16,10 @@ export type Document = {
   hash_sha256: string | null;
   pasta: string | null;
   status_revisao: DocumentStatusRevisao;
+  nome_original: string | null;
+  document_type: string | null;
+  classification_confidence: number | null;
+  revisao_classificacao_pendente: boolean;
   created_at: string;
   updated_at: string;
 };

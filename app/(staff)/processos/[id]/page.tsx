@@ -29,6 +29,8 @@ import {
 } from "@/lib/case-forms/data";
 import { updateCase } from "../actions";
 import { ChecklistPanel } from "../_components/checklist-panel";
+import { DocumentUploadClassifier } from "../_components/document-upload-classifier";
+import { PendingClassificationPanel } from "../_components/pending-classification-panel";
 import { CaseForm } from "../_components/case-form";
 import { CaseFormPanel, type StepWithFields } from "../_components/case-form-panel";
 import { CaseHistory } from "../_components/case-history";
@@ -162,6 +164,20 @@ export default async function ProcessoDetailPage({
             <CaseHistory events={history} />
           </div>
         </div>
+      </div>
+
+      <div className="space-y-4">
+        <h2 className="font-heading text-lg text-kmp-graphite">Documentos</h2>
+        <DocumentUploadClassifier
+          clientId={caseItem.client_id}
+          caseId={id}
+          clienteNome={client?.nome ?? ""}
+        />
+        <PendingClassificationPanel
+          caseId={id}
+          documents={documents}
+          checklistItems={checklistItems}
+        />
       </div>
 
       <div>

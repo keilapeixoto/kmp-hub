@@ -7,7 +7,7 @@ import type { InvoiceStatus } from "@/lib/invoices/types";
 import { updateInvoiceStatus } from "../actions";
 
 function statusLabel(slug: string): string {
-  return INVOICE_STATUSES.find((s) => s.slug === slug)?.label ?? slug;
+  return (INVOICE_STATUSES.find((s) => s.slug === slug)?.label ?? slug).toUpperCase();
 }
 
 // Controle manual: qualquer status pode virar qualquer outro — é a equipe

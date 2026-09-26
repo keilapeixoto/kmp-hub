@@ -1,21 +1,19 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUserRole } from "@/lib/auth";
-import { getInvoices } from "@/lib/invoices/data";
+import { getInvoiceSummary, getInvoices } from "@/lib/invoices/data";
 import { INVOICE_STATUSES } from "@/lib/invoices/constants";
+import { InvoiceStatusSelect } from "./_components/invoice-status-select";
 
 function firstValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-// Mesmas cores por status da tela de detalhe (financeiro/[id]).
-const STATUS_BADGE: Record<string, string> = {
-  rascunho: "bg-kmp-graphite/10 text-kmp-graphite/70",
-  enviada: "bg-blue-50 text-blue-700",
-  paga: "bg-green-50 text-green-700",
-  vencida: "bg-amber-50 text-amber-700",
-  cancelada: "bg-red-50 text-red-700",
-};
+function formatMoeda(value: number, moeda: string): string {
+  const locale = moeda === "BRL" ? "pt-BR" : "en-AU";
+  const prefix = moeda === "BRL" ? "R$ " : "AUD $";
+  return prefix + value.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
 export default async function FinanceiroPage({
   searchParams,
@@ -32,6 +30,7 @@ export default async function FinanceiroPage({
   const q = firstValue(params.q) ?? "";
 
   const invoices = await getInvoices({ status, q });
+  const summary = await getInvoiceSummary();
 
   return (
     <div className="space-y-6">
@@ -43,6 +42,29 @@ export default async function FinanceiroPage({
         >
           + Nova invoice
         </Link>
+      </div>
+
+      <div className="space-y-4">
+        {summary.map((row) => (
+          <div key={row.moeda} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="rounded-lg bg-white p-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-wide text-kmp-graphite/50">
+                Recebido no mês · {row.moeda}
+              </p>
+              <p className="mt-2 font-heading text-xl font-extrabold text-green-700">
+                {formatMoeda(row.recebidoMes, row.moeda)}
+              </p>
+            </div>
+            <div className="rounded-lg bg-white p-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-wide text-kmp-graphite/50">
+                Pendente a receber · {row.moeda}
+              </p>
+              <p className="mt-2 font-heading text-xl font-extrabold text-kmp-orange-deep">
+                {formatMoeda(row.pendente, row.moeda)}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
 
       <form
@@ -96,36 +118,21 @@ export default async function FinanceiroPage({
         ) : (
           <ul className="divide-y divide-black/5">
             {invoices.map((inv) => (
-              <li key={inv.id} className="p-4 text-sm">
-                <Link
-                  href={`/financeiro/${inv.id}`}
-                  className="flex items-center justify-between gap-3"
-                >
-                  <div>
-                    <p className="font-medium text-kmp-graphite">
-                      {inv.numero} · {inv.client_nome}
-                    </p>
-                    <p className="mt-1 text-xs text-kmp-graphite/50">
-                      {inv.servico_referente ?? "—"}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="font-heading text-base font-bold text-kmp-graphite">
-                      {inv.moeda === "BRL" ? "R$ " : "AUD $"}
-                      {inv.total.toLocaleString(inv.moeda === "BRL" ? "pt-BR" : "en-AU", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        STATUS_BADGE[inv.status] ?? "bg-kmp-graphite/10 text-kmp-graphite/70"
-                      }`}
-                    >
-                      {INVOICE_STATUSES.find((s) => s.slug === inv.status)?.label ?? inv.status}
-                    </span>
-                  </div>
+              <li key={inv.id} className="flex items-center justify-between gap-3 p-4 text-sm">
+                <Link href={`/financeiro/${inv.id}`} className="min-w-0 flex-1">
+                  <p className="font-medium text-kmp-graphite">
+                    {inv.numero} · {inv.client_nome}
+                  </p>
+                  <p className="mt-1 text-xs text-kmp-graphite/50">
+                    {inv.servico_referente ?? "—"}
+                  </p>
                 </Link>
+                <div className="flex items-center gap-3">
+                  <span className="font-heading text-base font-bold text-kmp-graphite">
+                    {formatMoeda(inv.total, inv.moeda)}
+                  </span>
+                  <InvoiceStatusSelect invoiceId={inv.id} status={inv.status} />
+                </div>
               </li>
             ))}
           </ul>

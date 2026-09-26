@@ -2,6 +2,7 @@ import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 import { GST_RATE } from "./constants";
 import type {
   Invoice,
+  InvoiceCurrency,
   InvoiceFilters,
   InvoiceItem,
   InvoiceWithClient,
@@ -53,6 +54,45 @@ export async function getInvoice(id: string): Promise<InvoiceWithItems | null> {
     .order("ordem");
 
   return { ...(invoice as Invoice), items: (items ?? []) as InvoiceItem[] };
+}
+
+export type InvoiceSummaryRow = { moeda: InvoiceCurrency; recebidoMes: number; pendente: number };
+
+// Recebido no mês = invoices pagas com data_pagamento no mês corrente.
+// Pendente a receber = enviada + vencida (rascunho ainda não foi cobrado,
+// cancelada não conta, paga já foi recebida). Somado por moeda — AUD e BRL
+// não podem ser misturados num único total.
+export async function getInvoiceSummary(): Promise<InvoiceSummaryRow[]> {
+  const supabase = await createSupabaseClient();
+  const { data, error } = await supabase
+    .from("invoices")
+    .select("moeda, status, total, data_pagamento");
+  if (error) throw error;
+
+  const anoMes = new Date().toISOString().slice(0, 7);
+  const porMoeda = new Map<InvoiceCurrency, InvoiceSummaryRow>([
+    ["AUD", { moeda: "AUD", recebidoMes: 0, pendente: 0 }],
+  ]);
+
+  for (const inv of (data ?? []) as Array<{
+    moeda: InvoiceCurrency;
+    status: string;
+    total: number;
+    data_pagamento: string | null;
+  }>) {
+    if (!porMoeda.has(inv.moeda)) {
+      porMoeda.set(inv.moeda, { moeda: inv.moeda, recebidoMes: 0, pendente: 0 });
+    }
+    const linha = porMoeda.get(inv.moeda)!;
+    if (inv.status === "paga" && inv.data_pagamento?.startsWith(anoMes)) {
+      linha.recebidoMes += inv.total;
+    }
+    if (inv.status === "enviada" || inv.status === "vencida") {
+      linha.pendente += inv.total;
+    }
+  }
+
+  return Array.from(porMoeda.values());
 }
 
 export type InvoiceTotals = { subtotal: number; gstValor: number; total: number };

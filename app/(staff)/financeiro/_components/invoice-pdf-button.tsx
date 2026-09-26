@@ -81,7 +81,11 @@ export function InvoicePdfButton({
         logging: false,
       });
 
-      const imgData = canvas.toDataURL("image/jpeg", 0.92);
+      // PNG em vez de JPEG: o logo (texto branco nítido sobre fundo laranja)
+      // saía com artefato de compressão/borrão nas bordas com JPEG, mesmo em
+      // qualidade alta — é o efeito clássico do subsampling de cor do JPEG
+      // em bordas duras de texto/logo. PNG é sem perda, sem esse problema.
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       const pageWidthMm = 210;
       const pageHeightMm = 297;
@@ -90,12 +94,12 @@ export function InvoicePdfButton({
 
       let heightLeft = imgHeightMm;
       let position = 0;
-      pdf.addImage(imgData, "JPEG", 0, position, imgWidthMm, imgHeightMm, undefined, "MEDIUM");
+      pdf.addImage(imgData, "PNG", 0, position, imgWidthMm, imgHeightMm, undefined, "MEDIUM");
       heightLeft -= pageHeightMm;
       while (heightLeft > 1) {
         position = heightLeft - imgHeightMm;
         pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, position, imgWidthMm, imgHeightMm, undefined, "MEDIUM");
+        pdf.addImage(imgData, "PNG", 0, position, imgWidthMm, imgHeightMm, undefined, "MEDIUM");
         heightLeft -= pageHeightMm;
       }
 

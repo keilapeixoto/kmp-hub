@@ -200,10 +200,14 @@ export function Sidebar() {
   const currentView = useSearchParams().get("view");
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col border-r border-black/5 bg-white">
-      <div className="px-6 py-5">
-        <span className="font-heading text-lg font-extrabold text-kmp-graphite">
-          KMP Hub
+    <aside className="flex w-64 shrink-0 flex-col bg-gradient-to-br from-kmp-orange via-kmp-orange to-kmp-graphite">
+      <div className="flex items-center gap-2 px-6 py-5">
+        {/* eslint-disable-next-line @next/next/no-img-element -- logo
+            fixo, mesmo arquivo usado no cabeçalho da invoice; não precisa
+            da otimização do next/image. */}
+        <img src="/kmp-logo.png" alt="KMP Consulting" className="h-7 w-auto" />
+        <span className="font-heading text-lg font-extrabold text-white">
+          Hub
         </span>
       </div>
 
@@ -211,7 +215,7 @@ export function Sidebar() {
         {NAV_GROUPS.map((group, index) => (
           <div key={group.label ?? `group-${index}`}>
             {group.label ? (
-              <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-kmp-graphite/40">
+              <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-white/40">
                 {group.label}
               </p>
             ) : null}
@@ -231,8 +235,8 @@ export function Sidebar() {
                     href={item.href}
                     className={`flex items-center gap-3 rounded-xl px-2.5 py-2 text-sm font-medium transition ${
                       active
-                        ? styles.activeRow
-                        : "text-kmp-graphite/70 hover:bg-black/5 hover:text-kmp-graphite"
+                        ? "bg-white/10 text-white"
+                        : "text-white/70 hover:bg-white/5 hover:text-white"
                     }`}
                   >
                     <span
@@ -249,7 +253,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-black/5 px-6 py-4 text-xs text-kmp-graphite/40">
+      <div className="border-t border-white/10 px-6 py-4 text-xs text-white/40">
         KMP Hub · v1.0
       </div>
     </aside>

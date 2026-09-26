@@ -3,7 +3,6 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentUserRole } from "@/lib/auth";
 import { getInvoice } from "@/lib/invoices/data";
 import { getClient } from "@/lib/clients/data";
-import { INVOICE_STATUSES } from "@/lib/invoices/constants";
 import { InvoicePdfButton } from "../_components/invoice-pdf-button";
 import { InvoiceStatusControl } from "../_components/invoice-status-control";
 
@@ -22,8 +21,6 @@ export default async function InvoiceDetailPage({
   if (!invoice) notFound();
 
   const client = await getClient(invoice.client_id);
-  const statusLabel = (slug: string) =>
-    INVOICE_STATUSES.find((s) => s.slug === slug)?.label ?? slug;
 
   return (
     <div className="space-y-6">
@@ -49,11 +46,7 @@ export default async function InvoiceDetailPage({
         </div>
       </div>
 
-      <InvoiceStatusControl
-        invoiceId={invoice.id}
-        status={invoice.status}
-        statusLabel={statusLabel}
-      />
+      <InvoiceStatusControl invoiceId={invoice.id} status={invoice.status} />
 
       <InvoicePdfButton invoice={invoice} client={client} />
     </div>

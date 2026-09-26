@@ -2,8 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { INVOICE_STATUSES } from "@/lib/invoices/constants";
 import type { InvoiceStatus } from "@/lib/invoices/types";
 import { updateInvoiceStatus } from "../actions";
+
+function statusLabel(slug: string): string {
+  return INVOICE_STATUSES.find((s) => s.slug === slug)?.label ?? slug;
+}
 
 // Controle manual: qualquer status pode virar qualquer outro — é a equipe
 // "dando baixa" à mão (paga/pendente/cancelada), não um fluxo travado.
@@ -42,11 +47,9 @@ const STATUS_STYLE: Record<InvoiceStatus, { active: string; inactive: string }> 
 export function InvoiceStatusControl({
   invoiceId,
   status,
-  statusLabel,
 }: {
   invoiceId: string;
   status: InvoiceStatus;
-  statusLabel: (slug: string) => string;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();

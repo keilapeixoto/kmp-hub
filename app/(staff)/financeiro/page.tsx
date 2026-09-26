@@ -8,12 +8,13 @@ function firstValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
+// Mesmas cores por status da tela de detalhe (financeiro/[id]).
 const STATUS_BADGE: Record<string, string> = {
   rascunho: "bg-kmp-graphite/10 text-kmp-graphite/70",
   enviada: "bg-blue-50 text-blue-700",
   paga: "bg-green-50 text-green-700",
-  vencida: "bg-red-50 text-red-700",
-  cancelada: "bg-kmp-graphite/10 text-kmp-graphite/50",
+  vencida: "bg-amber-50 text-amber-700",
+  cancelada: "bg-red-50 text-red-700",
 };
 
 export default async function FinanceiroPage({

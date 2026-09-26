@@ -18,12 +18,29 @@ const ALL_STATUSES: InvoiceStatus[] = [
   "cancelada",
 ];
 
-const STATUS_BUTTON_STYLE: Record<InvoiceStatus, string> = {
-  rascunho: "border-black/10 text-kmp-graphite hover:border-kmp-orange hover:text-kmp-orange",
-  enviada: "border-black/10 text-kmp-graphite hover:border-kmp-orange hover:text-kmp-orange",
-  paga: "border-green-200 bg-green-50 text-green-700 hover:bg-green-100",
-  vencida: "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100",
-  cancelada: "border-red-200 bg-red-50 text-red-700 hover:bg-red-100",
+// Uma cor por status, e o status atual aparece preenchido (não só em texto) —
+// os outros 4 ficam sempre visíveis como pílulas clicáveis pra trocar.
+const STATUS_STYLE: Record<InvoiceStatus, { active: string; inactive: string }> = {
+  rascunho: {
+    active: "border-kmp-graphite bg-kmp-graphite text-white",
+    inactive: "border-black/15 text-kmp-graphite/70 hover:bg-black/5",
+  },
+  enviada: {
+    active: "border-blue-600 bg-blue-600 text-white",
+    inactive: "border-blue-200 text-blue-700 hover:bg-blue-50",
+  },
+  paga: {
+    active: "border-green-600 bg-green-600 text-white",
+    inactive: "border-green-200 text-green-700 hover:bg-green-50",
+  },
+  vencida: {
+    active: "border-amber-600 bg-amber-600 text-white",
+    inactive: "border-amber-200 text-amber-700 hover:bg-amber-50",
+  },
+  cancelada: {
+    active: "border-red-600 bg-red-600 text-white",
+    inactive: "border-red-200 text-red-700 hover:bg-red-50",
+  },
 };
 
 export default async function InvoiceDetailPage({
@@ -69,20 +86,31 @@ export default async function InvoiceDetailPage({
       </div>
 
       <div className="rounded-lg bg-white p-4 shadow-sm">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="text-sm text-kmp-graphite/60">
-            Status atual: <span className="font-medium text-kmp-graphite">{statusLabel(invoice.status)}</span>
-          </span>
-          {ALL_STATUSES.filter((next) => next !== invoice.status).map((next) => (
-            <form key={next} action={updateInvoiceStatus.bind(null, invoice.id, next)}>
-              <button
-                type="submit"
-                className={`rounded-full border px-3 py-1 text-xs font-medium transition ${STATUS_BUTTON_STYLE[next]}`}
+        <p className="mb-2 text-xs text-kmp-graphite/50">
+          Clique em um status pra atualizar (dar baixa manual)
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          {ALL_STATUSES.map((s) => {
+            const isActive = s === invoice.status;
+            const style = STATUS_STYLE[s];
+            return isActive ? (
+              <span
+                key={s}
+                className={`rounded-full border px-3 py-1 text-xs font-semibold ${style.active}`}
               >
-                Marcar como {statusLabel(next).toLowerCase()}
-              </button>
-            </form>
-          ))}
+                {statusLabel(s)}
+              </span>
+            ) : (
+              <form key={s} action={updateInvoiceStatus.bind(null, invoice.id, s)}>
+                <button
+                  type="submit"
+                  className={`rounded-full border px-3 py-1 text-xs font-medium transition ${style.inactive}`}
+                >
+                  {statusLabel(s)}
+                </button>
+              </form>
+            );
+          })}
         </div>
       </div>
 

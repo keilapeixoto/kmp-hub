@@ -225,7 +225,10 @@ export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {
   if (status === "paga") {
     update.data_pagamento = new Date().toISOString().slice(0, 10);
   }
-  await supabase.from("invoices").update(update).eq("id", id);
+  const { error } = await supabase.from("invoices").update(update).eq("id", id);
+  if (error) {
+    throw new Error(`Não foi possível atualizar o status da invoice: ${error.message}`);
+  }
   revalidatePath("/financeiro");
   revalidatePath(`/financeiro/${id}`);
 }

@@ -58,11 +58,12 @@ nunca reescreve as classes na mão.
 | `--color-kmp-processos` / `-deep` | `#2E9B63` / `#217A4C` | Processos |
 | `--color-kmp-agenda` / `-deep` | `#D6A419` / `#AD8210` | Tarefas, Agenda |
 | `--color-kmp-documentos` / `-deep` | `#9B4F8E` / `#7A3A70` | Guias, Templates, Ocupações |
+| `--color-kmp-config` / `-deep` | `#3B6FD6` / `#2A54B0` | Configurações (todos os 8 itens do grupo) |
 | `--color-kmp-alert` / `-deep` | `#D6455F` / `#AD2F45` | Vencimentos; estado `warn` de qualquer `StatCard` |
 
-`Configurações` fica sem cor de propósito (`accent: "neutral"`, ícone
-cinza com borda) — seção administrativa, não precisa de destaque. Ícone
-sempre em bloco (`icon-tile`, ~28-36px, `rounded-lg`/`rounded-xl`,
+Todo módulo tem cor — não existe mais um grupo "sem destaque" na sidebar
+(v1 deixava Configurações neutro; a Keila pediu pra colorir também).
+Ícone sempre em bloco (`icon-tile`, ~28-36px, `rounded-lg`/`rounded-xl`,
 gradiente da cor pro seu `-deep`) — nunca cor sólida chapada.
 
 ## Paleta funcional (estados, não é sobre marca)

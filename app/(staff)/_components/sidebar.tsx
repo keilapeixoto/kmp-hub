@@ -38,8 +38,8 @@ type NavGroup = {
 };
 
 // Uma cor por módulo — o laranja (brand) fica só para as views
-// "principais" (Pipeline/Dashboard); Configurações fica neutro de
-// propósito (seção administrativa, sem destaque de cor).
+// "principais" (Pipeline/Dashboard); Configurações usa "config" (azul),
+// compartilhado pelos 8 itens do grupo.
 const NAV_GROUPS: NavGroup[] = [
   {
     label: null,
@@ -125,49 +125,49 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Configurações",
         icon: Settings,
         exact: true,
-        accent: "neutral",
+        accent: "config",
       },
       {
         href: "/configuracoes/servicos",
         label: "Tipos de serviço",
         icon: Briefcase,
-        accent: "neutral",
+        accent: "config",
       },
       {
         href: "/configuracoes/checklists",
         label: "Checklists",
         icon: ClipboardList,
-        accent: "neutral",
+        accent: "config",
       },
       {
         href: "/configuracoes/formularios",
         label: "Formulários",
         icon: FileText,
-        accent: "neutral",
+        accent: "config",
       },
       {
         href: "/configuracoes/processos",
         label: "Status de processos",
         icon: Kanban,
-        accent: "neutral",
+        accent: "config",
       },
       {
         href: "/configuracoes/armazenamento",
         label: "Armazenamento",
         icon: HardDrive,
-        accent: "neutral",
+        accent: "config",
       },
       {
         href: "/configuracoes/equipe",
         label: "Equipe",
         icon: UsersRound,
-        accent: "neutral",
+        accent: "config",
       },
       {
         href: "/configuracoes/ocupacoes",
         label: "Importar ocupações",
         icon: Upload,
-        accent: "neutral",
+        accent: "config",
       },
     ],
   },

@@ -1,7 +1,7 @@
 // Uma cor por módulo — o laranja (brand) é a cor de maior peso (views
 // principais, destaque de "atenção necessária"); as demais só existem
-// pra diferenciar módulo de módulo de relance. "neutral" fica sem cor
-// de propósito (seções administrativas). Ver docs/architecture/05-design-system.md.
+// pra diferenciar módulo de módulo de relance. Ver
+// docs/architecture/05-design-system.md.
 export type Accent =
   | "brand"
   | "leads"
@@ -9,8 +9,8 @@ export type Accent =
   | "processos"
   | "agenda"
   | "documentos"
-  | "alert"
-  | "neutral";
+  | "config"
+  | "alert";
 
 export const ACCENT_STYLES: Record<
   Accent,
@@ -40,12 +40,12 @@ export const ACCENT_STYLES: Record<
     tile: "bg-gradient-to-br from-kmp-documentos to-kmp-documentos-deep text-white shadow-sm shadow-kmp-documentos/40",
     activeRow: "bg-kmp-documentos/10 text-kmp-documentos-deep",
   },
+  config: {
+    tile: "bg-gradient-to-br from-kmp-config to-kmp-config-deep text-white shadow-sm shadow-kmp-config/40",
+    activeRow: "bg-kmp-config/10 text-kmp-config-deep",
+  },
   alert: {
     tile: "bg-gradient-to-br from-kmp-alert to-kmp-alert-deep text-white shadow-sm shadow-kmp-alert/40",
     activeRow: "bg-kmp-alert/10 text-kmp-alert-deep",
-  },
-  neutral: {
-    tile: "border border-black/10 bg-white text-kmp-graphite/40",
-    activeRow: "bg-black/5 text-kmp-graphite",
   },
 };

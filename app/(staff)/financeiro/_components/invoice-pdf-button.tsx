@@ -92,7 +92,8 @@ export function InvoicePdfButton({
       const clientName = (client?.nome ?? "Cliente").replace(/\s+/g, "_");
       pdf.save(`Invoice_KMP_${clientName}_${invoice.numero}.pdf`);
       setStatus("PDF salvo com sucesso.");
-    } catch {
+    } catch (err) {
+      console.error("Erro ao gerar PDF da invoice:", err);
       setStatus("Erro ao gerar PDF. Tente novamente.");
     } finally {
       if (host.parentNode) host.parentNode.removeChild(host);

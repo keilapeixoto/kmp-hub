@@ -44,7 +44,14 @@ export function InvoiceDocument({
       className={`${cormorant.variable} ${outfit.variable} mx-auto flex w-full max-w-[720px] flex-col bg-white text-kmp-graphite shadow-sm`}
       style={{ fontFamily: "var(--font-invoice-body)" }}
     >
-      <div className="flex items-start justify-between gap-4 bg-gradient-to-br from-kmp-orange to-kmp-orange-deep px-8 py-6 text-white">
+      {/* Gradiente e cores com opacidade em hex fixo (não classes tw com "/"):
+          o html2canvas que gera o PDF não entende as funções color-mix()/
+          linear-gradient(in oklab, ...) que o Tailwind v4 gera pra elas, e
+          isso quebra a exportação com "Erro ao gerar PDF". */}
+      <div
+        className="flex items-start justify-between gap-4 px-8 py-6 text-white"
+        style={{ backgroundImage: "linear-gradient(135deg, #F27B20, #C85A0E)" }}
+      >
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element -- precisa
               ser <img> simples: o html2canvas do PDF captura um clone fora
@@ -85,16 +92,16 @@ export function InvoiceDocument({
         <table className="mb-4 w-full border-collapse text-[13.5px]">
           <thead>
             <tr>
-              <th className="border-b-2 border-kmp-orange/20 pb-2 text-left text-[11px] font-medium uppercase tracking-wide text-kmp-graphite/50">
+              <th className="border-b-2 border-[#f27b2033] pb-2 text-left text-[11px] font-medium uppercase tracking-wide text-[#2c2c2c80]">
                 Descrição
               </th>
-              <th className="border-b-2 border-kmp-orange/20 pb-2 text-right text-[11px] font-medium uppercase tracking-wide text-kmp-graphite/50">
+              <th className="border-b-2 border-[#f27b2033] pb-2 text-right text-[11px] font-medium uppercase tracking-wide text-[#2c2c2c80]">
                 Qtd
               </th>
-              <th className="border-b-2 border-kmp-orange/20 pb-2 text-right text-[11px] font-medium uppercase tracking-wide text-kmp-graphite/50">
+              <th className="border-b-2 border-[#f27b2033] pb-2 text-right text-[11px] font-medium uppercase tracking-wide text-[#2c2c2c80]">
                 Valor unit.
               </th>
-              <th className="border-b-2 border-kmp-orange/20 pb-2 text-right text-[11px] font-medium uppercase tracking-wide text-kmp-graphite/50">
+              <th className="border-b-2 border-[#f27b2033] pb-2 text-right text-[11px] font-medium uppercase tracking-wide text-[#2c2c2c80]">
                 Subtotal
               </th>
             </tr>
@@ -102,14 +109,14 @@ export function InvoiceDocument({
           <tbody>
             {invoice.items.map((item) => (
               <tr key={item.id}>
-                <td className="border-b border-black/5 py-2 align-top">{item.descricao}</td>
-                <td className="border-b border-black/5 py-2 text-right align-top">
+                <td className="border-b border-[#0000000d] py-2 align-top">{item.descricao}</td>
+                <td className="border-b border-[#0000000d] py-2 text-right align-top">
                   {item.quantidade}
                 </td>
-                <td className="border-b border-black/5 py-2 text-right align-top">
+                <td className="border-b border-[#0000000d] py-2 text-right align-top">
                   {formatMoeda(item.valor_unitario, invoice.moeda)}
                 </td>
-                <td className="border-b border-black/5 py-2 text-right align-top">
+                <td className="border-b border-[#0000000d] py-2 text-right align-top">
                   {formatMoeda(item.quantidade * item.valor_unitario, invoice.moeda)}
                 </td>
               </tr>
@@ -137,7 +144,7 @@ export function InvoiceDocument({
           </div>
         </div>
 
-        <div className="my-5 rounded-md border-l-[3px] border-kmp-orange bg-kmp-orange/5 p-4 text-[13.5px]">
+        <div className="my-5 rounded-md border-l-[3px] border-kmp-orange bg-[#f27b200d] p-4 text-[13.5px]">
           <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-kmp-orange-deep">
             {invoice.forma_pagamento === "payid" ? "Pagamento via PayID" : "Pagamento via PIX"}
           </p>
@@ -175,7 +182,7 @@ export function InvoiceDocument({
         </div>
 
         {invoice.observacoes ? (
-          <p className="mt-4 whitespace-pre-wrap text-xs text-kmp-graphite/60">
+          <p className="mt-4 whitespace-pre-wrap text-xs text-[#2c2c2c99]">
             {invoice.observacoes}
           </p>
         ) : null}

@@ -67,17 +67,14 @@ Todo módulo tem cor — não existe mais um grupo "sem destaque" na sidebar
 Ícone sempre em bloco (`icon-tile`, ~28-36px, `rounded-lg`/`rounded-xl`,
 gradiente da cor pro seu `-deep`) — nunca cor sólida chapada.
 
-**Atualização (set/2026): chrome escuro na sidebar e na header bar.**
-Pedido da Keila com uma referência visual de outro CRM (fundo roxo atrás
-do menu, ícones coloridos por cima) — mesma ideia, mas com a identidade
-já documentada aqui, e laranja vibrante como cor dominante (pedido
-explícito dela, "mais laranja que preto" e depois "mais vibrante"):
-`bg-gradient-to-br from-kmp-orange via-kmp-orange to-kmp-graphite` na
-`<aside>` e `bg-gradient-to-r from-kmp-orange via-kmp-orange
-to-kmp-graphite` na `<header>` — usa o `--color-kmp-orange` puro (não o
-`-deep`) nos dois primeiros stops, o grafite só aparece no canto oposto
-(embaixo na sidebar, à direita na header), pra dar profundidade sem virar
-o protagonista. Texto/ícones em
+**Atualização (set/2026): chrome laranja sólido na sidebar e na header
+bar.** Pedido da Keila com uma referência visual de outro CRM (fundo roxo
+atrás do menu, ícones coloridos por cima) — mesma ideia, mas com a
+identidade já documentada aqui. Passou por três rodadas até fechar (viu
+prévia de cada uma antes de decidir): grafite dominante → gradiente com
+laranja dominante → **laranja sólido** (`bg-kmp-orange`, `--color-kmp-orange`
+puro, sem gradiente e sem grafite nenhum) na `<aside>` e na `<header>`.
+Texto/ícones em
 branco com opacidade (`text-white/70`, hover `text-white`), e a linha
 ativa da sidebar vira `bg-white/10 text-white` — fixo, não varia mais por
 módulo (o `activeRow` por módulo que existia em `ACCENT_STYLES` foi

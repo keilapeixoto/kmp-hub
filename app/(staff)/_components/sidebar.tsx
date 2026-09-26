@@ -200,7 +200,7 @@ export function Sidebar() {
   const currentView = useSearchParams().get("view");
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col bg-gradient-to-br from-kmp-orange via-kmp-orange to-kmp-graphite">
+    <aside className="flex w-64 shrink-0 flex-col bg-kmp-orange">
       <div className="px-6 py-5">
         <span className="font-heading text-lg font-extrabold text-white">
           KMP Hub

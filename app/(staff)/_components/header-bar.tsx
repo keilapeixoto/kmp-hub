@@ -5,7 +5,7 @@ import { GlobalSearchInput } from "./global-search-input";
 
 export function HeaderBar({ userEmail }: { userEmail: string }) {
   return (
-    <header className="flex items-center justify-between gap-4 bg-gradient-to-r from-kmp-orange via-kmp-orange to-kmp-graphite px-6 py-4 shadow-sm">
+    <header className="flex items-center justify-between gap-4 bg-kmp-orange px-6 py-4 shadow-sm">
       <GlobalSearchInput />
 
       <div className="flex items-center gap-4">

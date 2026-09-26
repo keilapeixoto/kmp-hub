@@ -37,6 +37,13 @@ export function ImportForm() {
           placeholder="nome,codigo_anzsco,categoria,autoridade_avaliadora,nivel_habilidade,na_csol,na_mltssl_legada,fonte"
           className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 font-mono text-xs text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
         />
+        <p className="mt-1 text-xs text-kmp-graphite/50">
+          Colunas de visto (opcionais): visto_189, visto_190, visto_491,
+          visto_482, visto_494, visto_186, visto_407, visto_485. Aceitam
+          sim/não (ou true/false); em branco fica como &quot;não
+          informado&quot;. Sem essas colunas, os vistos de linhas já
+          existentes não são alterados.
+        </p>
       </div>
 
       {state.error ? (

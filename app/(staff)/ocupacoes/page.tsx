@@ -15,12 +15,23 @@ export default async function OcupacoesPage({
   const params = await searchParams;
   const q = firstValue(params.q) ?? "";
   const categoria = firstValue(params.categoria) ?? "";
+  const page = Math.max(1, Number.parseInt(firstValue(params.page) ?? "1", 10) || 1);
 
-  const [role, occupations] = await Promise.all([
+  const [role, { rows: occupations, total, pageSize }] = await Promise.all([
     getCurrentUserRole(),
-    getOccupations({ q, categoria }),
+    getOccupations({ q, categoria, page }),
   ]);
   const isAdmin = role === "admin";
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  function pageHref(target: number) {
+    const sp = new URLSearchParams();
+    if (q) sp.set("q", q);
+    if (categoria) sp.set("categoria", categoria);
+    if (target > 1) sp.set("page", String(target));
+    const qs = sp.toString();
+    return qs ? `/ocupacoes?${qs}` : "/ocupacoes";
+  }
 
   return (
     <div className="space-y-6">
@@ -114,6 +125,26 @@ export default async function OcupacoesPage({
           </ul>
         )}
       </div>
+
+      {totalPages > 1 ? (
+        <div className="flex items-center justify-between text-sm text-kmp-graphite/70">
+          <span>
+            Página {page} de {totalPages} · {total} ocupações
+          </span>
+          <div className="flex gap-3">
+            {page > 1 ? (
+              <Link href={pageHref(page - 1)} className="hover:text-kmp-orange">
+                ← Anterior
+              </Link>
+            ) : null}
+            {page < totalPages ? (
+              <Link href={pageHref(page + 1)} className="hover:text-kmp-orange">
+                Próxima →
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

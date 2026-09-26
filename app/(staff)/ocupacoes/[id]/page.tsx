@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOccupation } from "@/lib/occupations/data";
+import { VISA_SUBCLASSES } from "@/lib/occupations/constants";
 
 export default async function OcupacaoDetailPage({
   params,
@@ -60,6 +61,40 @@ export default async function OcupacaoDetailPage({
             Na MLTSSL · válido para 485
           </span>
         ) : null}
+      </div>
+
+      <div className="rounded-lg bg-white p-6 shadow-sm">
+        <h2 className="font-heading text-lg text-kmp-graphite">
+          Elegibilidade por subclasse de visto
+        </h2>
+        <p className="mt-1 text-xs text-kmp-graphite/50">
+          Referência geral por ocupação — não considera cotas por estado nem
+          o histórico de rodadas de convite. Confirme sempre a elegibilidade
+          real do caso com a consultora.
+        </p>
+        <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {VISA_SUBCLASSES.map(({ coluna, codigo, nome }) => {
+            const valor = occupation[coluna];
+            const estilo =
+              valor === true
+                ? "bg-green-50 text-green-700"
+                : valor === false
+                  ? "bg-black/5 text-kmp-graphite/40"
+                  : "bg-black/5 text-kmp-graphite/30";
+            const rotulo =
+              valor === true ? "Elegível" : valor === false ? "Não" : "—";
+            return (
+              <li
+                key={coluna}
+                className={`rounded-md px-3 py-2 text-center ${estilo}`}
+                title={nome}
+              >
+                <p className="text-sm font-semibold">{codigo}</p>
+                <p className="text-xs">{rotulo}</p>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );

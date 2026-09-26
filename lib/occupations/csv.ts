@@ -1,4 +1,4 @@
-import { OCCUPATION_CATEGORIES } from "./constants";
+import { OCCUPATION_CATEGORIES, VISA_SUBCLASSES } from "./constants";
 
 export type ParsedOccupationRow = {
   nome: string;
@@ -9,7 +9,7 @@ export type ParsedOccupationRow = {
   na_csol: boolean;
   na_mltssl_legada: boolean;
   fonte: string | null;
-};
+} & Partial<Record<(typeof VISA_SUBCLASSES)[number]["coluna"], boolean | null>>;
 
 export type ParseResult = {
   rows: ParsedOccupationRow[];
@@ -29,6 +29,15 @@ const CABECALHO_ESPERADO = [
 
 function paraBooleano(valor: string): boolean {
   return ["1", "true", "sim", "yes"].includes(valor.trim().toLowerCase());
+}
+
+function paraBooleanoOpcional(valor: string | undefined): boolean | null {
+  if (valor === undefined) return null;
+  const normalizado = valor.trim().toLowerCase();
+  if (normalizado === "") return null;
+  if (["1", "true", "sim", "yes"].includes(normalizado)) return true;
+  if (["0", "false", "não", "nao", "no"].includes(normalizado)) return false;
+  return null;
 }
 
 export function parseOccupationsCsv(conteudo: string): ParseResult {
@@ -100,7 +109,7 @@ export function parseOccupationsCsv(conteudo: string): ParseResult {
       continue;
     }
 
-    rows.push({
+    const linha: ParsedOccupationRow = {
       nome: registro.nome,
       codigo_anzsco: registro.codigo_anzsco,
       categoria: registro.categoria,
@@ -109,7 +118,15 @@ export function parseOccupationsCsv(conteudo: string): ParseResult {
       na_csol: paraBooleano(registro.na_csol),
       na_mltssl_legada: paraBooleano(registro.na_mltssl_legada),
       fonte: registro.fonte || null,
-    });
+    };
+
+    for (const { coluna } of VISA_SUBCLASSES) {
+      if (cabecalho.includes(coluna)) {
+        linha[coluna] = paraBooleanoOpcional(registro[coluna]);
+      }
+    }
+
+    rows.push(linha);
   }
 
   return { rows, errors };

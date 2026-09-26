@@ -28,13 +28,14 @@ não existe `tailwind.config.js` neste projeto, e não deve ser recriado; a
 v4 resolve tudo via CSS). **Nunca usar cor hexadecimal solta num componente**
 — sempre a variável de tema (`bg-kmp-orange`, não `bg-[#f27b20]`).
 
-**Atualização (set/2026): a marca passou de duas fontes (Cormorant Garamond
-serifada + Outfit) para uma única, Plus Jakarta Sans, em todo lugar —
-produto e PDFs (briefings, guias). `--font-heading` e `--font-body`
-continuam existindo como tokens separados (resolvem para a mesma família,
-mas com pesos/tamanhos diferentes por convenção — ver Tipografia abaixo),
-então nenhum dos ~110 usos existentes de `font-heading`/`font-body` no
-código precisou mudar.**
+**Atualização (set/2026): a interface do produto passou de duas fontes
+(Cormorant Garamond serifada + Outfit) para uma única, Plus Jakarta Sans.
+Isso vale só pra tela — PDFs e documentos (briefings, guias, relatórios)
+continuam em Cormorant Garamond + Outfit, sem mudança. `--font-heading` e
+`--font-body` continuam existindo como tokens separados na interface
+(resolvem para a mesma família, mas com pesos/tamanhos diferentes por
+convenção — ver Tipografia abaixo), então nenhum dos ~110 usos existentes
+de `font-heading`/`font-body` no código precisou mudar.**
 
 **Sem emoji em nenhuma tela ou mensagem de sistema.** Regra do produto, sem
 exceção — nem em toast de sucesso, nem em placeholder.

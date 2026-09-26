@@ -50,10 +50,13 @@ Implementação: função `get_user_role()` no Postgres + políticas RLS por tab
 
 ## Identidade visual KMP
 
-- Título/headings e corpo de texto: **Plus Jakarta Sans** (fonte única,
-  desde set/2026 — substituiu Cormorant Garamond + Outfit em todo lugar,
-  produto e PDFs/briefings/guias). Títulos usam peso 700/800 pra manter
+- Título/headings e corpo de texto **na interface do produto**: **Plus
+  Jakarta Sans** (fonte única, desde set/2026 — substituiu Cormorant
+  Garamond + Outfit nas telas do Hub). Títulos usam peso 700/800 pra manter
   a distinção visual que a serifada tinha.
+- **PDFs e documentos** (briefings, guias, relatórios) continuam com
+  Cormorant Garamond + Outfit — identidade própria dos documentos oficiais,
+  não muda com o redesign da interface.
 - Cor primária (laranja): `#F27B20`.
 - Cor neutra escura (grafite): `#2C2C2C`.
 - Fundo: `#F8F7F5`.

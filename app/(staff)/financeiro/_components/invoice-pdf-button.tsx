@@ -7,6 +7,8 @@ import { InvoiceDocument } from "./invoice-document";
 
 const FIXED_WIDTH = 720;
 const TARGET_WIDTH_PX = 2480; // ~300dpi a 210mm de largura
+const A4_RATIO = 297 / 210; // altura/largura da página
+const PAGE_MIN_HEIGHT = Math.round(FIXED_WIDTH * A4_RATIO); // altura de 1 página A4 nessa largura
 
 function waitForImages(root: HTMLElement): Promise<void[]> {
   const images = Array.from(root.querySelectorAll("img"));
@@ -51,10 +53,18 @@ export function InvoicePdfButton({
       if (document.fonts?.ready) await document.fonts.ready;
 
       const clone = original.cloneNode(true) as HTMLElement;
-      clone.style.width = `${FIXED_WIDTH}px`;
-      clone.style.maxWidth = `${FIXED_WIDTH}px`;
-      clone.style.margin = "0";
-      clone.style.boxShadow = "none";
+      // previewRef aponta pro wrapper simples em volta do <InvoiceDocument>;
+      // quem precisa da largura/altura fixas é a raiz flex-col do documento
+      // em si (1º filho), senão o rodapé não fica esticado até a base.
+      const docRoot = (clone.firstElementChild as HTMLElement | null) ?? clone;
+      docRoot.style.width = `${FIXED_WIDTH}px`;
+      docRoot.style.maxWidth = `${FIXED_WIDTH}px`;
+      docRoot.style.margin = "0";
+      docRoot.style.boxShadow = "none";
+      // Preenche pelo menos 1 página A4 inteira (documento tem menos conteúdo
+      // que isso na maioria das invoices) — o rodapé usa flex-1 no conteúdo
+      // do meio pra ficar colado na base da página, não no meio dela.
+      docRoot.style.minHeight = `${PAGE_MIN_HEIGHT}px`;
       host.appendChild(clone);
       document.body.appendChild(host);
       await waitForImages(clone);

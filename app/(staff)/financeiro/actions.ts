@@ -98,7 +98,12 @@ export async function createInvoice(
   const supabase = await createClient();
   const { data: invoice, error } = await supabase
     .from("invoices")
-    .insert({ ...fields, ...totals, gst_valor: totals.gstValor })
+    .insert({
+      ...fields,
+      subtotal: totals.subtotal,
+      gst_valor: totals.gstValor,
+      total: totals.total,
+    })
     .select("id")
     .single();
 
@@ -148,7 +153,12 @@ export async function updateInvoice(
   const supabase = await createClient();
   const { error } = await supabase
     .from("invoices")
-    .update({ ...fields, ...totals, gst_valor: totals.gstValor })
+    .update({
+      ...fields,
+      subtotal: totals.subtotal,
+      gst_valor: totals.gstValor,
+      total: totals.total,
+    })
     .eq("id", id);
   if (error) {
     return { error: `Não foi possível salvar a invoice: ${error.message}` };

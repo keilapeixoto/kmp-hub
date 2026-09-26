@@ -8,6 +8,20 @@ import { InvoiceDocument } from "./invoice-document";
 const FIXED_WIDTH = 720;
 const TARGET_WIDTH_PX = 2480; // ~300dpi a 210mm de largura
 
+function waitForImages(root: HTMLElement): Promise<void[]> {
+  const images = Array.from(root.querySelectorAll("img"));
+  return Promise.all(
+    images.map((img) =>
+      img.complete
+        ? Promise.resolve()
+        : new Promise<void>((resolve) => {
+            img.addEventListener("load", () => resolve(), { once: true });
+            img.addEventListener("error", () => resolve(), { once: true });
+          }),
+    ),
+  );
+}
+
 export function InvoicePdfButton({
   invoice,
   client,
@@ -43,6 +57,7 @@ export function InvoicePdfButton({
       clone.style.boxShadow = "none";
       host.appendChild(clone);
       document.body.appendChild(host);
+      await waitForImages(clone);
 
       const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
         import("html2canvas"),

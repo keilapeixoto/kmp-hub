@@ -46,10 +46,11 @@ export function InvoiceDocument({
     >
       <div className="flex items-start justify-between gap-4 bg-gradient-to-br from-kmp-orange to-kmp-orange-deep px-8 py-6 text-white">
         <div>
-          <p className="text-2xl font-bold" style={headingStyle}>
-            KMP Consulting
-          </p>
-          <p className="mt-1 text-[11px] font-light opacity-90">
+          {/* eslint-disable-next-line @next/next/no-img-element -- precisa
+              ser <img> simples: o html2canvas do PDF captura um clone fora
+              da tela, e next/image atrapalharia esse fluxo. */}
+          <img src="/kmp-logo.png" alt="KMP Consulting" className="h-9 w-auto" />
+          <p className="mt-1.5 text-[11px] font-light opacity-90">
             Estratégia que conecta. Futuro que transforma.
           </p>
         </div>

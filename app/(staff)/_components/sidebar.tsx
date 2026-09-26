@@ -22,12 +22,14 @@ import {
   UsersRound,
 } from "lucide-react";
 import type { ComponentType } from "react";
+import { ACCENT_STYLES, type Accent } from "@/lib/ui/accent";
 
 type NavItem = {
   href: string;
   label: string;
   icon: ComponentType<{ className?: string }>;
   exact?: boolean;
+  accent: Accent;
 };
 
 type NavGroup = {
@@ -35,36 +37,84 @@ type NavGroup = {
   items: NavItem[];
 };
 
+// Uma cor por módulo — o laranja (brand) fica só para as views
+// "principais" (Pipeline/Dashboard); Configurações fica neutro de
+// propósito (seção administrativa, sem destaque de cor).
 const NAV_GROUPS: NavGroup[] = [
   {
     label: null,
     items: [
-      { href: "/processos?view=kanban", label: "Pipeline", icon: Kanban },
-      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      {
+        href: "/processos?view=kanban",
+        label: "Pipeline",
+        icon: Kanban,
+        accent: "brand",
+      },
+      {
+        href: "/dashboard",
+        label: "Dashboard",
+        icon: LayoutDashboard,
+        accent: "brand",
+      },
     ],
   },
   {
     label: "Comercial",
     items: [
-      { href: "/leads", label: "Leads", icon: Users },
-      { href: "/clientes", label: "Clientes", icon: UserCircle },
-      { href: "/processos", label: "Processos", icon: Briefcase },
-      { href: "/vencimentos", label: "Vencimentos", icon: CalendarClock },
+      { href: "/leads", label: "Leads", icon: Users, accent: "leads" },
+      {
+        href: "/clientes",
+        label: "Clientes",
+        icon: UserCircle,
+        accent: "clientes",
+      },
+      {
+        href: "/processos",
+        label: "Processos",
+        icon: Briefcase,
+        accent: "processos",
+      },
+      {
+        href: "/vencimentos",
+        label: "Vencimentos",
+        icon: CalendarClock,
+        accent: "alert",
+      },
     ],
   },
   {
     label: "Operação",
     items: [
-      { href: "/tarefas", label: "Tarefas", icon: CheckSquare },
-      { href: "/agenda", label: "Agenda", icon: Calendar },
+      {
+        href: "/tarefas",
+        label: "Tarefas",
+        icon: CheckSquare,
+        accent: "agenda",
+      },
+      { href: "/agenda", label: "Agenda", icon: Calendar, accent: "agenda" },
     ],
   },
   {
     label: "Biblioteca",
     items: [
-      { href: "/guias", label: "Guias", icon: BookOpen },
-      { href: "/templates", label: "Templates", icon: MessageSquare },
-      { href: "/ocupacoes", label: "Ocupações", icon: Globe },
+      {
+        href: "/guias",
+        label: "Guias",
+        icon: BookOpen,
+        accent: "documentos",
+      },
+      {
+        href: "/templates",
+        label: "Templates",
+        icon: MessageSquare,
+        accent: "documentos",
+      },
+      {
+        href: "/ocupacoes",
+        label: "Ocupações",
+        icon: Globe,
+        accent: "documentos",
+      },
     ],
   },
   {
@@ -75,41 +125,49 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Configurações",
         icon: Settings,
         exact: true,
+        accent: "neutral",
       },
       {
         href: "/configuracoes/servicos",
         label: "Tipos de serviço",
         icon: Briefcase,
+        accent: "neutral",
       },
       {
         href: "/configuracoes/checklists",
         label: "Checklists",
         icon: ClipboardList,
+        accent: "neutral",
       },
       {
         href: "/configuracoes/formularios",
         label: "Formulários",
         icon: FileText,
+        accent: "neutral",
       },
       {
         href: "/configuracoes/processos",
         label: "Status de processos",
         icon: Kanban,
+        accent: "neutral",
       },
       {
         href: "/configuracoes/armazenamento",
         label: "Armazenamento",
         icon: HardDrive,
+        accent: "neutral",
       },
       {
         href: "/configuracoes/equipe",
         label: "Equipe",
         icon: UsersRound,
+        accent: "neutral",
       },
       {
         href: "/configuracoes/ocupacoes",
         label: "Importar ocupações",
         icon: Upload,
+        accent: "neutral",
       },
     ],
   },
@@ -159,22 +217,19 @@ export function Sidebar() {
                   item.exact,
                 );
                 const Icon = item.icon;
+                const styles = ACCENT_STYLES[item.accent];
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     className={`flex items-center gap-3 rounded-xl px-2.5 py-2 text-sm font-medium transition ${
                       active
-                        ? "bg-kmp-orange/10 text-kmp-orange-deep"
+                        ? styles.activeRow
                         : "text-kmp-graphite/70 hover:bg-black/5 hover:text-kmp-graphite"
                     }`}
                   >
                     <span
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-                        active
-                          ? "bg-gradient-to-br from-kmp-orange to-kmp-orange-deep text-white shadow-sm shadow-kmp-orange/40"
-                          : "border border-black/10 bg-white text-kmp-graphite/40"
-                      }`}
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${styles.tile}`}
                     >
                       <Icon className="h-4 w-4 shrink-0" />
                     </span>

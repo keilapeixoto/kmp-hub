@@ -9,6 +9,7 @@ import {
   UserCircle,
   type LucideIcon,
 } from "lucide-react";
+import { ACCENT_STYLES, type Accent } from "@/lib/ui/accent";
 import { getCurrentUserProfile } from "@/lib/auth";
 import { formatTimesInAllZones } from "@/lib/appointments/timezones";
 import { getTeamMembersStaff } from "@/lib/cases/data";
@@ -22,13 +23,16 @@ function StatCard({
   warn,
   href,
   icon: Icon,
+  accent,
 }: {
   label: string;
   value: string | number;
   warn?: boolean;
   href: string;
   icon: LucideIcon;
+  accent: Accent;
 }) {
+  const styles = ACCENT_STYLES[warn ? "alert" : accent];
   return (
     <Link
       href={href}
@@ -36,19 +40,13 @@ function StatCard({
     >
       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-kmp-graphite/50">
         <span
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-            warn
-              ? "bg-kmp-orange/10 text-kmp-orange-deep"
-              : "border border-black/10 text-kmp-graphite/40"
-          }`}
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${styles.tile}`}
         >
           <Icon className="h-3.5 w-3.5" />
         </span>
         {label}
       </div>
-      <p
-        className={`mt-3 font-heading text-2xl font-extrabold ${warn ? "text-kmp-orange-deep" : "text-kmp-graphite"}`}
-      >
+      <p className="mt-3 font-heading text-2xl font-extrabold text-kmp-graphite">
         {value}
       </p>
     </Link>
@@ -86,18 +84,21 @@ export default async function DashboardPage() {
           value={metrics.novosLeads30d}
           href="/leads"
           icon={TrendingUp}
+          accent="leads"
         />
         <StatCard
           label="Conversão"
           value={metrics.conversaoPct === null ? "—" : `${metrics.conversaoPct}%`}
           href="/leads"
           icon={Percent}
+          accent="leads"
         />
         <StatCard
           label="Clientes ativos"
           value={metrics.clientesAtivos}
           href="/clientes"
           icon={UserCircle}
+          accent="clientes"
         />
         <StatCard
           label={`Processos parados (${STALLED_CASE_DAYS}d)`}
@@ -105,6 +106,7 @@ export default async function DashboardPage() {
           warn={metrics.processosParados > 0}
           href="/processos"
           icon={AlertTriangle}
+          accent="processos"
         />
         <StatCard
           label="Tarefas vencidas"
@@ -112,6 +114,7 @@ export default async function DashboardPage() {
           warn={metrics.tarefasVencidas > 0}
           href="/tarefas"
           icon={CheckSquare}
+          accent="agenda"
         />
       </div>
 
@@ -210,9 +213,9 @@ export default async function DashboardPage() {
           <div className="mb-3 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
             <span
               className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                metrics.documentosPendentes > 0
-                  ? "bg-kmp-orange/10 text-kmp-orange-deep"
-                  : "border border-black/10 text-kmp-graphite/40"
+                ACCENT_STYLES[
+                  metrics.documentosPendentes > 0 ? "alert" : "documentos"
+                ].tile
               }`}
             >
               <FileWarning className="h-3.5 w-3.5" />

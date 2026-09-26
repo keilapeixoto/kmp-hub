@@ -8,6 +8,22 @@
   --color-kmp-orange-deep: #c85a0e;
   --color-kmp-graphite: #2c2c2c;
   --color-kmp-bg: #f8f7f5;
+
+  /* Uma cor por módulo (navegação/ícones) — o laranja continua a cor de
+     maior peso (Dashboard, cartão em destaque, maior fatia de gráfico);
+     estas são só para diferenciar os outros módulos entre si. */
+  --color-kmp-leads: #2a8fa0;
+  --color-kmp-leads-deep: #1f6e7c;
+  --color-kmp-clientes: #6c5ce7;
+  --color-kmp-clientes-deep: #5140c4;
+  --color-kmp-processos: #2e9b63;
+  --color-kmp-processos-deep: #217a4c;
+  --color-kmp-agenda: #d6a419;
+  --color-kmp-agenda-deep: #ad8210;
+  --color-kmp-documentos: #9b4f8e;
+  --color-kmp-documentos-deep: #7a3a70;
+  --color-kmp-alert: #d6455f;
+  --color-kmp-alert-deep: #ad2f45;
 }
 
 body {

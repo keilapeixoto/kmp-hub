@@ -13,44 +13,35 @@ export type Accent =
   | "finance"
   | "alert";
 
-export const ACCENT_STYLES: Record<
-  Accent,
-  { tile: string; activeRow: string }
-> = {
+// Só o ícone (tile) — o destaque da linha ativa da sidebar não varia mais
+// por módulo (ver Sidebar), fundo escuro não combina com o tom claro por
+// módulo que essa variação usava antes.
+export const ACCENT_STYLES: Record<Accent, { tile: string }> = {
   brand: {
     tile: "bg-gradient-to-br from-kmp-orange to-kmp-orange-deep text-white shadow-sm shadow-kmp-orange/40",
-    activeRow: "bg-kmp-orange/10 text-kmp-orange-deep",
   },
   leads: {
     tile: "bg-gradient-to-br from-kmp-leads to-kmp-leads-deep text-white shadow-sm shadow-kmp-leads/40",
-    activeRow: "bg-kmp-leads/10 text-kmp-leads-deep",
   },
   clientes: {
     tile: "bg-gradient-to-br from-kmp-clientes to-kmp-clientes-deep text-white shadow-sm shadow-kmp-clientes/40",
-    activeRow: "bg-kmp-clientes/10 text-kmp-clientes-deep",
   },
   processos: {
     tile: "bg-gradient-to-br from-kmp-processos to-kmp-processos-deep text-white shadow-sm shadow-kmp-processos/40",
-    activeRow: "bg-kmp-processos/10 text-kmp-processos-deep",
   },
   agenda: {
     tile: "bg-gradient-to-br from-kmp-agenda to-kmp-agenda-deep text-white shadow-sm shadow-kmp-agenda/40",
-    activeRow: "bg-kmp-agenda/10 text-kmp-agenda-deep",
   },
   documentos: {
     tile: "bg-gradient-to-br from-kmp-documentos to-kmp-documentos-deep text-white shadow-sm shadow-kmp-documentos/40",
-    activeRow: "bg-kmp-documentos/10 text-kmp-documentos-deep",
   },
   config: {
     tile: "bg-gradient-to-br from-kmp-config to-kmp-config-deep text-white shadow-sm shadow-kmp-config/40",
-    activeRow: "bg-kmp-config/10 text-kmp-config-deep",
   },
   finance: {
     tile: "bg-gradient-to-br from-kmp-finance to-kmp-finance-deep text-white shadow-sm shadow-kmp-finance/40",
-    activeRow: "bg-kmp-finance/10 text-kmp-finance-deep",
   },
   alert: {
     tile: "bg-gradient-to-br from-kmp-alert to-kmp-alert-deep text-white shadow-sm shadow-kmp-alert/40",
-    activeRow: "bg-kmp-alert/10 text-kmp-alert-deep",
   },
 };

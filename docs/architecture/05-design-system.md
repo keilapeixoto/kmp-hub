@@ -67,20 +67,6 @@ Todo módulo tem cor — não existe mais um grupo "sem destaque" na sidebar
 Ícone sempre em bloco (`icon-tile`, ~28-36px, `rounded-lg`/`rounded-xl`,
 gradiente da cor pro seu `-deep`) — nunca cor sólida chapada.
 
-**Atualização (set/2026): chrome laranja sólido na sidebar e na header
-bar.** Pedido da Keila com uma referência visual de outro CRM (fundo roxo
-atrás do menu, ícones coloridos por cima) — mesma ideia, mas com a
-identidade já documentada aqui. Passou por três rodadas até fechar (viu
-prévia de cada uma antes de decidir): grafite dominante → gradiente com
-laranja dominante → **laranja sólido** (`bg-kmp-orange`, `--color-kmp-orange`
-puro, sem gradiente e sem grafite nenhum) na `<aside>` e na `<header>`.
-Texto/ícones em
-branco com opacidade (`text-white/70`, hover `text-white`), e a linha
-ativa da sidebar vira `bg-white/10 text-white` — fixo, não varia mais por
-módulo (o `activeRow` por módulo que existia em `ACCENT_STYLES` foi
-removido; só o `tile` do ícone continua colorido por módulo, que é o que
-dá o efeito "ícones vivos sobre fundo colorido" do exemplo).
-
 ## Paleta funcional (estados, não é sobre marca)
 
 Além das cores de marca, o sistema usa uma paleta funcional consistente para

@@ -77,7 +77,7 @@ export function GlobalSearchInput() {
         placeholder="Buscar leads, clientes, tarefas, guias…"
         aria-label="Busca global"
         autoComplete="off"
-        className="w-full rounded-md border border-black/10 bg-white py-2 pl-9 pr-3 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+        className="w-full rounded-md border border-black/10 py-2 pl-9 pr-3 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
       />
 
       {showDropdown ? (

@@ -1,5 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {
+  AlertTriangle,
+  CheckSquare,
+  FileWarning,
+  Percent,
+  TrendingUp,
+  UserCircle,
+  type LucideIcon,
+} from "lucide-react";
 import { getCurrentUserProfile } from "@/lib/auth";
 import { formatTimesInAllZones } from "@/lib/appointments/timezones";
 import { getTeamMembersStaff } from "@/lib/cases/data";
@@ -12,24 +21,34 @@ function StatCard({
   value,
   warn,
   href,
+  icon: Icon,
 }: {
   label: string;
   value: string | number;
   warn?: boolean;
   href: string;
+  icon: LucideIcon;
 }) {
   return (
     <Link
       href={href}
-      className="rounded-lg bg-white p-4 shadow-sm transition hover:shadow-md"
+      className="rounded-2xl bg-white p-4 shadow-sm transition hover:shadow-md"
     >
-      <p className="text-xs font-medium uppercase tracking-wide text-kmp-graphite/50">
+      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-kmp-graphite/50">
+        <span
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+            warn
+              ? "bg-kmp-orange/10 text-kmp-orange-deep"
+              : "border border-black/10 text-kmp-graphite/40"
+          }`}
+        >
+          <Icon className="h-3.5 w-3.5" />
+        </span>
         {label}
-      </p>
+      </div>
       <p
-        className={`mt-1 font-heading text-2xl ${warn ? "text-kmp-orange" : "text-kmp-graphite"}`}
+        className={`mt-3 font-heading text-2xl font-extrabold ${warn ? "text-kmp-orange-deep" : "text-kmp-graphite"}`}
       >
-        {warn ? "⚠ " : ""}
         {value}
       </p>
     </Link>
@@ -66,33 +85,38 @@ export default async function DashboardPage() {
           label="Novos leads (30d)"
           value={metrics.novosLeads30d}
           href="/leads"
+          icon={TrendingUp}
         />
         <StatCard
           label="Conversão"
           value={metrics.conversaoPct === null ? "—" : `${metrics.conversaoPct}%`}
           href="/leads"
+          icon={Percent}
         />
         <StatCard
           label="Clientes ativos"
           value={metrics.clientesAtivos}
           href="/clientes"
+          icon={UserCircle}
         />
         <StatCard
           label={`Processos parados (${STALLED_CASE_DAYS}d)`}
           value={metrics.processosParados}
           warn={metrics.processosParados > 0}
           href="/processos"
+          icon={AlertTriangle}
         />
         <StatCard
           label="Tarefas vencidas"
           value={metrics.tarefasVencidas}
           warn={metrics.tarefasVencidas > 0}
           href="/tarefas"
+          icon={CheckSquare}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-lg bg-white p-4 shadow-sm">
+        <div className="rounded-2xl bg-white p-4 shadow-sm">
           <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
             Processos ativos por etapa ({metrics.processosAtivos})
           </h2>
@@ -120,7 +144,7 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        <div className="rounded-lg bg-white p-4 shadow-sm">
+        <div className="rounded-2xl bg-white p-4 shadow-sm">
           <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
             Atendimentos de hoje
           </h2>
@@ -150,7 +174,7 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        <div className="rounded-lg bg-white p-4 shadow-sm">
+        <div className="rounded-2xl bg-white p-4 shadow-sm">
           <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
             Carga da equipe (tarefas abertas)
           </h2>
@@ -182,12 +206,20 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        <div className="rounded-lg bg-white p-4 shadow-sm">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
+        <div className="rounded-2xl bg-white p-4 shadow-sm">
+          <div className="mb-3 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
+            <span
+              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+                metrics.documentosPendentes > 0
+                  ? "bg-kmp-orange/10 text-kmp-orange-deep"
+                  : "border border-black/10 text-kmp-graphite/40"
+              }`}
+            >
+              <FileWarning className="h-3.5 w-3.5" />
+            </span>
             Documentos pendentes
-          </h2>
-          <p className="font-heading text-2xl text-kmp-graphite">
-            {metrics.documentosPendentes > 0 ? "⚠ " : ""}
+          </div>
+          <p className="font-heading text-2xl font-extrabold text-kmp-graphite">
             {metrics.documentosPendentes}
           </p>
           <p className="mt-1 text-xs text-kmp-graphite/50">

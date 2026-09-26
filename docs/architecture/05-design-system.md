@@ -16,16 +16,25 @@ elas não mudam com a biblioteca por baixo.
 
 | Token | Valor | Uso |
 |---|---|---|
-| `--font-heading` | Cormorant Garamond | Títulos, `h1`/`h2`, nomes de cliente/processo. |
-| `--font-body` | Outfit | Todo o resto — corpo de texto, labels, botões. |
+| `--font-heading` | Plus Jakarta Sans | Títulos, `h1`/`h2`, nomes de cliente/processo. |
+| `--font-body` | Plus Jakarta Sans | Todo o resto — corpo de texto, labels, botões. |
 | `--color-kmp-orange` | `#F27B20` | Ação primária, destaque, estado ativo. |
-| `--color-kmp-graphite` | `#2C2C2C` | Texto principal, sidebar. |
+| `--color-kmp-orange-deep` | `#C85A0E` | Segundo tom em gradientes de destaque (cartão hero, ícone ativo) — nunca sozinho. |
+| `--color-kmp-graphite` | `#2C2C2C` | Texto principal. |
 | `--color-kmp-bg` | `#F8F7F5` | Fundo da aplicação. |
 
 Definidos em `app/globals.css` via `@theme` (sintaxe nativa do Tailwind v4 —
 não existe `tailwind.config.js` neste projeto, e não deve ser recriado; a
 v4 resolve tudo via CSS). **Nunca usar cor hexadecimal solta num componente**
 — sempre a variável de tema (`bg-kmp-orange`, não `bg-[#f27b20]`).
+
+**Atualização (set/2026): a marca passou de duas fontes (Cormorant Garamond
+serifada + Outfit) para uma única, Plus Jakarta Sans, em todo lugar —
+produto e PDFs (briefings, guias). `--font-heading` e `--font-body`
+continuam existindo como tokens separados (resolvem para a mesma família,
+mas com pesos/tamanhos diferentes por convenção — ver Tipografia abaixo),
+então nenhum dos ~110 usos existentes de `font-heading`/`font-body` no
+código precisou mudar.**
 
 **Sem emoji em nenhuma tela ou mensagem de sistema.** Regra do produto, sem
 exceção — nem em toast de sucesso, nem em placeholder.
@@ -48,8 +57,9 @@ sexta cor sem justificativa documentada aqui.
 
 ## Tipografia
 
-- `font-heading` (Cormorant Garamond) só em títulos de página/seção —
-  nunca em botão, label, ou texto de corpo, mesmo que "pareça elegante".
+- `font-heading` (Plus Jakarta Sans, peso 700/800) só em títulos de
+  página/seção — mantém o peso mais forte que distinguia o antigo título
+  serifado, mesmo a família sendo a mesma do corpo agora.
 - Tamanhos: `text-2xl` para `h1` de página, `text-lg` para título de card/
   seção, `text-sm` para corpo padrão, `text-xs` para metadado secundário
   (data, contagem, label de campo).

@@ -135,16 +135,18 @@ export function Sidebar() {
   const currentView = useSearchParams().get("view");
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col bg-kmp-graphite text-white">
-      <div className="border-b border-white/10 px-6 py-5">
-        <span className="font-heading text-xl">KMP Hub</span>
+    <aside className="flex w-64 shrink-0 flex-col border-r border-black/5 bg-white">
+      <div className="px-6 py-5">
+        <span className="font-heading text-lg font-extrabold text-kmp-graphite">
+          KMP Hub
+        </span>
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">
         {NAV_GROUPS.map((group, index) => (
           <div key={group.label ?? `group-${index}`}>
             {group.label ? (
-              <p className="mb-2 px-3 text-xs font-medium uppercase tracking-wide text-white/40">
+              <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-kmp-graphite/40">
                 {group.label}
               </p>
             ) : null}
@@ -161,13 +163,21 @@ export function Sidebar() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition ${
+                    className={`flex items-center gap-3 rounded-xl px-2.5 py-2 text-sm font-medium transition ${
                       active
-                        ? "bg-kmp-orange text-white"
-                        : "text-white/70 hover:bg-white/10 hover:text-white"
+                        ? "bg-kmp-orange/10 text-kmp-orange-deep"
+                        : "text-kmp-graphite/70 hover:bg-black/5 hover:text-kmp-graphite"
                     }`}
                   >
-                    <Icon className="h-4 w-4 shrink-0" />
+                    <span
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                        active
+                          ? "bg-gradient-to-br from-kmp-orange to-kmp-orange-deep text-white shadow-sm shadow-kmp-orange/40"
+                          : "border border-black/10 bg-white text-kmp-graphite/40"
+                      }`}
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                    </span>
                     {item.label}
                   </Link>
                 );
@@ -177,7 +187,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-white/10 px-6 py-4 text-xs text-white/40">
+      <div className="border-t border-black/5 px-6 py-4 text-xs text-kmp-graphite/40">
         KMP Hub · v1.0
       </div>
     </aside>

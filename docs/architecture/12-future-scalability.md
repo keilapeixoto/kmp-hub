@@ -52,7 +52,7 @@ Três opções possíveis, com o trade-off de cada uma:
    `organization_id/client_id/case_id/arquivo`, policies de
    `storage.objects` ganham o segmento extra.
 7. Domínio/branding: cada organização precisa de identidade visual própria
-   (hoje `kmp-orange`/Cormorant Garamond são fixos) — os tokens de tema
+   (hoje `kmp-orange`/Plus Jakarta Sans são fixos) — os tokens de tema
    precisam sair de `app/globals.css` fixo para uma tabela
    `organizations.tema` (cores, fonte, nome) resolvida no layout raiz por
    subdomínio ou domínio customizado.

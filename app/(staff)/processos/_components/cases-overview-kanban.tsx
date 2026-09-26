@@ -10,11 +10,19 @@ import type { Client } from "@/lib/clients/types";
 import { updateCaseStatusDrag } from "../actions";
 
 const STATUS_COLUMN_STYLE: Record<string, string> = {
-  ativo: "bg-blue-50",
-  pausado: "bg-amber-50",
-  concluido: "bg-green-50",
-  cancelado: "bg-red-50",
+  ativo: "bg-blue-100",
+  pausado: "bg-amber-100",
+  concluido: "bg-green-100",
+  cancelado: "bg-red-100",
   arquivado: "bg-gray-100",
+};
+
+const STATUS_COUNT_STYLE: Record<string, string> = {
+  ativo: "text-blue-700",
+  pausado: "text-amber-700",
+  concluido: "text-green-700",
+  cancelado: "text-red-700",
+  arquivado: "text-kmp-graphite/60",
 };
 
 /**
@@ -74,7 +82,11 @@ export function CasesOverviewKanban({
           >
             <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-graphite">
               {statusLabels[statusOpt.slug] ?? statusOpt.label}
-              <span className="rounded-full bg-white px-2 py-0.5 text-xs text-kmp-graphite/60">
+              <span
+                className={`rounded-full bg-white px-2 py-0.5 text-xs font-semibold ${
+                  STATUS_COUNT_STYLE[statusOpt.slug] ?? "text-kmp-graphite/60"
+                }`}
+              >
                 {statusCases.length}
               </span>
             </h3>

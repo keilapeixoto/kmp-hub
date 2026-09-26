@@ -81,6 +81,14 @@ estado — **não varie isso por tela**:
 Qualquer badge de status novo escolhe uma dessas cinco — nunca inventa uma
 sexta cor sem justificativa documentada aqui.
 
+**Exceção documentada:** o fundo das colunas do Kanban de processos
+(`cases-overview-kanban.tsx`) usa um tom acima (`-100` em vez de `-50`,
+com o contador em `-700` em vez de cinza) — pedido explícito da Keila
+pra ficar "mais vivo" numa área com pouco texto sobre a cor (só cartões
+brancos por cima). Badges de status em texto (uma linha, uma palavra)
+continuam em `-50`/`-700` — o tom mais forte é só pra fundo de área
+grande.
+
 ## Tipografia
 
 - `font-heading` (Plus Jakarta Sans, peso 700/800) só em títulos de

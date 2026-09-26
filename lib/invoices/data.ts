@@ -16,9 +16,15 @@ export async function getInvoices(
   let query = supabase
     .from("invoices")
     .select("*, clients(nome)")
-    .order("created_at", { ascending: false });
+    .order("data_emissao", { ascending: false });
 
   if (filters.status) query = query.eq("status", filters.status);
+  if (filters.periodo) {
+    const inicio = `${filters.periodo}-01`;
+    const [ano, mes] = filters.periodo.split("-").map(Number);
+    const fim = new Date(Date.UTC(ano, mes, 1)).toISOString().slice(0, 10);
+    query = query.gte("data_emissao", inicio).lt("data_emissao", fim);
+  }
 
   const { data, error } = await query;
   if (error) throw error;
@@ -36,6 +42,20 @@ export async function getInvoices(
       inv.numero.toLowerCase().includes(termo) ||
       inv.client_nome.toLowerCase().includes(termo),
   );
+}
+
+// Meses/anos com pelo menos 1 invoice emitida, mais recente primeiro —
+// alimenta as abas de período em cima da lista.
+export async function getInvoicePeriods(): Promise<string[]> {
+  const supabase = await createSupabaseClient();
+  const { data, error } = await supabase.from("invoices").select("data_emissao");
+  if (error) throw error;
+
+  const periodos = new Set<string>();
+  for (const row of (data ?? []) as Array<{ data_emissao: string }>) {
+    periodos.add(row.data_emissao.slice(0, 7));
+  }
+  return Array.from(periodos).sort((a, b) => b.localeCompare(a));
 }
 
 export async function getInvoice(id: string): Promise<InvoiceWithItems | null> {

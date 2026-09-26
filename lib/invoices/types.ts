@@ -58,4 +58,5 @@ export type InvoiceWithClient = Invoice & { client_nome: string };
 export type InvoiceFilters = {
   status?: string;
   q?: string;
+  periodo?: string; // "YYYY-MM", filtra por data_emissao dentro do mês
 };

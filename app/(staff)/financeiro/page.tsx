@@ -1,9 +1,24 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUserRole } from "@/lib/auth";
-import { getInvoiceSummary, getInvoices } from "@/lib/invoices/data";
+import { getInvoicePeriods, getInvoiceSummary, getInvoices } from "@/lib/invoices/data";
 import { INVOICE_STATUSES } from "@/lib/invoices/constants";
 import { InvoiceStatusSelect } from "./_components/invoice-status-select";
+
+const MESES_PT = [
+  "Jan",
+  "Fev",
+  "Mar",
+  "Abr",
+  "Mai",
+  "Jun",
+  "Jul",
+  "Ago",
+  "Set",
+  "Out",
+  "Nov",
+  "Dez",
+];
 
 function firstValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
@@ -13,6 +28,30 @@ function formatMoeda(value: number, moeda: string): string {
   const locale = moeda === "BRL" ? "pt-BR" : "en-AU";
   const prefix = moeda === "BRL" ? "R$ " : "AUD $";
   return prefix + value.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatData(iso: string): string {
+  const [ano, mes, dia] = iso.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
+function periodoLabel(periodo: string): string {
+  const [ano, mes] = periodo.split("-").map(Number);
+  return `${MESES_PT[mes - 1]}/${ano}`;
+}
+
+// Monta a URL da aba/filtro preservando os outros parâmetros já ativos.
+function hrefComFiltros(
+  atual: { q: string; status: string; periodo: string },
+  override: Partial<{ q: string; status: string; periodo: string }>,
+): string {
+  const params = new URLSearchParams();
+  const combinado = { ...atual, ...override };
+  if (combinado.q) params.set("q", combinado.q);
+  if (combinado.status) params.set("status", combinado.status);
+  if (combinado.periodo) params.set("periodo", combinado.periodo);
+  const qs = params.toString();
+  return qs ? `/financeiro?${qs}` : "/financeiro";
 }
 
 export default async function FinanceiroPage({
@@ -28,9 +67,12 @@ export default async function FinanceiroPage({
   const params = await searchParams;
   const status = firstValue(params.status) ?? "";
   const q = firstValue(params.q) ?? "";
+  const periodo = firstValue(params.periodo) ?? "";
+  const filtrosAtuais = { q, status, periodo };
 
-  const invoices = await getInvoices({ status, q });
+  const invoices = await getInvoices({ status, q, periodo });
   const summary = await getInvoiceSummary();
+  const periodos = await getInvoicePeriods();
 
   return (
     <div className="space-y-6">
@@ -67,10 +109,39 @@ export default async function FinanceiroPage({
         ))}
       </div>
 
+      {periodos.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href={hrefComFiltros(filtrosAtuais, { periodo: "" })}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+              !periodo
+                ? "border-kmp-orange bg-kmp-orange text-white"
+                : "border-black/10 text-kmp-graphite/70 hover:border-kmp-orange hover:text-kmp-orange"
+            }`}
+          >
+            Todos os meses
+          </Link>
+          {periodos.map((p) => (
+            <Link
+              key={p}
+              href={hrefComFiltros(filtrosAtuais, { periodo: p })}
+              className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+                periodo === p
+                  ? "border-kmp-orange bg-kmp-orange text-white"
+                  : "border-black/10 text-kmp-graphite/70 hover:border-kmp-orange hover:text-kmp-orange"
+              }`}
+            >
+              {periodoLabel(p)}
+            </Link>
+          ))}
+        </div>
+      ) : null}
+
       <form
         method="GET"
         className="grid grid-cols-1 gap-3 rounded-lg bg-white p-4 shadow-sm sm:grid-cols-3"
       >
+        <input type="hidden" name="periodo" value={periodo} />
         <input
           type="text"
           name="q"
@@ -99,7 +170,7 @@ export default async function FinanceiroPage({
           >
             Filtrar
           </button>
-          {q || status ? (
+          {q || status || periodo ? (
             <Link
               href="/financeiro"
               className="ml-3 text-sm text-kmp-graphite/70 hover:text-kmp-orange"
@@ -110,32 +181,55 @@ export default async function FinanceiroPage({
         </div>
       </form>
 
-      <div className="rounded-lg bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-lg bg-white shadow-sm">
         {invoices.length === 0 ? (
           <p className="p-8 text-center text-sm text-kmp-graphite/60">
             Nenhuma invoice encontrada.
           </p>
         ) : (
-          <ul className="divide-y divide-black/5">
-            {invoices.map((inv) => (
-              <li key={inv.id} className="flex items-center justify-between gap-3 p-4 text-sm">
-                <Link href={`/financeiro/${inv.id}`} className="min-w-0 flex-1">
-                  <p className="font-medium text-kmp-graphite">
-                    {inv.numero} · {inv.client_nome}
-                  </p>
-                  <p className="mt-1 text-xs text-kmp-graphite/50">
+          <table className="w-full min-w-[720px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-black/10 text-xs font-semibold uppercase tracking-wide text-kmp-graphite/50">
+                <th className="px-4 py-3">Data</th>
+                <th className="px-4 py-3">Nome</th>
+                <th className="px-4 py-3">Nº invoice</th>
+                <th className="px-4 py-3">Serviço</th>
+                <th className="px-4 py-3 text-right">Valor</th>
+                <th className="px-4 py-3 text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-black/5">
+              {invoices.map((inv) => (
+                <tr key={inv.id} className="hover:bg-black/[0.02]">
+                  <td className="whitespace-nowrap px-4 py-3 text-kmp-graphite/70">
+                    {formatData(inv.data_emissao)}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Link
+                      href={`/financeiro/${inv.id}`}
+                      className="font-medium text-kmp-graphite hover:text-kmp-orange"
+                    >
+                      {inv.client_nome}
+                    </Link>
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3 text-kmp-graphite/70">
+                    {inv.numero}
+                  </td>
+                  <td className="px-4 py-3 text-kmp-graphite/70">
                     {inv.servico_referente ?? "—"}
-                  </p>
-                </Link>
-                <div className="flex items-center gap-3">
-                  <span className="font-heading text-base font-bold text-kmp-graphite">
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right font-heading font-bold text-kmp-graphite">
                     {formatMoeda(inv.total, inv.moeda)}
-                  </span>
-                  <InvoiceStatusSelect invoiceId={inv.id} status={inv.status} />
-                </div>
-              </li>
-            ))}
-          </ul>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex justify-end">
+                      <InvoiceStatusSelect invoiceId={inv.id} status={inv.status} />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </div>

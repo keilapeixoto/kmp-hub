@@ -67,18 +67,18 @@ Todo módulo tem cor — não existe mais um grupo "sem destaque" na sidebar
 Ícone sempre em bloco (`icon-tile`, ~28-36px, `rounded-lg`/`rounded-xl`,
 gradiente da cor pro seu `-deep`) — nunca cor sólida chapada.
 
-**Atualização (set/2026): logo real num selo laranja na header bar,
+**Atualização (set/2026): logo real num selo laranja no topo da sidebar,
 resto do chrome continua branco.** Pedido da Keila com uma referência
 visual de outro CRM (fundo colorido atrás do menu/busca) — testado em
-algumas variações (sidebar inteira, depois só a header, gradiente vs.
-sólido) até ela decidir que só queria o laranja num selo pequeno em volta
-do logo, com o resto voltando ao branco de sempre. `<header>` e `<aside>`
-ficam exatamente como documentado acima (sem chrome colorido); o único
-elemento novo é, no canto esquerdo da `<header>`, um bloco
+várias variações (sidebar inteira, header inteira, gradiente vs. sólido,
+selo na header) até fechar: `<header>` e `<aside>` ficam exatamente como
+documentado acima (sem chrome colorido, sem nada na header); o "KMP Hub"
+em texto que ficava no topo da `<aside>` vira um bloco
 `bg-kmp-orange rounded-lg px-3 py-1.5` com o logo real (`/kmp-logo.png`,
 mesmo arquivo do cabeçalho da invoice — fundo branco arredondado + "kmp"
 laranja + "consulting." branco, pensado pra sentar sobre um fundo
-laranja) seguido de "Hub" em texto branco, antes da busca global.
+laranja) seguido de "Hub" em texto branco. O laranja existe só ali, pra
+dar contraste ao logo — nenhum outro elemento do chrome muda.
 
 ## Paleta funcional (estados, não é sobre marca)
 

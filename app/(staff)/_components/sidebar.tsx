@@ -202,9 +202,15 @@ export function Sidebar() {
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-black/5 bg-white">
       <div className="px-6 py-5">
-        <span className="font-heading text-lg font-extrabold text-kmp-graphite">
-          KMP Hub
-        </span>
+        <div className="flex w-fit items-center gap-2 rounded-lg bg-kmp-orange px-3 py-1.5">
+          {/* eslint-disable-next-line @next/next/no-img-element -- logo
+              fixo, mesmo arquivo usado no cabeçalho da invoice; não
+              precisa da otimização do next/image. */}
+          <img src="/kmp-logo.png" alt="KMP Consulting" className="h-6 w-auto" />
+          <span className="font-heading text-base font-extrabold text-white">
+            Hub
+          </span>
+        </div>
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">

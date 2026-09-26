@@ -4,10 +4,14 @@ import { useActionState, useMemo, useState } from "react";
 import type { Case, ServiceType } from "@/lib/cases/types";
 import type { Client } from "@/lib/clients/types";
 import {
+  DEFAULT_PAYID,
+  DEFAULT_PIX,
   GST_RATE,
   INVOICE_CURRENCIES,
   INVOICE_PAYMENT_METHODS,
+  SERVICO_REFERENTE_OPTIONS,
 } from "@/lib/invoices/constants";
+import { createQuickClient } from "../actions";
 import type { InvoiceFormState } from "../actions";
 import type { InvoiceWithItems } from "@/lib/invoices/types";
 
@@ -43,12 +47,28 @@ export function InvoiceForm({
   const initialState: InvoiceFormState = { error: null };
   const [state, formAction, pending] = useActionState(action, initialState);
 
+  const [clientsList, setClientsList] = useState(clients);
   const [clientId, setClientId] = useState(invoice?.client_id ?? "");
+  const [showNovoCliente, setShowNovoCliente] = useState(false);
+  const [novoClienteNome, setNovoClienteNome] = useState("");
+  const [novoClienteEmail, setNovoClienteEmail] = useState("");
+  const [novoClienteTelefone, setNovoClienteTelefone] = useState("");
+  const [novoClienteErro, setNovoClienteErro] = useState<string | null>(null);
+  const [criandoCliente, setCriandoCliente] = useState(false);
   const [moeda, setMoeda] = useState(invoice?.moeda ?? "AUD");
   const [descontoTipo, setDescontoTipo] = useState(invoice?.desconto_tipo ?? "none");
   const [descontoValor, setDescontoValor] = useState(String(invoice?.desconto_valor ?? 0));
   const [gstIncluido, setGstIncluido] = useState(invoice?.gst_incluido ?? false);
   const [formaPagamento, setFormaPagamento] = useState(invoice?.forma_pagamento ?? "payid");
+  const servicoJaConhecido =
+    !invoice?.servico_referente ||
+    (SERVICO_REFERENTE_OPTIONS as readonly string[]).includes(invoice.servico_referente);
+  const [servicoOpcao, setServicoOpcao] = useState(
+    invoice?.servico_referente && servicoJaConhecido ? invoice.servico_referente : "Outro",
+  );
+  const [servicoOutro, setServicoOutro] = useState(
+    invoice?.servico_referente && !servicoJaConhecido ? invoice.servico_referente : "",
+  );
   const [items, setItems] = useState<ItemRow[]>(
     invoice && invoice.items.length > 0
       ? invoice.items.map((item) => ({
@@ -91,6 +111,25 @@ export function InvoiceForm({
     setItems((prev) => (prev.length > 1 ? prev.filter((_, i) => i !== index) : prev));
   }
 
+  async function handleCriarCliente() {
+    setCriandoCliente(true);
+    setNovoClienteErro(null);
+    const result = await createQuickClient(novoClienteNome, novoClienteEmail, novoClienteTelefone);
+    setCriandoCliente(false);
+    if (result.error || !result.client) {
+      setNovoClienteErro(result.error ?? "Não foi possível criar o cliente.");
+      return;
+    }
+    setClientsList((prev) =>
+      [...prev, result.client as Client].sort((a, b) => a.nome.localeCompare(b.nome)),
+    );
+    setClientId(result.client.id);
+    setShowNovoCliente(false);
+    setNovoClienteNome("");
+    setNovoClienteEmail("");
+    setNovoClienteTelefone("");
+  }
+
   return (
     <form action={formAction} className="space-y-8">
       <input type="hidden" name="items_json" value={JSON.stringify(items)} />
@@ -99,9 +138,18 @@ export function InvoiceForm({
         <h2 className="font-heading text-lg text-kmp-graphite">Fatura</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label htmlFor="client_id" className={labelClass}>
-              Cliente *
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="client_id" className={labelClass}>
+                Cliente *
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowNovoCliente((prev) => !prev)}
+                className="text-xs font-medium text-kmp-orange hover:underline"
+              >
+                {showNovoCliente ? "Cancelar" : "+ Novo cliente"}
+              </button>
+            </div>
             <select
               id="client_id"
               name="client_id"
@@ -111,12 +159,49 @@ export function InvoiceForm({
               className={inputClass}
             >
               <option value="">Selecione um cliente</option>
-              {clients.map((c) => (
+              {clientsList.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.nome}
                 </option>
               ))}
             </select>
+
+            {showNovoCliente ? (
+              <div className="mt-2 space-y-2 rounded-md border border-black/10 bg-black/5 p-3">
+                <input
+                  type="text"
+                  value={novoClienteNome}
+                  onChange={(e) => setNovoClienteNome(e.target.value)}
+                  placeholder="Nome do cliente *"
+                  className={inputClass + " mt-0"}
+                />
+                <input
+                  type="email"
+                  value={novoClienteEmail}
+                  onChange={(e) => setNovoClienteEmail(e.target.value)}
+                  placeholder="E-mail (opcional)"
+                  className={inputClass + " mt-0"}
+                />
+                <input
+                  type="text"
+                  value={novoClienteTelefone}
+                  onChange={(e) => setNovoClienteTelefone(e.target.value)}
+                  placeholder="Telefone (opcional)"
+                  className={inputClass + " mt-0"}
+                />
+                {novoClienteErro ? (
+                  <p className="text-xs text-red-600">{novoClienteErro}</p>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={handleCriarCliente}
+                  disabled={criandoCliente || !novoClienteNome.trim()}
+                  className="rounded-md bg-kmp-orange px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+                >
+                  {criandoCliente ? "Criando…" : "Criar cliente"}
+                </button>
+              </div>
+            ) : null}
           </div>
           <div>
             <label htmlFor="case_id" className={labelClass}>
@@ -156,17 +241,34 @@ export function InvoiceForm({
             </select>
           </div>
           <div>
-            <label htmlFor="servico_referente" className={labelClass}>
+            <label htmlFor="servico_referente_opcao" className={labelClass}>
               Serviço referente
             </label>
-            <input
-              id="servico_referente"
-              name="servico_referente"
-              type="text"
-              defaultValue={invoice?.servico_referente ?? ""}
-              placeholder="Ex: Subclass 485 Post Higher Education"
+            <select
+              id="servico_referente_opcao"
+              value={servicoOpcao}
+              onChange={(e) => setServicoOpcao(e.target.value)}
               className={inputClass}
-            />
+            >
+              {SERVICO_REFERENTE_OPTIONS.map((opcao) => (
+                <option key={opcao} value={opcao}>
+                  {opcao}
+                </option>
+              ))}
+            </select>
+            {servicoOpcao === "Outro" ? (
+              <input
+                id="servico_referente"
+                name="servico_referente"
+                type="text"
+                value={servicoOutro}
+                onChange={(e) => setServicoOutro(e.target.value)}
+                placeholder="Ex: Subclass 485 Post Higher Education"
+                className={inputClass}
+              />
+            ) : (
+              <input type="hidden" name="servico_referente" value={servicoOpcao} />
+            )}
           </div>
           <div>
             <label htmlFor="data_emissao" className={labelClass}>
@@ -342,7 +444,7 @@ export function InvoiceForm({
                 id="payid_valor"
                 name="payid_valor"
                 type="text"
-                defaultValue={invoice?.payid_valor ?? ""}
+                defaultValue={invoice?.payid_valor ?? DEFAULT_PAYID.valor}
                 className={inputClass}
               />
             </div>
@@ -354,7 +456,7 @@ export function InvoiceForm({
                 id="payid_titular"
                 name="payid_titular"
                 type="text"
-                defaultValue={invoice?.payid_titular ?? ""}
+                defaultValue={invoice?.payid_titular ?? DEFAULT_PAYID.titular}
                 className={inputClass}
               />
             </div>
@@ -366,7 +468,7 @@ export function InvoiceForm({
                 id="payid_bsb"
                 name="payid_bsb"
                 type="text"
-                defaultValue={invoice?.payid_bsb ?? ""}
+                defaultValue={invoice?.payid_bsb ?? DEFAULT_PAYID.bsb}
                 className={inputClass}
               />
             </div>
@@ -378,7 +480,7 @@ export function InvoiceForm({
                 id="payid_conta"
                 name="payid_conta"
                 type="text"
-                defaultValue={invoice?.payid_conta ?? ""}
+                defaultValue={invoice?.payid_conta ?? DEFAULT_PAYID.conta}
                 className={inputClass}
               />
             </div>
@@ -393,7 +495,7 @@ export function InvoiceForm({
                 id="pix_chave"
                 name="pix_chave"
                 type="text"
-                defaultValue={invoice?.pix_chave ?? ""}
+                defaultValue={invoice?.pix_chave ?? DEFAULT_PIX.chave}
                 className={inputClass}
               />
             </div>
@@ -405,7 +507,7 @@ export function InvoiceForm({
                 id="pix_titular"
                 name="pix_titular"
                 type="text"
-                defaultValue={invoice?.pix_titular ?? ""}
+                defaultValue={invoice?.pix_titular ?? DEFAULT_PIX.titular}
                 className={inputClass}
               />
             </div>

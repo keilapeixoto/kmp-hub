@@ -52,8 +52,8 @@ export default async function FinanceiroPage({
           type="text"
           name="q"
           defaultValue={q}
-          placeholder="Buscar por número"
-          aria-label="Buscar por número"
+          placeholder="Buscar por número ou cliente"
+          aria-label="Buscar por número ou cliente"
           className="rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange sm:col-span-2"
         />
         <select

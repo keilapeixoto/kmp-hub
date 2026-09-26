@@ -19,16 +19,21 @@ export async function getInvoices(
 
   if (filters.status) query = query.eq("status", filters.status);
 
-  const termo = filters.q?.trim().replace(/[,()%]/g, "");
-  if (termo) query = query.ilike("numero", `%${termo}%`);
-
   const { data, error } = await query;
   if (error) throw error;
-  return ((data ?? []) as Array<Invoice & { clients: { nome: string } | null }>).map(
+  const invoices = ((data ?? []) as Array<Invoice & { clients: { nome: string } | null }>).map(
     ({ clients, ...invoice }) => ({
       ...invoice,
       client_nome: clients?.nome ?? "—",
     }),
+  );
+
+  const termo = filters.q?.trim().toLowerCase();
+  if (!termo) return invoices;
+  return invoices.filter(
+    (inv) =>
+      inv.numero.toLowerCase().includes(termo) ||
+      inv.client_nome.toLowerCase().includes(termo),
   );
 }
 

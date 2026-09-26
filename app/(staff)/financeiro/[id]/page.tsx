@@ -8,12 +8,22 @@ import type { InvoiceStatus } from "@/lib/invoices/types";
 import { InvoicePdfButton } from "../_components/invoice-pdf-button";
 import { updateInvoiceStatus } from "../actions";
 
-const NEXT_STATUSES: Record<InvoiceStatus, InvoiceStatus[]> = {
-  rascunho: ["enviada", "cancelada"],
-  enviada: ["paga", "vencida", "cancelada"],
-  paga: [],
-  vencida: ["paga", "cancelada"],
-  cancelada: [],
+// Controle manual: qualquer status pode virar qualquer outro — é a equipe
+// "dando baixa" à mão (paga/pendente/cancelada), não um fluxo travado.
+const ALL_STATUSES: InvoiceStatus[] = [
+  "rascunho",
+  "enviada",
+  "paga",
+  "vencida",
+  "cancelada",
+];
+
+const STATUS_BUTTON_STYLE: Record<InvoiceStatus, string> = {
+  rascunho: "border-black/10 text-kmp-graphite hover:border-kmp-orange hover:text-kmp-orange",
+  enviada: "border-black/10 text-kmp-graphite hover:border-kmp-orange hover:text-kmp-orange",
+  paga: "border-green-200 bg-green-50 text-green-700 hover:bg-green-100",
+  vencida: "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100",
+  cancelada: "border-red-200 bg-red-50 text-red-700 hover:bg-red-100",
 };
 
 export default async function InvoiceDetailPage({
@@ -63,11 +73,11 @@ export default async function InvoiceDetailPage({
           <span className="text-sm text-kmp-graphite/60">
             Status atual: <span className="font-medium text-kmp-graphite">{statusLabel(invoice.status)}</span>
           </span>
-          {NEXT_STATUSES[invoice.status].map((next) => (
+          {ALL_STATUSES.filter((next) => next !== invoice.status).map((next) => (
             <form key={next} action={updateInvoiceStatus.bind(null, invoice.id, next)}>
               <button
                 type="submit"
-                className="rounded-full border border-black/10 px-3 py-1 text-xs font-medium text-kmp-graphite transition hover:border-kmp-orange hover:text-kmp-orange"
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition ${STATUS_BUTTON_STYLE[next]}`}
               >
                 Marcar como {statusLabel(next).toLowerCase()}
               </button>

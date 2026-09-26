@@ -183,6 +183,42 @@ export async function updateInvoice(
   redirect(`/financeiro/${id}`);
 }
 
+export type QuickClientResult =
+  | { error: string; client: null }
+  | { error: null; client: { id: string; nome: string } };
+
+export async function createQuickClient(
+  nome: string,
+  email: string,
+  telefone: string,
+): Promise<QuickClientResult> {
+  const nomeTrim = nome.trim();
+  if (!nomeTrim) {
+    return { error: "Informe o nome do cliente.", client: null };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("clients")
+    .insert({
+      nome: nomeTrim,
+      email: email.trim() || null,
+      telefone: telefone.trim() || null,
+    })
+    .select("id, nome")
+    .single();
+
+  if (error || !data) {
+    return {
+      error: `Não foi possível criar o cliente: ${error?.message ?? "erro desconhecido"}`,
+      client: null,
+    };
+  }
+
+  revalidatePath("/clientes");
+  return { error: null, client: data };
+}
+
 export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {
   const supabase = await createClient();
   const update: { status: InvoiceStatus; data_pagamento?: string } = { status };

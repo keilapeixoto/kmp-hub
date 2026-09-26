@@ -36,7 +36,7 @@ Repositório e schema novos (não evolução do CRM atual) — motivo: RLS por f
 - **Notas internas e riscos** ficam em colunas/tabelas separadas, com política RLS que exclui a função `client` incondicionalmente — nunca aparecem no portal.
 - **Documentos**: soft delete apenas (arquivamento), nunca exclusão permanente; só admin acessa arquivados.
 - **Fusos horários**: tudo em UTC no banco, conversão só na interface (BR, Sydney, Brisbane, fuso do cliente).
-- **Fases rígidas**: nada da Fase 2 (portal, formulários públicos, propostas, invoices, integrações externas, IA) entra antes da Fase 1 estar validada em uso real.
+- **Fases rígidas**: nada da Fase 2 (portal, formulários públicos, propostas, invoices, integrações externas, IA) entra antes da Fase 1 estar validada em uso real. **Exceção aberta (set/2026):** emissão de invoices adiantada a pedido da Keila, antes da Fase 1 fechar (Sprint 8/checklist da seção 32 e projeto Supabase de produção ainda pendentes). Escopo inicial: registro/emissão interna (sem Stripe/Xero — essas integrações continuam fora de escopo até serem pedidas).
 - **Maior risco do projeto é RLS mal configurado.** Toda tabela nova precisa de teste automatizado de permissão por função, antes de qualquer deploy.
 
 ## Funções e permissões (seção 5 do plano)
@@ -66,8 +66,9 @@ Implementação: função `get_user_role()` no Postgres + políticas RLS por tab
 
 ```
 /app/(staff)/...     app da equipe — dashboard, leads, clientes, processos, agenda,
-                     tarefas, documentos, guias, financeiro (F3), relatórios,
-                     templates, equipe, configurações, busca
+                     tarefas, documentos, guias, financeiro (invoices — adiantado
+                     da Fase 2, ver seção "Convenções"), relatórios, templates,
+                     equipe, configurações, busca
 /app/(portal)/...    portal do cliente — mesmas convenções de layout, rotas
                      próprias (/portal/login, /portal, /portal/documentos, etc.)
 ```
@@ -88,6 +89,16 @@ cliente; export do CRM antigo), 2 PDFs > 50 MB não importados (limite do plano
 Free do Supabase), projeto Supabase de produção ainda não criado, testes pgTAP
 (`supabase/tests/database/`) rodados manualmente via SQL Editor. Scripts de
 importação em `scripts/`; mapeamento com nomes reais em `import/` (fora do git).
+
+**Financeiro/invoices (set/2026, exceção de fase — ver Convenções acima):**
+`invoices`/`invoice_items` (`lib/invoices/`, `app/(staff)/financeiro/`), só
+`admin`/`finance` (RLS em `018_invoices_rls.test.sql`). Numeração automática
+por trigger (`INV-<ano>-####`). PDF gerado no navegador com `html2canvas` +
+`jspdf` (offscreen clone, sem servidor) — modelo de tela e de PDF portados de
+um gerador HTML avulso que a Keila já usava (PayID/PIX, AUD/BRL, desconto
+fixo/percentual, GST 10% opcional). Sem Stripe/Xero/cobrança automática —
+fora de escopo até serem pedidos. Portal do cliente não vê invoices ainda
+(decisão da Keila, v1 é só uso interno da equipe).
 
 ## Dados de demonstração
 

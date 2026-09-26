@@ -10,6 +10,7 @@ export type Accent =
   | "agenda"
   | "documentos"
   | "config"
+  | "finance"
   | "alert";
 
 export const ACCENT_STYLES: Record<
@@ -43,6 +44,10 @@ export const ACCENT_STYLES: Record<
   config: {
     tile: "bg-gradient-to-br from-kmp-config to-kmp-config-deep text-white shadow-sm shadow-kmp-config/40",
     activeRow: "bg-kmp-config/10 text-kmp-config-deep",
+  },
+  finance: {
+    tile: "bg-gradient-to-br from-kmp-finance to-kmp-finance-deep text-white shadow-sm shadow-kmp-finance/40",
+    activeRow: "bg-kmp-finance/10 text-kmp-finance-deep",
   },
   alert: {
     tile: "bg-gradient-to-br from-kmp-alert to-kmp-alert-deep text-white shadow-sm shadow-kmp-alert/40",

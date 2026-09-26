@@ -1,0 +1,162 @@
+import type { Client } from "@/lib/clients/types";
+import type { InvoiceWithItems } from "@/lib/invoices/types";
+
+function formatMoeda(value: number, moeda: string): string {
+  const locale = moeda === "BRL" ? "pt-BR" : "en-AU";
+  const prefix = moeda === "BRL" ? "R$ " : "AUD $";
+  return prefix + value.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatData(iso: string | null): string {
+  if (!iso) return "—";
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+}
+
+export function InvoiceDocument({
+  invoice,
+  client,
+}: {
+  invoice: InvoiceWithItems;
+  client: Client | null;
+}) {
+  return (
+    <div className="mx-auto flex w-full max-w-[720px] flex-col bg-white text-kmp-graphite shadow-sm">
+      <div className="flex items-start justify-between gap-4 bg-gradient-to-br from-kmp-orange to-kmp-orange-deep px-8 py-6 text-white">
+        <div>
+          <p className="font-heading text-2xl font-bold">KMP Consulting</p>
+          <p className="mt-1 text-[11px] font-light opacity-90">
+            Estratégia que conecta. Futuro que transforma.
+          </p>
+        </div>
+        <div className="text-right">
+          <h1 className="font-heading text-2xl font-bold">Invoice</h1>
+          <p className="mt-1 text-xs opacity-90">Nº {invoice.numero}</p>
+        </div>
+      </div>
+
+      <div className="flex-1 px-8 py-7">
+        <div className="mb-6 flex flex-wrap justify-between gap-4 text-sm">
+          <div>
+            <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-kmp-orange-deep">
+              Cobrado a
+            </p>
+            <p>{client?.nome ?? "—"}</p>
+            <p>{client?.email ?? ""}</p>
+            <p>{client?.telefone ?? ""}</p>
+          </div>
+          <div>
+            <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-kmp-orange-deep">
+              Detalhes
+            </p>
+            <p>Emissão: {formatData(invoice.data_emissao)}</p>
+            <p>Vencimento: {formatData(invoice.data_vencimento)}</p>
+            <p>Serviço: {invoice.servico_referente ?? "—"}</p>
+          </div>
+        </div>
+
+        <table className="mb-4 w-full border-collapse text-[13.5px]">
+          <thead>
+            <tr>
+              <th className="border-b-2 border-kmp-orange/20 pb-2 text-left text-[11px] font-medium uppercase tracking-wide text-kmp-graphite/50">
+                Descrição
+              </th>
+              <th className="border-b-2 border-kmp-orange/20 pb-2 text-right text-[11px] font-medium uppercase tracking-wide text-kmp-graphite/50">
+                Qtd
+              </th>
+              <th className="border-b-2 border-kmp-orange/20 pb-2 text-right text-[11px] font-medium uppercase tracking-wide text-kmp-graphite/50">
+                Valor unit.
+              </th>
+              <th className="border-b-2 border-kmp-orange/20 pb-2 text-right text-[11px] font-medium uppercase tracking-wide text-kmp-graphite/50">
+                Subtotal
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {invoice.items.map((item) => (
+              <tr key={item.id}>
+                <td className="border-b border-black/5 py-2 align-top">{item.descricao}</td>
+                <td className="border-b border-black/5 py-2 text-right align-top">
+                  {item.quantidade}
+                </td>
+                <td className="border-b border-black/5 py-2 text-right align-top">
+                  {formatMoeda(item.valor_unitario, invoice.moeda)}
+                </td>
+                <td className="border-b border-black/5 py-2 text-right align-top">
+                  {formatMoeda(item.quantidade * item.valor_unitario, invoice.moeda)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="ml-auto w-64 text-[13.5px]">
+          <div className="flex justify-between py-1">
+            <span>Subtotal</span>
+            <span>{formatMoeda(invoice.subtotal, invoice.moeda)}</span>
+          </div>
+          {invoice.gst_valor > 0 ? (
+            <div className="flex justify-between py-1">
+              <span>GST (10%)</span>
+              <span>{formatMoeda(invoice.gst_valor, invoice.moeda)}</span>
+            </div>
+          ) : null}
+          <div className="mt-1.5 flex justify-between border-t-2 border-kmp-orange pt-2 font-heading text-base font-bold text-kmp-orange-deep">
+            <span>Total</span>
+            <span>{formatMoeda(invoice.total, invoice.moeda)}</span>
+          </div>
+        </div>
+
+        <div className="my-5 rounded-md border-l-[3px] border-kmp-orange bg-kmp-orange/5 p-4 text-[13.5px]">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-kmp-orange-deep">
+            {invoice.forma_pagamento === "payid" ? "Pagamento via PayID" : "Pagamento via PIX"}
+          </p>
+          {invoice.forma_pagamento === "payid" ? (
+            <>
+              <div className="flex justify-between py-0.5">
+                <span>PayID</span>
+                <span>{invoice.payid_valor ?? "—"}</span>
+              </div>
+              <div className="flex justify-between py-0.5">
+                <span>BSB</span>
+                <span>{invoice.payid_bsb ?? "—"}</span>
+              </div>
+              <div className="flex justify-between py-0.5">
+                <span>Conta</span>
+                <span>{invoice.payid_conta ?? "—"}</span>
+              </div>
+              <div className="flex justify-between py-0.5">
+                <span>Titular</span>
+                <span>{invoice.payid_titular ?? "—"}</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-between py-0.5">
+                <span>Chave PIX</span>
+                <span>{invoice.pix_chave ?? "—"}</span>
+              </div>
+              <div className="flex justify-between py-0.5">
+                <span>Titular</span>
+                <span>{invoice.pix_titular ?? "—"}</span>
+              </div>
+            </>
+          )}
+        </div>
+
+        {invoice.observacoes ? (
+          <p className="mt-4 whitespace-pre-wrap text-xs text-kmp-graphite/60">
+            {invoice.observacoes}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="bg-kmp-graphite px-6 py-4 text-center text-white">
+        <p className="font-heading text-base font-semibold text-kmp-orange">
+          Obrigada pela confiança na KMP Consulting
+        </p>
+        <p className="mt-1 text-[11px]">KMP Consulting | vistos@kmpconsulting.com.au</p>
+      </div>
+    </div>
+  );
+}

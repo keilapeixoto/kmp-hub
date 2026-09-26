@@ -59,6 +59,7 @@ nunca reescreve as classes na mão.
 | `--color-kmp-agenda` / `-deep` | `#D6A419` / `#AD8210` | Tarefas, Agenda |
 | `--color-kmp-documentos` / `-deep` | `#9B4F8E` / `#7A3A70` | Guias, Templates, Ocupações |
 | `--color-kmp-config` / `-deep` | `#3B6FD6` / `#2A54B0` | Configurações (todos os 8 itens do grupo) |
+| `--color-kmp-finance` / `-deep` | `#C23B6E` / `#9A2C56` | Financeiro (invoices) |
 | `--color-kmp-alert` / `-deep` | `#D6455F` / `#AD2F45` | Vencimentos; estado `warn` de qualquer `StatCard` |
 
 Todo módulo tem cor — não existe mais um grupo "sem destaque" na sidebar

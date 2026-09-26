@@ -67,27 +67,18 @@ Todo módulo tem cor — não existe mais um grupo "sem destaque" na sidebar
 Ícone sempre em bloco (`icon-tile`, ~28-36px, `rounded-lg`/`rounded-xl`,
 gradiente da cor pro seu `-deep`) — nunca cor sólida chapada.
 
-**Atualização (set/2026): chrome escuro na sidebar e na header bar.**
-Pedido da Keila com uma referência visual de outro CRM (fundo roxo atrás
-do menu, ícones coloridos por cima) — mesma ideia, mas com a identidade
-já documentada aqui, e laranja vibrante como cor dominante (pedido
-explícito dela, "mais laranja que preto" e depois "mais vibrante"):
-`bg-gradient-to-br from-kmp-orange via-kmp-orange to-kmp-graphite` na
-`<aside>` e `bg-gradient-to-r from-kmp-orange via-kmp-orange
-to-kmp-graphite` na `<header>` — usa o `--color-kmp-orange` puro (não o
-`-deep`) nos dois primeiros stops, o grafite só aparece no canto oposto
-(embaixo na sidebar, à direita na header), pra dar profundidade sem virar
-o protagonista. Texto/ícones em
-branco com opacidade (`text-white/70`, hover `text-white`), e a linha
-ativa da sidebar vira `bg-white/10 text-white` — fixo, não varia mais por
-módulo (o `activeRow` por módulo que existia em `ACCENT_STYLES` foi
-removido; só o `tile` do ícone continua colorido por módulo, que é o que
-dá o efeito "ícones vivos sobre fundo colorido" do exemplo).
-
-O topo da sidebar troca o texto "KMP Hub" pelo logo real (`/kmp-logo.png`,
+**Atualização (set/2026): logo real num selo laranja na header bar,
+resto do chrome continua branco.** Pedido da Keila com uma referência
+visual de outro CRM (fundo colorido atrás do menu/busca) — testado em
+algumas variações (sidebar inteira, depois só a header, gradiente vs.
+sólido) até ela decidir que só queria o laranja num selo pequeno em volta
+do logo, com o resto voltando ao branco de sempre. `<header>` e `<aside>`
+ficam exatamente como documentado acima (sem chrome colorido); o único
+elemento novo é, no canto esquerdo da `<header>`, um bloco
+`bg-kmp-orange rounded-lg px-3 py-1.5` com o logo real (`/kmp-logo.png`,
 mesmo arquivo do cabeçalho da invoice — fundo branco arredondado + "kmp"
-laranja + "consulting." branco, pensado pra sentar sobre um fundo laranja)
-seguido de "Hub" em texto (`<img src="/kmp-logo.png" .../> Hub`).
+laranja + "consulting." branco, pensado pra sentar sobre um fundo
+laranja) seguido de "Hub" em texto branco, antes da busca global.
 
 ## Paleta funcional (estados, não é sobre marca)
 

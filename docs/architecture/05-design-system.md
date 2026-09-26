@@ -70,14 +70,17 @@ gradiente da cor pro seu `-deep`) — nunca cor sólida chapada.
 **Atualização (set/2026): chrome escuro na sidebar e na header bar.**
 Pedido da Keila com uma referência visual de outro CRM (fundo roxo atrás
 do menu, ícones coloridos por cima) — mesma ideia, mas com a identidade
-já documentada aqui: `bg-gradient-to-br from-kmp-graphite via-kmp-graphite
-to-kmp-orange-deep` na `<aside>` e `bg-gradient-to-r from-kmp-graphite
-to-kmp-orange-deep` na `<header>`, texto/ícones em branco com opacidade
-(`text-white/70`, hover `text-white`), e a linha ativa da sidebar vira
-`bg-white/10 text-white` — fixo, não varia mais por módulo (o
-`activeRow` por módulo que existia em `ACCENT_STYLES` foi removido; só o
-`tile` do ícone continua colorido por módulo, que é o que dá o efeito
-"ícones vivos sobre fundo escuro" do exemplo).
+já documentada aqui, e laranja como cor dominante (pedido explícito dela,
+"mais laranja que preto"): `bg-gradient-to-br from-kmp-orange-deep
+via-kmp-orange to-kmp-graphite` na `<aside>` e `bg-gradient-to-r
+from-kmp-orange-deep via-kmp-orange to-kmp-graphite` na `<header>` — o
+grafite só aparece no canto oposto (embaixo na sidebar, à direita na
+header), pra dar profundidade sem virar o protagonista. Texto/ícones em
+branco com opacidade (`text-white/70`, hover `text-white`), e a linha
+ativa da sidebar vira `bg-white/10 text-white` — fixo, não varia mais por
+módulo (o `activeRow` por módulo que existia em `ACCENT_STYLES` foi
+removido; só o `tile` do ícone continua colorido por módulo, que é o que
+dá o efeito "ícones vivos sobre fundo colorido" do exemplo).
 
 ## Paleta funcional (estados, não é sobre marca)
 

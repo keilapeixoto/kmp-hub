@@ -1,5 +1,24 @@
+import { Cormorant_Garamond, Outfit } from "next/font/google";
 import type { Client } from "@/lib/clients/types";
 import type { InvoiceWithItems } from "@/lib/invoices/types";
+
+// Fonte própria da invoice — PDFs/documentos continuam em Cormorant
+// Garamond + Outfit mesmo depois do redesign da interface pra Plus Jakarta
+// Sans (ver "Identidade visual KMP" no CLAUDE.md). Não usar font-heading/
+// font-body do tema aqui: essas classes agora resolvem pra Plus Jakarta Sans.
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-invoice-heading",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-invoice-body",
+});
+
+const headingStyle = { fontFamily: "var(--font-invoice-heading)" };
 
 function formatMoeda(value: number, moeda: string): string {
   const locale = moeda === "BRL" ? "pt-BR" : "en-AU";
@@ -21,16 +40,23 @@ export function InvoiceDocument({
   client: Client | null;
 }) {
   return (
-    <div className="mx-auto flex w-full max-w-[720px] flex-col bg-white text-kmp-graphite shadow-sm">
+    <div
+      className={`${cormorant.variable} ${outfit.variable} mx-auto flex w-full max-w-[720px] flex-col bg-white text-kmp-graphite shadow-sm`}
+      style={{ fontFamily: "var(--font-invoice-body)" }}
+    >
       <div className="flex items-start justify-between gap-4 bg-gradient-to-br from-kmp-orange to-kmp-orange-deep px-8 py-6 text-white">
         <div>
-          <p className="font-heading text-2xl font-bold">KMP Consulting</p>
+          <p className="text-2xl font-bold" style={headingStyle}>
+            KMP Consulting
+          </p>
           <p className="mt-1 text-[11px] font-light opacity-90">
             Estratégia que conecta. Futuro que transforma.
           </p>
         </div>
         <div className="text-right">
-          <h1 className="font-heading text-2xl font-bold">Invoice</h1>
+          <h1 className="text-2xl font-bold" style={headingStyle}>
+            Invoice
+          </h1>
           <p className="mt-1 text-xs opacity-90">Nº {invoice.numero}</p>
         </div>
       </div>
@@ -101,7 +127,10 @@ export function InvoiceDocument({
               <span>{formatMoeda(invoice.gst_valor, invoice.moeda)}</span>
             </div>
           ) : null}
-          <div className="mt-1.5 flex justify-between border-t-2 border-kmp-orange pt-2 font-heading text-base font-bold text-kmp-orange-deep">
+          <div
+            className="mt-1.5 flex justify-between border-t-2 border-kmp-orange pt-2 text-base font-bold text-kmp-orange-deep"
+            style={headingStyle}
+          >
             <span>Total</span>
             <span>{formatMoeda(invoice.total, invoice.moeda)}</span>
           </div>
@@ -152,7 +181,7 @@ export function InvoiceDocument({
       </div>
 
       <div className="bg-kmp-graphite px-6 py-4 text-center text-white">
-        <p className="font-heading text-base font-semibold text-kmp-orange">
+        <p className="text-base font-semibold text-kmp-orange" style={headingStyle}>
           Obrigada pela confiança na KMP Consulting
         </p>
         <p className="mt-1 text-[11px]">KMP Consulting | vistos@kmpconsulting.com.au</p>

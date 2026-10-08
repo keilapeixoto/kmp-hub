@@ -8,12 +8,15 @@ import {
   getServiceTypes,
 } from "@/lib/cases/data";
 import type { CaseFilters } from "@/lib/cases/types";
+import { CasesFila } from "./_components/cases-fila";
 import { CasesFilters } from "./_components/cases-filters";
 import { CasesKanban } from "./_components/cases-kanban";
 import { CasesOverviewKanban } from "./_components/cases-overview-kanban";
 import { CasesTable } from "./_components/cases-table";
 
 type SearchParams = Record<string, string | string[] | undefined>;
+
+const QUEUE_SLUGS = ["todos", "alta", "atrasados", "pausados", "concluidos"] as const;
 
 function firstValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
@@ -25,7 +28,12 @@ export default async function ProcessosPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
-  const view = firstValue(params.view) === "kanban" ? "kanban" : "list";
+  const viewParam = firstValue(params.view);
+  const view = viewParam === "kanban" ? "kanban" : viewParam === "fila" ? "fila" : "list";
+  const queueParam = firstValue(params.fila);
+  const queue = QUEUE_SLUGS.includes(queueParam as (typeof QUEUE_SLUGS)[number])
+    ? (queueParam as (typeof QUEUE_SLUGS)[number])
+    : "todos";
 
   const filters: CaseFilters = {
     consultor: firstValue(params.consultor),
@@ -99,9 +107,28 @@ export default async function ProcessosPage({
         >
           Pipeline
         </Link>
+        <Link
+          href={`/processos?view=fila${suffix}`}
+          className={`rounded-md px-3 py-1.5 font-medium ${
+            view === "fila"
+              ? "bg-kmp-graphite text-white"
+              : "bg-white text-kmp-graphite/70 hover:text-kmp-orange"
+          }`}
+        >
+          Fila
+        </Link>
       </div>
 
-      {view === "kanban" ? (
+      {view === "fila" ? (
+        <CasesFila
+          cases={cases}
+          clients={clients}
+          consultants={consultants}
+          serviceTypes={serviceTypes}
+          queue={queue}
+          baseHref={`/processos?view=fila${suffix}`}
+        />
+      ) : view === "kanban" ? (
         filters.servicoTipo ? (
           <CasesKanban
             cases={cases}

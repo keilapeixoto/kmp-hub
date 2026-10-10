@@ -116,6 +116,17 @@ continuar neutro). Esses ficaram fora porque um fundo escuro sem redesenhar
 cada campo de formulário quebraria a legibilidade — não foi descuido, foi
 decisão consciente até surgir um pedido específico pra eles.
 
+**Atualização (out/2026): virou tema claro/escuro alternável, não mais
+fixo — cobre o portal inteiro.** A Keila pediu as duas coisas juntas: "o
+layout todo" (não só os cartões acima) e poder alternar entre claro e
+escuro. Isso trocou a arquitetura — ver seção "Dark mode" abaixo, que
+documenta como funciona agora (tokens semânticos + variante `dark:` do
+Tailwind, não mais classes escuras fixas). As exclusões de propósito
+listadas acima continuam valendo (inputs/selects/textareas mantêm fundo
+branco nativo nos dois temas; Kanban e filtros ganharam o fundo
+`kmp-surface`/`kmp-divider` "de graça" pelo token, mas não o brilho azul
+"hero"; `invoice-document.tsx` continua sempre claro).
+
 ## Paleta funcional (estados, não é sobre marca)
 
 Além das cores de marca, o sistema usa uma paleta funcional consistente para
@@ -227,8 +238,45 @@ grande.
 
 ## Dark mode
 
-**Não existe hoje e não é prioridade da Fase 1** (produto interno de uso em
-horário comercial). Se/quando for construído, os tokens de tema em
-`app/globals.css` já estão centralizados o suficiente para um par
-`:root`/`[data-theme="dark"]` sem reescrever componentes — não é um
-retrabalho grande, mas também não deve ser antecipado sem pedido explícito.
+**Existe desde out/2026, alternável pela pessoa (não segue o SO).** App da
+equipe (`(staff)`) só — o portal do cliente (`(portal)`) não tem toggle e
+não é afetado.
+
+**Como funciona:**
+- `@custom-variant dark (&:where(.dark, .dark *));` em `app/globals.css`
+  liga a variante `dark:` do Tailwind a uma classe `.dark` na `<html>`, em
+  vez do `prefers-color-scheme` padrão — é opt-in, não segue o tema do
+  sistema operacional.
+- Três tokens semânticos em `@theme` (valor claro) + um bloco `.dark {...}`
+  logo abaixo (valor escuro, sobrescreve a variável CSS quando a classe
+  está presente): `--color-kmp-text` (texto padrão, troca `text-kmp-graphite`
+  nos componentes), `--color-kmp-surface` (fundo de cartão/tabela/sidebar/
+  header, troca `bg-white`), `--color-kmp-divider` (borda/divisória sutil,
+  troca `border-black/10` etc.). `--color-kmp-bg` (fundo da página) também
+  ganhou um valor em `.dark`. Qualquer componente que use esses quatro
+  tokens em vez de `bg-white`/`text-kmp-graphite`/`border-black/NN` já
+  responde ao tema automaticamente, sem precisar de classe `dark:` própria.
+- Os cartões "hero" (StatCards e o resto do painel azul — ver atualização
+  acima) somam um `dark:` explícito por cima (`dark:border
+  dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel
+  dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20`) — só
+  eles ganham o gradiente/brilho azul; o resto do app vira `kmp-surface`
+  liso.
+- `ThemeToggle` (`app/(staff)/_components/theme-toggle.tsx`), botão no
+  rodapé da sidebar, alterna `document.documentElement.classList` e grava
+  em `localStorage["kmp-theme"]`. `app/layout.tsx` tem um `<script>`
+  bloqueante no `<head>` que lê essa chave e aplica `.dark` antes da
+  primeira pintura (evita flash claro→escuro); sem valor salvo, carrega
+  sempre claro — não lê `prefers-color-scheme` no primeiro acesso.
+- **Cores de marca/estado não entram nos tokens** — `bg-kmp-orange`,
+  `bg-kmp-graphite` sólido (pílulas ativas, rodapé da invoice), e os
+  badges pastel (`bg-green-50 text-green-700` etc.) ficam fixos nos dois
+  temas de propósito; só "chrome" (fundo neutro, texto padrão, linha
+  divisória) é que muda.
+- **Inputs/selects/textareas mantêm fundo branco nativo sempre** — não
+  foram redesenhados para o escuro. Um formulário no modo escuro mostra
+  campos claros dentro de um cartão escuro (efeito "vidro"), decisão
+  consciente pra não arriscar legibilidade em cada campo do app.
+- `invoice-document.tsx` (PDF/fatura impressa) é o único lugar
+  explicitamente fora do sistema de tokens — precisa imprimir igual nos
+  dois temas, então continua com `bg-white`/`text-kmp-graphite` fixos.

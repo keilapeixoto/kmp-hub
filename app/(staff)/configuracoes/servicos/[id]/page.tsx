@@ -88,7 +88,7 @@ export default async function ServiceTypeDetailPage({
           Checklist
         </h2>
         {serviceType.checklist_template_id ? (
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
             <Link
               href={`/configuracoes/checklists/${serviceType.checklist_template_id}`}
               className="text-sm font-medium text-kmp-orange hover:underline"
@@ -125,7 +125,7 @@ export default async function ServiceTypeDetailPage({
             </form>
           </div>
         ) : (
-          <p className="rounded-lg bg-white p-6 text-sm text-kmp-graphite/60 shadow-sm">
+          <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 text-sm text-white/50 shadow-md shadow-kmp-config/20">
             Nenhum template de checklist configurado.
           </p>
         )}

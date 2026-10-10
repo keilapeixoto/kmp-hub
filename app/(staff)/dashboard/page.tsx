@@ -121,26 +121,26 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
+        <div className="rounded-2xl border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
+          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-white/60">
             Processos ativos por etapa ({metrics.processosAtivos})
           </h2>
           {metrics.processosPorEtapa.length === 0 ? (
-            <p className="text-sm text-kmp-graphite/60">
+            <p className="text-sm text-white/50">
               Nenhum processo ativo com etapa definida.
             </p>
           ) : (
             <div className="space-y-2">
               {metrics.processosPorEtapa.map((e) => (
                 <div key={e.etapa} className="flex items-center gap-3 text-sm">
-                  <span className="w-44 truncate text-kmp-graphite">{e.etapa}</span>
-                  <div className="h-2 flex-1 rounded-full bg-black/5">
+                  <span className="w-44 truncate text-white/80">{e.etapa}</span>
+                  <div className="h-2 flex-1 rounded-full bg-white/10">
                     <div
                       className="h-2 rounded-full bg-kmp-orange"
                       style={{ width: `${(e.total / maxEtapa) * 100}%` }}
                     />
                   </div>
-                  <span className="w-8 text-right text-kmp-graphite/60">
+                  <span className="w-8 text-right text-white/50">
                     {e.total}
                   </span>
                 </div>
@@ -149,12 +149,12 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
+        <div className="rounded-2xl border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
+          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-white/60">
             Atendimentos de hoje
           </h2>
           {metrics.atendimentosHoje.length === 0 ? (
-            <p className="text-sm text-kmp-graphite/60">
+            <p className="text-sm text-white/50">
               Nenhum compromisso hoje.
             </p>
           ) : (
@@ -163,13 +163,13 @@ export default async function DashboardPage() {
                 <li key={ap.id} className="text-sm">
                   <Link
                     href={`/agenda/${ap.id}`}
-                    className="text-kmp-graphite hover:text-kmp-orange"
+                    className="text-white/90 hover:text-kmp-orange"
                   >
                     <span className="font-medium">{ap.titulo}</span>
                     {ap.tipo ? (
-                      <span className="text-kmp-graphite/50"> · {ap.tipo}</span>
+                      <span className="text-white/40"> · {ap.tipo}</span>
                     ) : null}
-                    <span className="block text-xs text-kmp-graphite/50">
+                    <span className="block text-xs text-white/40">
                       {formatTimesInAllZones(ap.inicio)}
                     </span>
                   </Link>
@@ -179,12 +179,12 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
+        <div className="rounded-2xl border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
+          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-white/60">
             Carga da equipe (tarefas abertas)
           </h2>
           {workload.size === 0 ? (
-            <p className="text-sm text-kmp-graphite/60">
+            <p className="text-sm text-white/50">
               Nenhuma tarefa aberta.
             </p>
           ) : (
@@ -193,16 +193,16 @@ export default async function DashboardPage() {
                 .sort((a, b) => b[1] - a[1])
                 .map(([userId, count]) => (
                   <div key={userId} className="flex items-center gap-3 text-sm">
-                    <span className="w-44 truncate text-kmp-graphite">
+                    <span className="w-44 truncate text-white/80">
                       {staffName(userId)}
                     </span>
-                    <div className="h-2 flex-1 rounded-full bg-black/5">
+                    <div className="h-2 flex-1 rounded-full bg-white/10">
                       <div
                         className="h-2 rounded-full bg-kmp-orange"
                         style={{ width: `${(count / maxLoad) * 100}%` }}
                       />
                     </div>
-                    <span className="w-8 text-right text-kmp-graphite/60">
+                    <span className="w-8 text-right text-white/50">
                       {count}
                     </span>
                   </div>
@@ -211,8 +211,8 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <div className="mb-3 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
+        <div className="rounded-2xl border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
+          <div className="mb-3 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-white/60">
             <span
               className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
                 ACCENT_STYLES[
@@ -224,10 +224,10 @@ export default async function DashboardPage() {
             </span>
             Documentos pendentes
           </div>
-          <p className="font-heading text-2xl font-extrabold text-kmp-graphite">
+          <p className="font-heading text-2xl font-extrabold text-white">
             {metrics.documentosPendentes}
           </p>
-          <p className="mt-1 text-xs text-kmp-graphite/50">
+          <p className="mt-1 text-xs text-white/40">
             Itens de checklist aguardando envio, análise ou correção.
           </p>
         </div>

@@ -28,34 +28,34 @@ export default async function StorageMonthlyReportPage() {
         </p>
       </div>
 
-      <dl className="space-y-4 rounded-lg bg-white p-6 shadow-sm">
+      <dl className="space-y-4 rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
         <div>
-          <dt className="text-xs uppercase tracking-wide text-kmp-graphite/50">
+          <dt className="text-xs uppercase tracking-wide text-white/50">
             Total utilizado
           </dt>
-          <dd className="text-lg text-kmp-graphite">{formatBytes(r.totalBytes)}</dd>
+          <dd className="text-lg text-white">{formatBytes(r.totalBytes)}</dd>
         </div>
         <div>
-          <dt className="text-xs uppercase tracking-wide text-kmp-graphite/50">
+          <dt className="text-xs uppercase tracking-wide text-white/50">
             Variação vs. 30 dias atrás
           </dt>
-          <dd className="text-lg text-kmp-graphite">
+          <dd className="text-lg text-white">
             {formatDelta(r.deltaVsMesAnterior)}
           </dd>
         </div>
         <div>
-          <dt className="text-xs uppercase tracking-wide text-kmp-graphite/50">
+          <dt className="text-xs uppercase tracking-wide text-white/50">
             Média por cliente
           </dt>
-          <dd className="text-lg text-kmp-graphite">
+          <dd className="text-lg text-white">
             {formatBytes(r.mediaPorClienteBytes)}
           </dd>
         </div>
         <div>
-          <dt className="text-xs uppercase tracking-wide text-kmp-graphite/50">
+          <dt className="text-xs uppercase tracking-wide text-white/50">
             Maiores consumidores
           </dt>
-          <dd className="mt-1 space-y-0.5 text-sm text-kmp-graphite">
+          <dd className="mt-1 space-y-0.5 text-sm text-white/80">
             {r.topClientes.map((c) => (
               <p key={c.nome}>
                 {c.nome} — {formatBytes(c.bytes)}
@@ -64,34 +64,34 @@ export default async function StorageMonthlyReportPage() {
           </dd>
         </div>
         <div>
-          <dt className="text-xs uppercase tracking-wide text-kmp-graphite/50">
+          <dt className="text-xs uppercase tracking-wide text-white/50">
             Arquivos acima de 20 MB
           </dt>
-          <dd className="text-lg text-kmp-graphite">{r.arquivosGrandes.length}</dd>
+          <dd className="text-lg text-white">{r.arquivosGrandes.length}</dd>
         </div>
         <div>
-          <dt className="text-xs uppercase tracking-wide text-kmp-graphite/50">
+          <dt className="text-xs uppercase tracking-wide text-white/50">
             Duplicados
           </dt>
-          <dd className="text-lg text-kmp-graphite">
+          <dd className="text-lg text-white">
             {r.duplicadosGrupos} grupos ({formatBytes(r.duplicadosBytes)} redundantes)
           </dd>
         </div>
         <div>
-          <dt className="text-xs uppercase tracking-wide text-kmp-graphite/50">
+          <dt className="text-xs uppercase tracking-wide text-white/50">
             Projeção de uso em 6 meses
           </dt>
-          <dd className="text-lg text-kmp-graphite">
+          <dd className="text-lg text-white">
             {r.projecao6MesesBytes === null
               ? "sem histórico suficiente ainda (a rotina diária precisa rodar por mais tempo)"
               : formatBytes(r.projecao6MesesBytes)}
           </dd>
         </div>
         <div>
-          <dt className="text-xs uppercase tracking-wide text-kmp-graphite/50">
+          <dt className="text-xs uppercase tracking-wide text-white/50">
             Estimativa de custo extra (Supabase, acima de 100 GB)
           </dt>
-          <dd className="text-lg text-kmp-graphite">
+          <dd className="text-lg text-white">
             {r.estimativaCustoExtraUsd === null
               ? "sem histórico suficiente ainda"
               : `US$ ${r.estimativaCustoExtraUsd.toFixed(2)}/mês`}

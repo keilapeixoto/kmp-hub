@@ -89,19 +89,19 @@ export default async function FinanceiroPage({
       <div className="space-y-4">
         {summary.map((row) => (
           <div key={row.moeda} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="rounded-lg bg-white p-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-wide text-kmp-graphite/50">
+            <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
+              <p className="text-xs font-semibold uppercase tracking-wide text-white/50">
                 Recebido no mês · {row.moeda}
               </p>
-              <p className="mt-2 font-heading text-xl font-extrabold text-green-700">
+              <p className="mt-2 font-heading text-xl font-extrabold text-green-400">
                 {formatMoeda(row.recebidoMes, row.moeda)}
               </p>
             </div>
-            <div className="rounded-lg bg-white p-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-wide text-kmp-graphite/50">
+            <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
+              <p className="text-xs font-semibold uppercase tracking-wide text-white/50">
                 Pendente a receber · {row.moeda}
               </p>
-              <p className="mt-2 font-heading text-xl font-extrabold text-kmp-orange-deep">
+              <p className="mt-2 font-heading text-xl font-extrabold text-kmp-orange">
                 {formatMoeda(row.pendente, row.moeda)}
               </p>
             </div>
@@ -181,15 +181,15 @@ export default async function FinanceiroPage({
         </div>
       </form>
 
-      <div className="overflow-x-auto rounded-lg bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
         {invoices.length === 0 ? (
-          <p className="p-8 text-center text-sm text-kmp-graphite/60">
+          <p className="p-8 text-center text-sm text-white/50">
             Nenhuma invoice encontrada.
           </p>
         ) : (
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead>
-              <tr className="border-b border-black/10 text-xs font-semibold uppercase tracking-wide text-kmp-graphite/50">
+              <tr className="border-b border-white/10 text-xs font-semibold uppercase tracking-wide text-white/50">
                 <th className="px-4 py-3">Data</th>
                 <th className="px-4 py-3">Nome</th>
                 <th className="px-4 py-3">Nº invoice</th>
@@ -198,27 +198,27 @@ export default async function FinanceiroPage({
                 <th className="px-4 py-3 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-black/5">
+            <tbody className="divide-y divide-white/10">
               {invoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-black/[0.02]">
-                  <td className="whitespace-nowrap px-4 py-3 text-kmp-graphite/70">
+                <tr key={inv.id} className="hover:bg-white/5">
+                  <td className="whitespace-nowrap px-4 py-3 text-white/60">
                     {formatData(inv.data_emissao)}
                   </td>
                   <td className="px-4 py-3">
                     <Link
                       href={`/financeiro/${inv.id}`}
-                      className="font-medium text-kmp-graphite hover:text-kmp-orange"
+                      className="font-medium text-white hover:text-kmp-orange"
                     >
                       {inv.client_nome}
                     </Link>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-kmp-graphite/70">
+                  <td className="whitespace-nowrap px-4 py-3 text-white/60">
                     {inv.numero}
                   </td>
-                  <td className="px-4 py-3 text-kmp-graphite/70">
+                  <td className="px-4 py-3 text-white/60">
                     {inv.servico_referente ?? "—"}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-right font-heading font-bold text-kmp-graphite">
+                  <td className="whitespace-nowrap px-4 py-3 text-right font-heading font-bold text-white">
                     {formatMoeda(inv.total, inv.moeda)}
                   </td>
                   <td className="px-4 py-3 text-right">

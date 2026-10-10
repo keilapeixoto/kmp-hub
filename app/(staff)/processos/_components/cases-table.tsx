@@ -53,7 +53,7 @@ function EtapaBadge({
   isLast: boolean;
 }) {
   if (!stage) {
-    return <span className="text-kmp-graphite/40">—</span>;
+    return <span className="text-white/40">—</span>;
   }
   const className = isLast
     ? "bg-green-50 text-green-700"
@@ -90,7 +90,7 @@ export async function CasesTable({
 
   if (cases.length === 0) {
     return (
-      <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
+      <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
         Nenhum processo encontrado com esses filtros.
       </p>
     );
@@ -136,9 +136,9 @@ export async function CasesTable({
                 ({groupCases.length})
               </span>
             </h3>
-            <div className="overflow-x-auto rounded-lg bg-white shadow-sm">
+            <div className="overflow-x-auto rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
               <table className="w-full min-w-[900px] text-left text-sm">
-                <thead className="border-b border-black/10 text-xs uppercase text-kmp-graphite/60">
+                <thead className="border-b border-white/10 text-xs uppercase text-white/50">
                   <tr>
                     <th className="px-4 py-3 font-medium">Cliente</th>
                     <th className="px-4 py-3 font-medium">Etapa</th>
@@ -150,11 +150,11 @@ export async function CasesTable({
                 </thead>
                 <tbody>
                   {groupCases.map((c) => (
-                    <tr key={c.id} className="border-b border-black/5 last:border-0">
+                    <tr key={c.id} className="border-b border-white/10 last:border-0">
                       <td className="px-4 py-3">
                         <Link
                           href={`/processos/${c.id}`}
-                          className="font-medium text-kmp-graphite hover:text-kmp-orange"
+                          className="font-medium text-white hover:text-kmp-orange"
                         >
                           {clientName(c.client_id)}
                         </Link>
@@ -169,13 +169,13 @@ export async function CasesTable({
                       <td className="px-4 py-3">
                         <StatusBadge status={c.status} statusLabels={statusLabels} />
                       </td>
-                      <td className="px-4 py-3 text-kmp-graphite/80">
+                      <td className="px-4 py-3 text-white/70">
                         {CASE_PRIORITY_LABELS[c.prioridade] ?? c.prioridade}
                       </td>
-                      <td className="px-4 py-3 text-kmp-graphite/80">
+                      <td className="px-4 py-3 text-white/70">
                         {consultantName(c.consultor_id)}
                       </td>
-                      <td className="px-4 py-3 text-kmp-graphite/80">
+                      <td className="px-4 py-3 text-white/70">
                         {c.prazo ? new Date(c.prazo).toLocaleDateString("pt-BR") : "—"}
                       </td>
                     </tr>

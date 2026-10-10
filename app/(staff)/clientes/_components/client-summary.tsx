@@ -21,11 +21,11 @@ export function ClientSummary({
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div className="rounded-lg bg-white p-6 shadow-sm">
-        <h2 className="font-heading text-lg text-kmp-graphite">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
+        <h2 className="font-heading text-lg text-white">
           Dados gerais
         </h2>
-        <dl className="mt-4 space-y-2 text-sm text-kmp-graphite/80">
+        <dl className="mt-4 space-y-2 text-sm text-white/70">
           <div>
             <dt className="inline font-medium">País: </dt>
             <dd className="inline">{client.pais ?? "—"}</dd>
@@ -56,12 +56,12 @@ export function ClientSummary({
         </dl>
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
-        <h2 className="font-heading text-lg text-kmp-graphite">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
+        <h2 className="font-heading text-lg text-white">
           Pendências
         </h2>
         {expiring.length === 0 ? (
-          <p className="mt-4 text-sm text-kmp-graphite/60">
+          <p className="mt-4 text-sm text-white/50">
             Nenhum documento vencendo em breve.
           </p>
         ) : (
@@ -76,7 +76,7 @@ export function ClientSummary({
             })}
           </ul>
         )}
-        <p className="mt-4 text-sm text-kmp-graphite/60">
+        <p className="mt-4 text-sm text-white/50">
           {relations.length} dependente{relations.length === 1 ? "" : "s"}{" "}
           cadastrado{relations.length === 1 ? "" : "s"}.
         </p>

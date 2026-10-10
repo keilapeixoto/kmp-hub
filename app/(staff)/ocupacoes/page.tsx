@@ -90,22 +90,22 @@ export default async function OcupacoesPage({
         </div>
       </form>
 
-      <div className="rounded-lg bg-white shadow-sm">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
         {occupations.length === 0 ? (
-          <p className="p-8 text-center text-sm text-kmp-graphite/60">
+          <p className="p-8 text-center text-sm text-white/50">
             Nenhuma ocupação encontrada.
           </p>
         ) : (
-          <ul className="divide-y divide-black/5">
+          <ul className="divide-y divide-white/10">
             {occupations.map((o) => (
               <li key={o.id} className="p-4 text-sm">
                 <Link
                   href={`/ocupacoes/${o.id}`}
-                  className="font-medium text-kmp-graphite hover:text-kmp-orange"
+                  className="font-medium text-white hover:text-kmp-orange"
                 >
                   {o.nome} · {o.codigo_anzsco}
                 </Link>
-                <p className="mt-1 text-xs text-kmp-graphite/50">
+                <p className="mt-1 text-xs text-white/40">
                   {o.categoria} · {o.autoridade_avaliadora}
                 </p>
                 <div className="mt-2 flex gap-2">

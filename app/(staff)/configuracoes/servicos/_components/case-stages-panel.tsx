@@ -17,13 +17,13 @@ export function CaseStagesPanel({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg bg-white shadow-sm">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
         {stages.length === 0 ? (
-          <p className="p-6 text-center text-sm text-kmp-graphite/60">
+          <p className="p-6 text-center text-sm text-white/50">
             Nenhuma etapa cadastrada ainda.
           </p>
         ) : (
-          <ul className="divide-y divide-black/5">
+          <ul className="divide-y divide-white/10">
             {stages.map((stage) => {
               const removeWithIds = removeCaseStage.bind(
                 null,
@@ -35,8 +35,8 @@ export function CaseStagesPanel({
                   key={stage.id}
                   className="flex items-center justify-between p-4 text-sm"
                 >
-                  <span className="text-kmp-graphite">
-                    <span className="mr-2 text-kmp-graphite/40">
+                  <span className="text-white">
+                    <span className="mr-2 text-white/40">
                       {stage.ordem}.
                     </span>
                     {stage.nome}
@@ -45,7 +45,7 @@ export function CaseStagesPanel({
                     <form action={removeWithIds}>
                       <button
                         type="submit"
-                        className="text-xs text-kmp-graphite/60 transition hover:text-red-600"
+                        className="text-xs text-white/50 transition hover:text-red-400"
                       >
                         Remover
                       </button>

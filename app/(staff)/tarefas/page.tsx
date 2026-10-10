@@ -55,8 +55,8 @@ export default async function TarefasPage({
       </div>
 
       {workload.size > 0 ? (
-        <div className="rounded-lg bg-white p-4 shadow-sm">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
+        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
+          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-white/60">
             Carga da equipe (tarefas abertas)
           </h2>
           <div className="space-y-2">
@@ -64,16 +64,16 @@ export default async function TarefasPage({
               .sort((a, b) => b[1] - a[1])
               .map(([userId, count]) => (
                 <div key={userId} className="flex items-center gap-3 text-sm">
-                  <span className="w-44 truncate text-kmp-graphite">
+                  <span className="w-44 truncate text-white/80">
                     {staffName(userId)}
                   </span>
-                  <div className="h-2 flex-1 rounded-full bg-black/5">
+                  <div className="h-2 flex-1 rounded-full bg-white/10">
                     <div
                       className="h-2 rounded-full bg-kmp-orange"
                       style={{ width: `${(count / maxLoad) * 100}%` }}
                     />
                   </div>
-                  <span className="w-8 text-right text-kmp-graphite/60">
+                  <span className="w-8 text-right text-white/50">
                     {count}
                   </span>
                 </div>
@@ -144,13 +144,13 @@ export default async function TarefasPage({
       </form>
 
       {tasks.length === 0 ? (
-        <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
+        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
           Nenhuma tarefa encontrada.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
           <table className="w-full min-w-[700px] text-left text-sm">
-            <thead className="border-b border-black/10 text-xs uppercase text-kmp-graphite/60">
+            <thead className="border-b border-white/10 text-xs uppercase text-white/50">
               <tr>
                 <th className="px-4 py-3 font-medium">Tarefa</th>
                 <th className="px-4 py-3 font-medium">Responsável</th>
@@ -166,32 +166,32 @@ export default async function TarefasPage({
                   new Date(task.prazo) < new Date() &&
                   (task.status === "pendente" || task.status === "em_andamento");
                 return (
-                  <tr key={task.id} className="border-b border-black/5 last:border-0">
+                  <tr key={task.id} className="border-b border-white/10 last:border-0">
                     <td className="px-4 py-3">
                       <Link
                         href={`/tarefas/${task.id}`}
-                        className="font-medium text-kmp-graphite hover:text-kmp-orange"
+                        className="font-medium text-white hover:text-kmp-orange"
                       >
                         {task.titulo}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-kmp-graphite/80">
+                    <td className="px-4 py-3 text-white/70">
                       {staffName(task.responsavel)}
                     </td>
-                    <td className="px-4 py-3 text-kmp-graphite/80">
+                    <td className="px-4 py-3 text-white/70">
                       {TASK_PRIORITY_LABELS[task.prioridade]}
                     </td>
                     <td className="px-4 py-3">
                       {task.prazo ? (
-                        <span className={overdue ? "font-medium text-kmp-orange" : "text-kmp-graphite/80"}>
+                        <span className={overdue ? "font-medium text-kmp-orange" : "text-white/70"}>
                           {overdue ? "⚠ " : ""}
                           {new Date(task.prazo).toLocaleDateString("pt-BR")}
                         </span>
                       ) : (
-                        <span className="text-kmp-graphite/40">—</span>
+                        <span className="text-white/40">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-kmp-graphite/80">
+                    <td className="px-4 py-3 text-white/70">
                       {TASK_STATUS_LABELS[task.status]}
                     </td>
                   </tr>

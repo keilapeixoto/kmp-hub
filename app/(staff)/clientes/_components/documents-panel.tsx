@@ -55,13 +55,13 @@ export function DocumentsPanel({
         </form>
       </div>
 
-      <div className="rounded-lg bg-white shadow-sm">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
         {documents.length === 0 ? (
-          <p className="p-6 text-center text-sm text-kmp-graphite/60">
+          <p className="p-6 text-center text-sm text-white/50">
             Nenhum documento cadastrado.
           </p>
         ) : (
-          <ul className="divide-y divide-black/5">
+          <ul className="divide-y divide-white/10">
             {documents.map((doc) => {
               const expiring = !doc.arquivado && isDocumentExpiringSoon(doc.validade);
               const archiveWithIds = archiveIdentityDocument.bind(
@@ -75,15 +75,15 @@ export function DocumentsPanel({
                   className="flex items-center justify-between p-4 text-sm"
                 >
                   <div>
-                    <p className="font-medium text-kmp-graphite">
+                    <p className="font-medium text-white">
                       {doc.tipo}{" "}
                       {doc.arquivado ? (
-                        <span className="ml-2 text-xs text-kmp-graphite/40">
+                        <span className="ml-2 text-xs text-white/40">
                           (arquivado)
                         </span>
                       ) : null}
                     </p>
-                    <p className="text-kmp-graphite/60">
+                    <p className="text-white/50">
                       {doc.numero ?? "sem número"}
                       {doc.validade
                         ? ` · validade ${new Date(doc.validade).toLocaleDateString("pt-BR")}`
@@ -103,7 +103,7 @@ export function DocumentsPanel({
                       <form action={archiveWithIds}>
                         <button
                           type="submit"
-                          className="text-xs text-kmp-graphite/60 transition hover:text-red-600"
+                          className="text-xs text-white/50 transition hover:text-red-400"
                         >
                           Arquivar
                         </button>

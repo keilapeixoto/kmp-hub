@@ -28,7 +28,7 @@ export default async function TemplatesPage() {
       </div>
 
       {templates.length === 0 ? (
-        <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
+        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
           Nenhum template cadastrado ainda.
         </p>
       ) : (

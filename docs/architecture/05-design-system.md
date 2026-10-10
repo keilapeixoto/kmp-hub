@@ -94,8 +94,27 @@ Configurações — não um tom novo) com fundo
 cor do próprio módulo (`ACCENT_STYLES[accent].tile`, sem mudança) — é só o
 chrome do card que fica escuro, a mesma lógica já usada no selo do logo.
 Tokens novos em `app/globals.css`: `--color-kmp-panel` (`#1A1C20`) e
-`--color-kmp-panel-deep` (`#121316`). Escopo por enquanto é só o Dashboard;
-não foi pedido ainda pra outras telas.
+`--color-kmp-panel-deep` (`#121316`).
+
+**Atualização (out/2026): painel escuro estendido a todo o portal da
+equipe.** A Keila pediu pra não ficar só no Dashboard — viu uma prévia com
+mais seções escuras e aprovou ("ok, go ahead"). O mesmo padrão do StatCard
+(`rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel
+to-kmp-panel-deep shadow-md shadow-kmp-config/20`, texto em `text-white` /
+`text-white/70` / `text-white/50` / `text-white/40` conforme hierarquia) foi
+aplicado em todo cartão/lista/tabela **somente de exibição** — leads,
+clientes, processos (lista, fila, histórico, checklist), agenda, guias,
+financeiro (stats e tabela de invoices), vencimentos, ocupações, tarefas
+(carga da equipe, tabela, comentários), templates (estado vazio), busca e os
+cartões-hub de Configurações.
+
+**Ficou de fora de propósito** (continua com o cartão branco original):
+todo formulário com campos de texto/select (ex.: `*/novo`, `*/editar`,
+painéis "Adicionar..."), os quadros Kanban, as barras de filtro, a tela de
+login, e `invoice-document.tsx` (o PDF/fatura impresso, que precisa
+continuar neutro). Esses ficaram fora porque um fundo escuro sem redesenhar
+cada campo de formulário quebraria a legibilidade — não foi descuido, foi
+decisão consciente até surgir um pedido específico pra eles.
 
 ## Paleta funcional (estados, não é sobre marca)
 

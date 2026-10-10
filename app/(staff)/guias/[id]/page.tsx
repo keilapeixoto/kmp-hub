@@ -71,19 +71,19 @@ export default async function GuiaDetailPage({
           )}
         </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-sm">
-          <h2 className="font-heading text-lg text-kmp-graphite">
+        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
+          <h2 className="font-heading text-lg text-white">
             Histórico de versões
           </h2>
           {versions.length === 0 ? (
-            <p className="mt-4 text-sm text-kmp-graphite/60">
+            <p className="mt-4 text-sm text-white/50">
               Ainda na primeira versão.
             </p>
           ) : (
             <ol className="mt-4 space-y-4">
               {versions.map((v) => (
                 <li key={v.id} className="border-l-2 border-kmp-orange/30 pl-3">
-                  <p className="text-xs text-kmp-graphite/50">
+                  <p className="text-xs text-white/40">
                     Versão {v.versao} ·{" "}
                     {new Date(v.created_at).toLocaleString("pt-BR")}
                   </p>
@@ -91,7 +91,7 @@ export default async function GuiaDetailPage({
                     <summary className="cursor-pointer text-xs text-kmp-orange">
                       Ver conteúdo
                     </summary>
-                    <div className="mt-2 whitespace-pre-wrap rounded-md bg-black/5 p-3 text-xs text-kmp-graphite/80">
+                    <div className="mt-2 whitespace-pre-wrap rounded-md bg-white/10 p-3 text-xs text-white/70">
                       {v.conteudo}
                     </div>
                   </details>

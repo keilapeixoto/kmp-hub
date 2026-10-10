@@ -17,13 +17,13 @@ export function TemplateItemsPanel({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg bg-white shadow-sm">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
         {items.length === 0 ? (
-          <p className="p-6 text-center text-sm text-kmp-graphite/60">
+          <p className="p-6 text-center text-sm text-white/50">
             Nenhum item cadastrado ainda.
           </p>
         ) : (
-          <ul className="divide-y divide-black/5">
+          <ul className="divide-y divide-white/10">
             {items.map((item) => {
               const removeWithIds = removeChecklistTemplateItem.bind(
                 null,
@@ -34,24 +34,24 @@ export function TemplateItemsPanel({
                 <li key={item.id} className="p-4 text-sm">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <span className="mr-2 text-kmp-graphite/40">
+                      <span className="mr-2 text-white/40">
                         {item.ordem}.
                       </span>
-                      <span className="font-medium text-kmp-graphite">
+                      <span className="font-medium text-white">
                         {item.nome}
                       </span>
                       {!item.obrigatorio ? (
-                        <span className="ml-2 text-xs text-kmp-graphite/40">
+                        <span className="ml-2 text-xs text-white/40">
                           (opcional)
                         </span>
                       ) : null}
                       {item.condicional ? (
-                        <span className="ml-2 text-xs text-kmp-graphite/40">
+                        <span className="ml-2 text-xs text-white/40">
                           (condicional)
                         </span>
                       ) : null}
                       {item.descricao ? (
-                        <p className="mt-1 text-xs text-kmp-graphite/60">
+                        <p className="mt-1 text-xs text-white/50">
                           {item.descricao}
                         </p>
                       ) : null}
@@ -60,7 +60,7 @@ export function TemplateItemsPanel({
                       <form action={removeWithIds}>
                         <button
                           type="submit"
-                          className="shrink-0 text-xs text-kmp-graphite/60 transition hover:text-red-600"
+                          className="shrink-0 text-xs text-white/50 transition hover:text-red-400"
                         >
                           Remover
                         </button>

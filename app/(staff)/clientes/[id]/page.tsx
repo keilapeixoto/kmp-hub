@@ -169,22 +169,22 @@ async function ClientTimeline({
 
   if (entries.length === 0) {
     return (
-      <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
+      <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
         Nenhum evento registrado ainda.
       </p>
     );
   }
 
   return (
-    <div className="rounded-lg bg-white p-6 shadow-sm">
+    <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
       <ol className="space-y-4">
         {entries.map((entry, index) => (
           <li key={index} className="border-l-2 border-kmp-orange/30 pl-4">
-            <p className="text-xs uppercase tracking-wide text-kmp-graphite/50">
+            <p className="text-xs uppercase tracking-wide text-white/40">
               {entry.categoria} ·{" "}
               {new Date(entry.quando).toLocaleString("pt-BR")}
             </p>
-            <p className="mt-0.5 text-sm text-kmp-graphite">{entry.descricao}</p>
+            <p className="mt-0.5 text-sm text-white/90">{entry.descricao}</p>
           </li>
         ))}
       </ol>

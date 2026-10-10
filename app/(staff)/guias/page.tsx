@@ -30,22 +30,22 @@ export default async function GuiasPage() {
         ) : null}
       </div>
 
-      <div className="rounded-lg bg-white shadow-sm">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
         {guides.length === 0 ? (
-          <p className="p-8 text-center text-sm text-kmp-graphite/60">
+          <p className="p-8 text-center text-sm text-white/50">
             Nenhum guia cadastrado ainda.
           </p>
         ) : (
-          <ul className="divide-y divide-black/5">
+          <ul className="divide-y divide-white/10">
             {guides.map((guide) => (
               <li key={guide.id} className="p-4 text-sm">
                 <Link
                   href={`/guias/${guide.id}`}
-                  className="font-medium text-kmp-graphite hover:text-kmp-orange"
+                  className="font-medium text-white hover:text-kmp-orange"
                 >
                   {guide.titulo}
                 </Link>
-                <p className="mt-1 text-xs text-kmp-graphite/50">
+                <p className="mt-1 text-xs text-white/40">
                   Versão {guide.versao}
                   {serviceTypeName(guide.service_type_id)
                     ? ` · ${serviceTypeName(guide.service_type_id)}`

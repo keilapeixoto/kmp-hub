@@ -29,22 +29,22 @@ export default async function OcupacaoDetailPage({
         </p>
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
-        <dl className="divide-y divide-black/5 text-sm">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
+        <dl className="divide-y divide-white/10 text-sm">
           <div className="flex justify-between py-2">
-            <dt className="text-kmp-graphite/50">Código ANZSCO</dt>
-            <dd className="text-kmp-graphite">{occupation.codigo_anzsco}</dd>
+            <dt className="text-white/40">Código ANZSCO</dt>
+            <dd className="text-white">{occupation.codigo_anzsco}</dd>
           </div>
           <div className="flex justify-between py-2">
-            <dt className="text-kmp-graphite/50">Autoridade avaliadora</dt>
-            <dd className="text-kmp-graphite">
+            <dt className="text-white/40">Autoridade avaliadora</dt>
+            <dd className="text-white">
               {occupation.autoridade_avaliadora}
             </dd>
           </div>
           {occupation.fonte ? (
             <div className="flex justify-between py-2">
-              <dt className="text-kmp-graphite/50">Fonte</dt>
-              <dd className="text-kmp-graphite">{occupation.fonte}</dd>
+              <dt className="text-white/40">Fonte</dt>
+              <dd className="text-white">{occupation.fonte}</dd>
             </div>
           ) : null}
         </dl>
@@ -63,11 +63,11 @@ export default async function OcupacaoDetailPage({
         ) : null}
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
-        <h2 className="font-heading text-lg text-kmp-graphite">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
+        <h2 className="font-heading text-lg text-white">
           Elegibilidade por subclasse de visto
         </h2>
-        <p className="mt-1 text-xs text-kmp-graphite/50">
+        <p className="mt-1 text-xs text-white/40">
           Referência geral por ocupação — não considera cotas por estado nem
           o histórico de rodadas de convite. Confirme sempre a elegibilidade
           real do caso com a consultora.
@@ -79,8 +79,8 @@ export default async function OcupacaoDetailPage({
               valor === true
                 ? "bg-green-50 text-green-700"
                 : valor === false
-                  ? "bg-black/5 text-kmp-graphite/40"
-                  : "bg-black/5 text-kmp-graphite/30";
+                  ? "bg-white/10 text-white/40"
+                  : "bg-white/10 text-white/25";
             const rotulo =
               valor === true ? "Elegível" : valor === false ? "Não" : "—";
             return (

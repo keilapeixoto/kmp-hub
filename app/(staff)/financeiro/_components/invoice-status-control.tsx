@@ -24,7 +24,7 @@ const ALL_STATUSES: InvoiceStatus[] = [
 const STATUS_STYLE: Record<InvoiceStatus, { active: string; inactive: string }> = {
   rascunho: {
     active: "border-kmp-graphite bg-kmp-graphite text-white",
-    inactive: "border-black/15 text-kmp-graphite/70 hover:bg-black/5",
+    inactive: "border-white/20 text-white/70 hover:bg-white/10",
   },
   enviada: {
     active: "border-blue-600 bg-blue-600 text-white",
@@ -76,8 +76,8 @@ export function InvoiceStatusControl({
   }
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow-sm">
-      <p className="mb-2 text-xs text-kmp-graphite/50">
+    <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
+      <p className="mb-2 text-xs text-white/50">
         Clique em um status pra atualizar (dar baixa manual)
       </p>
       <div className="flex flex-wrap items-center gap-2">

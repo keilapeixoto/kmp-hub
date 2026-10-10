@@ -71,16 +71,16 @@ export default async function AgendaPage() {
       ) : null}
 
       {days.length === 0 ? (
-        <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
+        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
           Nenhum compromisso na agenda.
         </p>
       ) : (
         days.map(([dayKey, dayAppointments]) => (
-          <div key={dayKey} className="rounded-lg bg-white shadow-sm">
-            <h2 className="border-b border-black/5 px-4 py-3 font-heading text-sm text-kmp-graphite">
+          <div key={dayKey} className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+            <h2 className="border-b border-white/10 px-4 py-3 font-heading text-sm text-white">
               {formatDateSydney(dayAppointments[0].inicio)}
             </h2>
-            <ul className="divide-y divide-black/5">
+            <ul className="divide-y divide-white/10">
               {dayAppointments.map((ap) => {
                 const past = isPastIso(ap.inicio);
                 const missingSummary = past && !summarized.has(ap.id);
@@ -90,20 +90,20 @@ export default async function AgendaPage() {
                       href={`/agenda/${ap.id}`}
                       className="flex flex-wrap items-center justify-between gap-2"
                     >
-                      <span className="text-sm font-medium text-kmp-graphite hover:text-kmp-orange">
+                      <span className="text-sm font-medium text-white hover:text-kmp-orange">
                         {ap.titulo}
                         {ap.tipo ? (
-                          <span className="ml-2 text-xs text-kmp-graphite/50">
+                          <span className="ml-2 text-xs text-white/40">
                             {ap.tipo}
                           </span>
                         ) : null}
                         {clientName(ap.client_id) ? (
-                          <span className="ml-2 text-xs text-kmp-graphite/50">
+                          <span className="ml-2 text-xs text-white/40">
                             · {clientName(ap.client_id)}
                           </span>
                         ) : null}
                       </span>
-                      <span className="text-xs text-kmp-graphite/60">
+                      <span className="text-xs text-white/50">
                         {formatTimesInAllZones(ap.inicio)}
                         {missingSummary ? (
                           <span className="ml-2 font-medium text-kmp-orange">

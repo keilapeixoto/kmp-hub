@@ -54,13 +54,13 @@ export function DependentsPanel({
         </form>
       </div>
 
-      <div className="rounded-lg bg-white shadow-sm">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
         {relations.length === 0 ? (
-          <p className="p-6 text-center text-sm text-kmp-graphite/60">
+          <p className="p-6 text-center text-sm text-white/50">
             Nenhum dependente cadastrado.
           </p>
         ) : (
-          <ul className="divide-y divide-black/5">
+          <ul className="divide-y divide-white/10">
             {relations.map((rel) => {
               const removeWithIds = removeDependent.bind(
                 null,
@@ -75,18 +75,18 @@ export function DependentsPanel({
                   <div>
                     <Link
                       href={`/clientes/${rel.related_client_id}`}
-                      className="font-medium text-kmp-graphite hover:text-kmp-orange"
+                      className="font-medium text-white hover:text-kmp-orange"
                     >
                       {rel.related?.nome ?? "—"}
                     </Link>
-                    <p className="text-kmp-graphite/60">
+                    <p className="text-white/50">
                       {CLIENT_RELATION_TYPE_LABELS[rel.tipo] ?? rel.tipo}
                     </p>
                   </div>
                   <form action={removeWithIds}>
                     <button
                       type="submit"
-                      className="text-xs text-kmp-graphite/60 transition hover:text-red-600"
+                      className="text-xs text-white/50 transition hover:text-red-400"
                     >
                       Remover vínculo
                     </button>

@@ -52,28 +52,28 @@ export default async function ServiceTypesPage({
         </Link>
       ) : null}
 
-      <div className="rounded-lg bg-white shadow-sm">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
         {serviceTypes.length === 0 ? (
-          <p className="p-6 text-center text-sm text-kmp-graphite/60">
+          <p className="p-6 text-center text-sm text-white/50">
             Nenhum tipo de serviço cadastrado.
           </p>
         ) : (
-          <ul className="divide-y divide-black/5">
+          <ul className="divide-y divide-white/10">
             {serviceTypes.map((st) => (
               <li key={st.id} className="p-4 text-sm">
                 <Link
                   href={`/configuracoes/servicos/${st.id}`}
-                  className="font-medium text-kmp-graphite hover:text-kmp-orange"
+                  className="font-medium text-white hover:text-kmp-orange"
                 >
                   {st.nome}
                 </Link>
                 {st.arquivado ? (
-                  <span className="ml-2 rounded-full bg-black/5 px-2 py-0.5 text-xs font-medium text-kmp-graphite/60">
+                  <span className="ml-2 rounded-full bg-white/10 px-2 py-0.5 text-xs font-medium text-white/60">
                     Arquivada
                   </span>
                 ) : null}
                 {st.descricao ? (
-                  <p className="mt-1 text-kmp-graphite/60">{st.descricao}</p>
+                  <p className="mt-1 text-white/50">{st.descricao}</p>
                 ) : null}
               </li>
             ))}

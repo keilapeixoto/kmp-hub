@@ -10,7 +10,7 @@ const PRIORITY_RANK: Record<string, number> = { alta: 0, media: 1, baixa: 2 };
 const PRIORITY_DOT: Record<string, string> = {
   alta: "bg-red-500",
   media: "bg-amber-500",
-  baixa: "bg-kmp-graphite/30",
+  baixa: "bg-white/30",
 };
 
 type QueueSlug = "todos" | "alta" | "atrasados" | "pausados" | "concluidos";
@@ -105,7 +105,7 @@ export async function CasesFila({
       </div>
 
       {queued.length === 0 ? (
-        <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
+        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
           Nenhum processo nessa fila.
         </p>
       ) : (
@@ -117,37 +117,37 @@ export async function CasesFila({
                 {groupName}{" "}
                 <span className="font-normal text-kmp-graphite/50">({groupCases.length})</span>
               </h3>
-              <div className="overflow-hidden rounded-lg bg-white shadow-sm">
-                <ul className="divide-y divide-black/5">
+              <div className="overflow-hidden rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+                <ul className="divide-y divide-white/10">
                   {groupCases.map((c) => {
                     const overdue = isOverdue(c);
                     return (
                       <li key={c.id}>
                         <Link
                           href={`/processos/${c.id}`}
-                          className="flex items-center justify-between gap-3 px-4 py-3 text-sm transition hover:bg-black/[0.02]"
+                          className="flex items-center justify-between gap-3 px-4 py-3 text-sm transition hover:bg-white/5"
                         >
                           <div className="flex min-w-0 items-center gap-2.5">
                             <span
-                              className={`h-2 w-2 shrink-0 rounded-full ${PRIORITY_DOT[c.prioridade] ?? "bg-kmp-graphite/30"}`}
+                              className={`h-2 w-2 shrink-0 rounded-full ${PRIORITY_DOT[c.prioridade] ?? "bg-white/30"}`}
                               title={`Prioridade ${CASE_PRIORITY_LABELS[c.prioridade] ?? c.prioridade}`}
                             />
-                            <span className="truncate font-medium text-kmp-graphite">
+                            <span className="truncate font-medium text-white">
                               {clientName(c.client_id)}
                             </span>
-                            <span className="shrink-0 text-xs text-kmp-graphite/50">
+                            <span className="shrink-0 text-xs text-white/40">
                               {consultantName(c.consultor_id)}
                             </span>
                           </div>
                           <div className="flex shrink-0 items-center gap-3 text-xs">
-                            <span className="text-kmp-graphite/60">
+                            <span className="text-white/50">
                               {statusLabels[c.status] ?? c.status}
                             </span>
                             <span
                               className={
                                 overdue
                                   ? "rounded-full bg-red-50 px-2 py-0.5 font-medium text-red-700"
-                                  : "text-kmp-graphite/60"
+                                  : "text-white/50"
                               }
                             >
                               {c.prazo

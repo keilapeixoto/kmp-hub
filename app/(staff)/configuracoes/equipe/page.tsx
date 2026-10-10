@@ -29,18 +29,18 @@ export default async function TeamPage() {
         </Link>
       </div>
 
-      <div className="rounded-lg bg-white shadow-sm">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
         {members.length === 0 ? (
-          <p className="p-6 text-center text-sm text-kmp-graphite/60">
+          <p className="p-6 text-center text-sm text-white/50">
             Nenhum usuário cadastrado.
           </p>
         ) : (
-          <ul className="divide-y divide-black/5">
+          <ul className="divide-y divide-white/10">
             {members.map((m) => (
               <li key={m.userId}>
                 <Link
                   href={`/configuracoes/equipe/${m.userId}`}
-                  className="flex items-center justify-between gap-4 px-4 py-3 text-sm transition hover:bg-black/[0.02]"
+                  className="flex items-center justify-between gap-4 px-4 py-3 text-sm transition hover:bg-white/5"
                 >
                   <span className="flex items-center gap-3">
                     {m.fotoUrl ? (
@@ -51,27 +51,27 @@ export default async function TeamPage() {
                         className="h-8 w-8 rounded-full object-cover"
                       />
                     ) : (
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kmp-graphite/10 text-xs font-medium text-kmp-graphite/60">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-xs font-medium text-white/60">
                         {m.nome.slice(0, 1).toUpperCase()}
                       </span>
                     )}
                     <span>
-                      <span className="font-medium text-kmp-graphite">
+                      <span className="font-medium text-white">
                         {m.nome}
                       </span>
                       {m.cargo ? (
-                        <span className="ml-2 text-xs text-kmp-graphite/50">
+                        <span className="ml-2 text-xs text-white/40">
                           {m.cargo}
                         </span>
                       ) : null}
                       <br />
-                      <span className="text-xs text-kmp-graphite/50">
+                      <span className="text-xs text-white/40">
                         {m.email}
                       </span>
                     </span>
                   </span>
                   <span className="flex shrink-0 items-center gap-3">
-                    <span className="rounded-full bg-kmp-graphite/10 px-2.5 py-1 text-xs font-medium text-kmp-graphite/70">
+                    <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-white/70">
                       {ROLE_LABELS[m.role] ?? m.role}
                     </span>
                     {!m.ativo ? (

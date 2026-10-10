@@ -274,7 +274,7 @@ export async function ChecklistPanel({
   if (!checklist) {
     if (!serviceTypeChecklistTemplateId) {
       return (
-        <p className="rounded-lg bg-white p-6 text-sm text-kmp-graphite/60 shadow-sm">
+        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 text-sm text-white/50 shadow-md shadow-kmp-config/20">
           Este tipo de serviço ainda não tem um template de checklist
           configurado em Configurações → Tipos de serviço.
         </p>
@@ -288,8 +288,8 @@ export async function ChecklistPanel({
     );
 
     return (
-      <div className="rounded-lg bg-white p-6 text-center shadow-sm">
-        <p className="text-sm text-kmp-graphite/60">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 text-center shadow-md shadow-kmp-config/20">
+        <p className="text-sm text-white/50">
           Nenhum checklist criado para este processo ainda.
         </p>
         <form action={createWithIds} className="mt-4">
@@ -306,13 +306,13 @@ export async function ChecklistPanel({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg bg-white p-4 shadow-sm">
+      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
         <div className="flex items-center justify-between text-sm">
-          <span className="font-medium text-kmp-graphite">
+          <span className="font-medium text-white">
             {checklist.percentual}% completo
           </span>
         </div>
-        <div className="mt-2 h-2 rounded-full bg-black/5">
+        <div className="mt-2 h-2 rounded-full bg-white/10">
           <div
             className="h-2 rounded-full bg-kmp-orange transition-all"
             style={{ width: `${checklist.percentual}%` }}

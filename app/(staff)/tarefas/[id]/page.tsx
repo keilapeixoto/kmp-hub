@@ -68,14 +68,14 @@ export default async function TarefaDetailPage({
           />
         </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-sm">
-          <h2 className="font-heading text-lg text-kmp-graphite">
+        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
+          <h2 className="font-heading text-lg text-white">
             Comentários
           </h2>
 
           <div className="mt-4 space-y-4">
             {comments.length === 0 ? (
-              <p className="text-sm text-kmp-graphite/60">
+              <p className="text-sm text-white/50">
                 Nenhum comentário ainda.
               </p>
             ) : (
@@ -84,11 +84,11 @@ export default async function TarefaDetailPage({
                   key={comment.id}
                   className="border-l-2 border-kmp-orange/30 pl-3"
                 >
-                  <p className="text-xs text-kmp-graphite/50">
+                  <p className="text-xs text-white/40">
                     {staffName(comment.autor)} ·{" "}
                     {new Date(comment.created_at).toLocaleString("pt-BR")}
                   </p>
-                  <p className="mt-0.5 text-sm text-kmp-graphite">
+                  <p className="mt-0.5 text-sm text-white/90">
                     {comment.texto}
                   </p>
                 </div>

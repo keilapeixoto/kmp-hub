@@ -20,32 +20,32 @@ export default async function BuscaPage({
       </h1>
 
       {q.length < 2 ? (
-        <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
+        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
           Digite pelo menos 2 caracteres no campo de busca do topo.
         </p>
       ) : results.length === 0 ? (
-        <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
+        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
           Nada encontrado para &quot;{q}&quot;.
         </p>
       ) : (
-        <div className="rounded-lg bg-white shadow-sm">
-          <ul className="divide-y divide-black/5">
+        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+          <ul className="divide-y divide-white/10">
             {results.map((r, i) => (
               <li key={i}>
                 <Link
                   href={r.href}
-                  className="flex items-center justify-between px-4 py-3 text-sm transition hover:bg-black/[0.02]"
+                  className="flex items-center justify-between px-4 py-3 text-sm transition hover:bg-white/5"
                 >
                   <span>
-                    <span className="mr-3 rounded-full bg-kmp-graphite/10 px-2 py-0.5 text-xs font-medium text-kmp-graphite/70">
+                    <span className="mr-3 rounded-full bg-white/10 px-2 py-0.5 text-xs font-medium text-white/70">
                       {r.categoria}
                     </span>
-                    <span className="font-medium text-kmp-graphite">
+                    <span className="font-medium text-white">
                       {r.titulo}
                     </span>
                   </span>
                   {r.detalhe ? (
-                    <span className="text-xs text-kmp-graphite/50">
+                    <span className="text-xs text-white/40">
                       {r.detalhe}
                     </span>
                   ) : null}

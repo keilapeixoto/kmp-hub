@@ -37,7 +37,7 @@ export function ClientFilesPanel({
 
   if (documents.length === 0) {
     return (
-      <p className="rounded-lg bg-white p-6 text-center text-sm text-kmp-graphite/60 shadow-sm">
+      <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
         Nenhum arquivo enviado para este cliente ainda.
       </p>
     );

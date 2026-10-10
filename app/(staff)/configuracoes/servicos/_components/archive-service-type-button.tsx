@@ -18,7 +18,7 @@ export function ArchiveServiceTypeButton({
         type="button"
         disabled={pending}
         onClick={() => startTransition(() => reactivateServiceType(id))}
-        className="text-sm text-kmp-graphite/70 transition hover:text-kmp-orange disabled:opacity-60"
+        className="text-sm text-kmp-text/70 transition hover:text-kmp-orange disabled:opacity-60"
       >
         {pending ? "…" : "Reativar pipeline"}
       </button>
@@ -39,7 +39,7 @@ export function ArchiveServiceTypeButton({
         }
         startTransition(() => archiveServiceType(id));
       }}
-      className="text-sm text-kmp-graphite/70 transition hover:text-red-600 disabled:opacity-60"
+      className="text-sm text-kmp-text/70 transition hover:text-red-600 disabled:opacity-60"
     >
       {pending ? "Arquivando…" : "Arquivar pipeline"}
     </button>

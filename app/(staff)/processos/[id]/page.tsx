@@ -122,11 +122,11 @@ export default async function ProcessoDetailPage({
         <div>
           <Link
             href="/processos"
-            className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+            className="text-sm text-kmp-text/60 hover:text-kmp-orange"
           >
             ← Processos
           </Link>
-          <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
+          <h1 className="mt-1 font-heading text-2xl text-kmp-text">
             {client?.nome ?? "Cliente"}
           </h1>
         </div>
@@ -141,7 +141,7 @@ export default async function ProcessoDetailPage({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-lg bg-white p-6 shadow-sm lg:col-span-2">
+        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm lg:col-span-2">
           <CaseForm
             action={updateWithId}
             caseItem={caseItem}
@@ -156,8 +156,8 @@ export default async function ProcessoDetailPage({
           />
         </div>
 
-        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
-          <h2 className="font-heading text-lg text-white">
+        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <h2 className="font-heading text-lg text-kmp-text">
             Histórico de status e etapa
           </h2>
           <div className="mt-4">
@@ -167,7 +167,7 @@ export default async function ProcessoDetailPage({
       </div>
 
       <div className="space-y-4">
-        <h2 className="font-heading text-lg text-kmp-graphite">Documentos</h2>
+        <h2 className="font-heading text-lg text-kmp-text">Documentos</h2>
         <DocumentUploadClassifier
           clientId={caseItem.client_id}
           caseId={id}
@@ -181,7 +181,7 @@ export default async function ProcessoDetailPage({
       </div>
 
       <div>
-        <h2 className="mb-4 font-heading text-lg text-kmp-graphite">
+        <h2 className="mb-4 font-heading text-lg text-kmp-text">
           Checklist
         </h2>
         <ChecklistPanel
@@ -196,7 +196,7 @@ export default async function ProcessoDetailPage({
 
       {dataFormTemplate ? (
         <div>
-          <h2 className="mb-4 font-heading text-lg text-kmp-graphite">
+          <h2 className="mb-4 font-heading text-lg text-kmp-text">
             Formulário de Dados
           </h2>
           <CaseFormPanel

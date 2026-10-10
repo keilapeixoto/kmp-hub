@@ -10,7 +10,7 @@ const PRIORITY_RANK: Record<string, number> = { alta: 0, media: 1, baixa: 2 };
 const PRIORITY_DOT: Record<string, string> = {
   alta: "bg-red-500",
   media: "bg-amber-500",
-  baixa: "bg-white/30",
+  baixa: "bg-kmp-text/30",
 };
 
 type QueueSlug = "todos" | "alta" | "atrasados" | "pausados" | "concluidos";
@@ -96,7 +96,7 @@ export async function CasesFila({
             className={`rounded-full border px-3 py-1 font-medium transition ${
               queue === tab.slug
                 ? "border-kmp-orange bg-kmp-orange text-white"
-                : "border-black/10 text-kmp-graphite/70 hover:border-kmp-orange hover:text-kmp-orange"
+                : "border-kmp-divider text-kmp-text/70 hover:border-kmp-orange hover:text-kmp-orange"
             }`}
           >
             {tab.label}
@@ -105,7 +105,7 @@ export async function CasesFila({
       </div>
 
       {queued.length === 0 ? (
-        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
+        <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
           Nenhum processo nessa fila.
         </p>
       ) : (
@@ -113,41 +113,41 @@ export async function CasesFila({
           const groupCases = groups.get(groupName)!;
           return (
             <div key={groupName}>
-              <h3 className="mb-2 text-sm font-semibold text-kmp-graphite">
+              <h3 className="mb-2 text-sm font-semibold text-kmp-text">
                 {groupName}{" "}
-                <span className="font-normal text-kmp-graphite/50">({groupCases.length})</span>
+                <span className="font-normal text-kmp-text/50">({groupCases.length})</span>
               </h3>
-              <div className="overflow-hidden rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
-                <ul className="divide-y divide-white/10">
+              <div className="overflow-hidden rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+                <ul className="divide-y divide-kmp-divider">
                   {groupCases.map((c) => {
                     const overdue = isOverdue(c);
                     return (
                       <li key={c.id}>
                         <Link
                           href={`/processos/${c.id}`}
-                          className="flex items-center justify-between gap-3 px-4 py-3 text-sm transition hover:bg-white/5"
+                          className="flex items-center justify-between gap-3 px-4 py-3 text-sm transition hover:bg-kmp-divider"
                         >
                           <div className="flex min-w-0 items-center gap-2.5">
                             <span
-                              className={`h-2 w-2 shrink-0 rounded-full ${PRIORITY_DOT[c.prioridade] ?? "bg-white/30"}`}
+                              className={`h-2 w-2 shrink-0 rounded-full ${PRIORITY_DOT[c.prioridade] ?? "bg-kmp-text/30"}`}
                               title={`Prioridade ${CASE_PRIORITY_LABELS[c.prioridade] ?? c.prioridade}`}
                             />
-                            <span className="truncate font-medium text-white">
+                            <span className="truncate font-medium text-kmp-text">
                               {clientName(c.client_id)}
                             </span>
-                            <span className="shrink-0 text-xs text-white/40">
+                            <span className="shrink-0 text-xs text-kmp-text/40">
                               {consultantName(c.consultor_id)}
                             </span>
                           </div>
                           <div className="flex shrink-0 items-center gap-3 text-xs">
-                            <span className="text-white/50">
+                            <span className="text-kmp-text/50">
                               {statusLabels[c.status] ?? c.status}
                             </span>
                             <span
                               className={
                                 overdue
                                   ? "rounded-full bg-red-50 px-2 py-0.5 font-medium text-red-700"
-                                  : "text-white/50"
+                                  : "text-kmp-text/50"
                               }
                             >
                               {c.prazo

@@ -7,7 +7,7 @@ import type { ServiceTypeFormState } from "../actions";
 const initialState: ServiceTypeFormState = { error: null };
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
 
 export function ServiceTypeForm({
   action,
@@ -24,7 +24,7 @@ export function ServiceTypeForm({
   return (
     <form action={formAction} className="space-y-4">
       <div>
-        <label htmlFor="nome" className="block text-sm font-medium text-kmp-graphite">
+        <label htmlFor="nome" className="block text-sm font-medium text-kmp-text">
           Nome *
         </label>
         <input
@@ -38,7 +38,7 @@ export function ServiceTypeForm({
       <div>
         <label
           htmlFor="descricao"
-          className="block text-sm font-medium text-kmp-graphite"
+          className="block text-sm font-medium text-kmp-text"
         >
           Descrição
         </label>

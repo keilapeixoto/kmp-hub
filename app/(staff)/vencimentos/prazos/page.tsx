@@ -22,10 +22,10 @@ export default async function PrazosPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Vencimento de vistos
         </h1>
-        <p className="text-sm text-kmp-graphite/60">
+        <p className="text-sm text-kmp-text/60">
           Pedidos do Department com janela de 28 dias para resposta — exame
           médico, informação adicional, skills assessment pendente.
         </p>

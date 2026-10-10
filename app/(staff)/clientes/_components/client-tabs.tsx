@@ -17,15 +17,15 @@ export function ClientTabs({
   active: string;
 }) {
   return (
-    <div className="flex gap-2 border-b border-black/10 text-sm">
+    <div className="flex gap-2 border-b border-kmp-divider text-sm">
       {TABS.map((t) => (
         <Link
           key={t.slug}
           href={`/clientes/${clientId}?tab=${t.slug}`}
           className={`px-3 py-2 font-medium ${
             active === t.slug
-              ? "border-b-2 border-kmp-orange text-kmp-graphite"
-              : "text-kmp-graphite/60 hover:text-kmp-orange"
+              ? "border-b-2 border-kmp-orange text-kmp-text"
+              : "text-kmp-text/60 hover:text-kmp-orange"
           }`}
         >
           {t.label}

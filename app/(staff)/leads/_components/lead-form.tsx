@@ -8,8 +8,8 @@ import type { LeadFormState } from "../actions";
 const initialState: LeadFormState = { error: null };
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
-const labelClass = "block text-sm font-medium text-kmp-graphite";
+  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+const labelClass = "block text-sm font-medium text-kmp-text";
 
 export function LeadForm({
   action,
@@ -35,7 +35,7 @@ export function LeadForm({
   return (
     <form action={formAction} className="space-y-8">
       <section>
-        <h2 className="font-heading text-lg text-kmp-graphite">
+        <h2 className="font-heading text-lg text-kmp-text">
           Dados do lead
         </h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -89,7 +89,7 @@ export function LeadForm({
       </section>
 
       <section>
-        <h2 className="font-heading text-lg text-kmp-graphite">
+        <h2 className="font-heading text-lg text-kmp-text">
           Localização
         </h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -125,7 +125,7 @@ export function LeadForm({
       </section>
 
       <section>
-        <h2 className="font-heading text-lg text-kmp-graphite">Comercial</h2>
+        <h2 className="font-heading text-lg text-kmp-text">Comercial</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="origem" className={labelClass}>
@@ -183,7 +183,7 @@ export function LeadForm({
               <input
                 disabled
                 value={currentUserNome}
-                className={`${inputClass} bg-black/5 text-kmp-graphite/60`}
+                className={`${inputClass} bg-kmp-divider text-kmp-text/60`}
               />
             )}
           </div>
@@ -208,7 +208,7 @@ export function LeadForm({
       </section>
 
       <section>
-        <h2 className="font-heading text-lg text-kmp-graphite">
+        <h2 className="font-heading text-lg text-kmp-text">
           Acompanhamento
         </h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">

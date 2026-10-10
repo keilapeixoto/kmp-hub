@@ -24,7 +24,7 @@ export function DeadlineStatusSelect({
           await updateDeadlineStatus(id, value);
         });
       }}
-      className="rounded-md border border-black/10 px-2 py-1 text-xs text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange disabled:opacity-60"
+      className="rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange disabled:opacity-60"
     >
       {DEADLINE_STATUSES.map((s) => (
         <option key={s.slug} value={s.slug}>

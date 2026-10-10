@@ -16,8 +16,8 @@ function firstValue(value: string | string[] | undefined): string | undefined {
 }
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-2 py-1.5 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
-const labelClass = "block text-xs font-medium text-kmp-graphite/70";
+  "mt-1 w-full rounded-md border border-kmp-divider px-2 py-1.5 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+const labelClass = "block text-xs font-medium text-kmp-text/70";
 
 export default async function TarefasPage({
   searchParams,
@@ -45,7 +45,7 @@ export default async function TarefasPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl text-kmp-graphite">Tarefas</h1>
+        <h1 className="font-heading text-2xl text-kmp-text">Tarefas</h1>
         <Link
           href="/tarefas/nova"
           className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
@@ -55,8 +55,8 @@ export default async function TarefasPage({
       </div>
 
       {workload.size > 0 ? (
-        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-white/60">
+        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-4 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-text/60">
             Carga da equipe (tarefas abertas)
           </h2>
           <div className="space-y-2">
@@ -64,16 +64,16 @@ export default async function TarefasPage({
               .sort((a, b) => b[1] - a[1])
               .map(([userId, count]) => (
                 <div key={userId} className="flex items-center gap-3 text-sm">
-                  <span className="w-44 truncate text-white/80">
+                  <span className="w-44 truncate text-kmp-text/80">
                     {staffName(userId)}
                   </span>
-                  <div className="h-2 flex-1 rounded-full bg-white/10">
+                  <div className="h-2 flex-1 rounded-full bg-kmp-divider">
                     <div
                       className="h-2 rounded-full bg-kmp-orange"
                       style={{ width: `${(count / maxLoad) * 100}%` }}
                     />
                   </div>
-                  <span className="w-8 text-right text-white/50">
+                  <span className="w-8 text-right text-kmp-text/50">
                     {count}
                   </span>
                 </div>
@@ -84,7 +84,7 @@ export default async function TarefasPage({
 
       <form
         method="GET"
-        className="grid grid-cols-2 gap-3 rounded-lg bg-white p-4 shadow-sm sm:grid-cols-4"
+        className="grid grid-cols-2 gap-3 rounded-lg bg-kmp-surface p-4 shadow-sm sm:grid-cols-4"
       >
         <div>
           <label className={labelClass}>Status</label>
@@ -136,7 +136,7 @@ export default async function TarefasPage({
           </button>
           <Link
             href="/tarefas"
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-kmp-graphite/70 transition hover:text-kmp-orange"
+            className="rounded-md px-3 py-1.5 text-sm font-medium text-kmp-text/70 transition hover:text-kmp-orange"
           >
             Limpar
           </Link>
@@ -144,13 +144,13 @@ export default async function TarefasPage({
       </form>
 
       {tasks.length === 0 ? (
-        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
+        <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
           Nenhuma tarefa encontrada.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+        <div className="overflow-x-auto rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
           <table className="w-full min-w-[700px] text-left text-sm">
-            <thead className="border-b border-white/10 text-xs uppercase text-white/50">
+            <thead className="border-b border-kmp-divider text-xs uppercase text-kmp-text/50">
               <tr>
                 <th className="px-4 py-3 font-medium">Tarefa</th>
                 <th className="px-4 py-3 font-medium">Responsável</th>
@@ -166,32 +166,32 @@ export default async function TarefasPage({
                   new Date(task.prazo) < new Date() &&
                   (task.status === "pendente" || task.status === "em_andamento");
                 return (
-                  <tr key={task.id} className="border-b border-white/10 last:border-0">
+                  <tr key={task.id} className="border-b border-kmp-divider last:border-0">
                     <td className="px-4 py-3">
                       <Link
                         href={`/tarefas/${task.id}`}
-                        className="font-medium text-white hover:text-kmp-orange"
+                        className="font-medium text-kmp-text hover:text-kmp-orange"
                       >
                         {task.titulo}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-white/70">
+                    <td className="px-4 py-3 text-kmp-text/70">
                       {staffName(task.responsavel)}
                     </td>
-                    <td className="px-4 py-3 text-white/70">
+                    <td className="px-4 py-3 text-kmp-text/70">
                       {TASK_PRIORITY_LABELS[task.prioridade]}
                     </td>
                     <td className="px-4 py-3">
                       {task.prazo ? (
-                        <span className={overdue ? "font-medium text-kmp-orange" : "text-white/70"}>
+                        <span className={overdue ? "font-medium text-kmp-orange" : "text-kmp-text/70"}>
                           {overdue ? "⚠ " : ""}
                           {new Date(task.prazo).toLocaleDateString("pt-BR")}
                         </span>
                       ) : (
-                        <span className="text-white/40">—</span>
+                        <span className="text-kmp-text/40">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-white/70">
+                    <td className="px-4 py-3 text-kmp-text/70">
                       {TASK_STATUS_LABELS[task.status]}
                     </td>
                   </tr>

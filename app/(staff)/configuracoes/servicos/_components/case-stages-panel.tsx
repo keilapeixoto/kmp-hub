@@ -2,7 +2,7 @@ import type { CaseStage } from "@/lib/cases/types";
 import { addCaseStage, removeCaseStage } from "../actions";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
 
 export function CaseStagesPanel({
   serviceTypeId,
@@ -17,13 +17,13 @@ export function CaseStagesPanel({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         {stages.length === 0 ? (
-          <p className="p-6 text-center text-sm text-white/50">
+          <p className="p-6 text-center text-sm text-kmp-text/50">
             Nenhuma etapa cadastrada ainda.
           </p>
         ) : (
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {stages.map((stage) => {
               const removeWithIds = removeCaseStage.bind(
                 null,
@@ -35,8 +35,8 @@ export function CaseStagesPanel({
                   key={stage.id}
                   className="flex items-center justify-between p-4 text-sm"
                 >
-                  <span className="text-white">
-                    <span className="mr-2 text-white/40">
+                  <span className="text-kmp-text">
+                    <span className="mr-2 text-kmp-text/40">
                       {stage.ordem}.
                     </span>
                     {stage.nome}
@@ -45,7 +45,7 @@ export function CaseStagesPanel({
                     <form action={removeWithIds}>
                       <button
                         type="submit"
-                        className="text-xs text-white/50 transition hover:text-red-400"
+                        className="text-xs text-kmp-text/50 transition hover:text-red-400"
                       >
                         Remover
                       </button>
@@ -59,8 +59,8 @@ export function CaseStagesPanel({
       </div>
 
       {isAdmin ? (
-        <div className="rounded-lg bg-white p-6 shadow-sm">
-          <h2 className="font-heading text-lg text-kmp-graphite">
+        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+          <h2 className="font-heading text-lg text-kmp-text">
             Adicionar etapa
           </h2>
           <form
@@ -68,13 +68,13 @@ export function CaseStagesPanel({
             className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3"
           >
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Nome
               </label>
               <input name="nome" required className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Ordem
               </label>
               <input

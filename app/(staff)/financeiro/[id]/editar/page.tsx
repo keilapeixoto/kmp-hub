@@ -29,10 +29,10 @@ export default async function EditarInvoicePage({
 
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-2xl text-kmp-graphite">
+      <h1 className="font-heading text-2xl text-kmp-text">
         Editar invoice {invoice.numero}
       </h1>
-      <div className="rounded-lg bg-white p-6 shadow-sm">
+      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
         <InvoiceForm
           action={boundAction}
           invoice={invoice}

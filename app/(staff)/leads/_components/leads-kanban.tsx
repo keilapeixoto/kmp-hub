@@ -48,11 +48,11 @@ export function LeadsKanban({
               const leadId = e.dataTransfer.getData("text/lead-id");
               if (leadId) handleDrop(column.slug, leadId);
             }}
-            className="flex w-64 shrink-0 flex-col rounded-lg bg-black/5 p-3"
+            className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3"
           >
-            <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-graphite">
+            <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-text">
               {column.label}
-              <span className="rounded-full bg-white px-2 py-0.5 text-xs text-kmp-graphite/60">
+              <span className="rounded-full bg-kmp-surface px-2 py-0.5 text-xs text-kmp-text/60">
                 {columnLeads.length}
               </span>
             </h3>
@@ -65,16 +65,16 @@ export function LeadsKanban({
                   onDragStart={(e) =>
                     e.dataTransfer.setData("text/lead-id", lead.id)
                   }
-                  className="block rounded-md bg-white p-3 text-sm shadow-sm transition hover:shadow-md"
+                  className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md"
                 >
-                  <p className="font-medium text-kmp-graphite">{lead.nome}</p>
+                  <p className="font-medium text-kmp-text">{lead.nome}</p>
                   {lead.servico_interesse ? (
-                    <p className="mt-1 text-xs text-kmp-graphite/60">
+                    <p className="mt-1 text-xs text-kmp-text/60">
                       {lead.servico_interesse}
                     </p>
                   ) : null}
                   <div className="mt-2 flex items-center justify-between">
-                    <span className="text-xs text-kmp-graphite/60">
+                    <span className="text-xs text-kmp-text/60">
                       {consultantName(lead.consultor_id)}
                     </span>
                     {isLeadInactive(lead) ? (
@@ -84,7 +84,7 @@ export function LeadsKanban({
                 </Link>
               ))}
               {columnLeads.length === 0 ? (
-                <p className="rounded-md border border-dashed border-black/10 p-3 text-center text-xs text-kmp-graphite/40">
+                <p className="rounded-md border border-dashed border-kmp-divider p-3 text-center text-xs text-kmp-text/40">
                   Vazio
                 </p>
               ) : null}

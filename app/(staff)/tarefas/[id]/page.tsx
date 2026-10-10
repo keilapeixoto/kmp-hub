@@ -40,11 +40,11 @@ export default async function TarefaDetailPage({
       <div>
         <Link
           href="/tarefas"
-          className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+          className="text-sm text-kmp-text/60 hover:text-kmp-orange"
         >
           ← Tarefas
         </Link>
-        <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
+        <h1 className="mt-1 font-heading text-2xl text-kmp-text">
           {task.titulo}
         </h1>
         {dependency && dependency.status !== "concluida" ? (
@@ -56,7 +56,7 @@ export default async function TarefaDetailPage({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-lg bg-white p-6 shadow-sm lg:col-span-2">
+        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm lg:col-span-2">
           <TaskForm
             action={updateWithId}
             task={task}
@@ -68,14 +68,14 @@ export default async function TarefaDetailPage({
           />
         </div>
 
-        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
-          <h2 className="font-heading text-lg text-white">
+        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <h2 className="font-heading text-lg text-kmp-text">
             Comentários
           </h2>
 
           <div className="mt-4 space-y-4">
             {comments.length === 0 ? (
-              <p className="text-sm text-white/50">
+              <p className="text-sm text-kmp-text/50">
                 Nenhum comentário ainda.
               </p>
             ) : (
@@ -84,11 +84,11 @@ export default async function TarefaDetailPage({
                   key={comment.id}
                   className="border-l-2 border-kmp-orange/30 pl-3"
                 >
-                  <p className="text-xs text-white/40">
+                  <p className="text-xs text-kmp-text/40">
                     {staffName(comment.autor)} ·{" "}
                     {new Date(comment.created_at).toLocaleString("pt-BR")}
                   </p>
-                  <p className="mt-0.5 text-sm text-white/90">
+                  <p className="mt-0.5 text-sm text-kmp-text/90">
                     {comment.texto}
                   </p>
                 </div>
@@ -102,7 +102,7 @@ export default async function TarefaDetailPage({
               rows={3}
               required
               placeholder="Escreva um comentário…"
-              className="w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+              className="w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
             />
             <button
               type="submit"

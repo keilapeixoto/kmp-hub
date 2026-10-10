@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Dark mode via classe `.dark` na <html> (alternado pelo ThemeToggle),
+   não por prefers-color-scheme — a Keila quer poder escolher, não que
+   siga o SO. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-heading: var(--font-jakarta), sans-serif;
   --font-body: var(--font-jakarta), sans-serif;
@@ -8,6 +13,16 @@
   --color-kmp-orange-deep: #c85a0e;
   --color-kmp-graphite: #2c2c2c;
   --color-kmp-bg: #f8f7f5;
+
+  /* Tokens semânticos — mesma cor nas duas telas, trocam de valor sob
+     `.dark` (ver bloco abaixo). Usados no lugar de `bg-white` /
+     `text-kmp-graphite` / `border-black/10` em qualquer componente que
+     precise se adaptar ao tema. Cor de marca/estado (laranja, badges
+     pastel, bg-kmp-graphite sólido) não entra aqui — só muda o que é
+     "chrome" (fundo de cartão, texto padrão, linha divisória). */
+  --color-kmp-text: #2c2c2c;
+  --color-kmp-surface: #ffffff;
+  --color-kmp-divider: rgb(0 0 0 / 0.08);
 
   /* Painel escuro (Dashboard) — pedido da Keila inspirado numa referência
      visual externa ("central de comando"), usando o azul que já existia
@@ -41,4 +56,13 @@ body {
   font-family: var(--font-body);
   background-color: var(--color-kmp-bg);
   color: var(--color-kmp-graphite);
+}
+
+/* Valores dos tokens semânticos no modo escuro — reusa as cores do painel
+   que já existia (kmp-panel/kmp-panel-deep), não inventa paleta nova. */
+.dark {
+  --color-kmp-bg: var(--color-kmp-panel-deep);
+  --color-kmp-text: #f3f3f3;
+  --color-kmp-surface: var(--color-kmp-panel);
+  --color-kmp-divider: rgb(255 255 255 / 0.1);
 }

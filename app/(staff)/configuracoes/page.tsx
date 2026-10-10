@@ -67,10 +67,10 @@ export default async function ConfiguracoesHubPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Configurações
         </h1>
-        <p className="text-sm text-kmp-graphite/60">
+        <p className="text-sm text-kmp-text/60">
           Ajustes do sistema — cada área abaixo pode ser personalizada sem
           precisar mexer no código.
         </p>
@@ -83,13 +83,13 @@ export default async function ConfiguracoesHubPage() {
             <Link
               key={area.href}
               href={area.href}
-              className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-5 shadow-md shadow-kmp-config/20 transition hover:border-kmp-config/70"
+              className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-5 shadow-sm dark:shadow-md dark:shadow-kmp-config/20 transition dark:hover:border-kmp-config/70"
             >
               <Icon className="h-6 w-6 text-kmp-orange" />
-              <h2 className="mt-3 font-heading text-lg text-white">
+              <h2 className="mt-3 font-heading text-lg text-kmp-text">
                 {area.nome}
               </h2>
-              <p className="mt-1 text-sm text-white/50">
+              <p className="mt-1 text-sm text-kmp-text/50">
                 {area.descricao}
               </p>
             </Link>

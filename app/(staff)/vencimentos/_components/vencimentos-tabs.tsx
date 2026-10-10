@@ -12,7 +12,7 @@ export function VencimentosTabs() {
   const pathname = usePathname();
 
   return (
-    <div className="flex gap-1 border-b border-black/10">
+    <div className="flex gap-1 border-b border-kmp-divider">
       {TABS.map((tab) => {
         const active = pathname === tab.href;
         return (
@@ -21,8 +21,8 @@ export function VencimentosTabs() {
             href={tab.href}
             className={`px-4 py-2 text-sm font-medium transition ${
               active
-                ? "border-b-2 border-kmp-orange text-kmp-graphite"
-                : "text-kmp-graphite/60 hover:text-kmp-orange"
+                ? "border-b-2 border-kmp-orange text-kmp-text"
+                : "text-kmp-text/60 hover:text-kmp-orange"
             }`}
           >
             {tab.label}

@@ -8,7 +8,7 @@ import type { GuideFormState } from "../actions";
 const initialState: GuideFormState = { error: null };
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
 
 export function GuideForm({
   action,
@@ -24,7 +24,7 @@ export function GuideForm({
   return (
     <form action={formAction} className="space-y-4">
       <div>
-        <label htmlFor="titulo" className="block text-sm font-medium text-kmp-graphite">
+        <label htmlFor="titulo" className="block text-sm font-medium text-kmp-text">
           Título *
         </label>
         <input
@@ -39,7 +39,7 @@ export function GuideForm({
       <div>
         <label
           htmlFor="service_type_id"
-          className="block text-sm font-medium text-kmp-graphite"
+          className="block text-sm font-medium text-kmp-text"
         >
           Tipo de serviço (opcional)
         </label>
@@ -59,7 +59,7 @@ export function GuideForm({
       </div>
 
       <div>
-        <label htmlFor="conteudo" className="block text-sm font-medium text-kmp-graphite">
+        <label htmlFor="conteudo" className="block text-sm font-medium text-kmp-text">
           Conteúdo *
         </label>
         <textarea
@@ -70,7 +70,7 @@ export function GuideForm({
           defaultValue={guide?.conteudo ?? ""}
           className={`${inputClass} font-mono text-xs`}
         />
-        <p className="mt-1 text-xs text-kmp-graphite/50">
+        <p className="mt-1 text-xs text-kmp-text/50">
           Cada salvamento com conteúdo alterado gera uma nova versão
           automaticamente — o histórico fica ao lado.
         </p>

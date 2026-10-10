@@ -32,15 +32,15 @@ export default async function ServiceTypeDetailPage({
       <div>
         <Link
           href="/configuracoes/servicos"
-          className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+          className="text-sm text-kmp-text/60 hover:text-kmp-orange"
         >
           ← Tipos de serviço
         </Link>
         <div className="mt-1 flex items-center justify-between">
-          <h1 className="font-heading text-2xl text-kmp-graphite">
+          <h1 className="font-heading text-2xl text-kmp-text">
             {serviceType.nome}
             {serviceType.arquivado ? (
-              <span className="ml-3 rounded-full bg-black/5 px-2.5 py-0.5 align-middle text-xs font-medium text-kmp-graphite/60">
+              <span className="ml-3 rounded-full bg-kmp-divider px-2.5 py-0.5 align-middle text-xs font-medium text-kmp-text/60">
                 Arquivada
               </span>
             ) : null}
@@ -58,13 +58,13 @@ export default async function ServiceTypeDetailPage({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-lg bg-white p-6 shadow-sm">
-          <h2 className="font-heading text-lg text-kmp-graphite">Dados</h2>
+        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+          <h2 className="font-heading text-lg text-kmp-text">Dados</h2>
           <div className="mt-4">
             {isAdmin ? (
               <ServiceTypeForm action={updateWithId} serviceType={serviceType} />
             ) : (
-              <p className="text-sm text-kmp-graphite/80">
+              <p className="text-sm text-kmp-text/80">
                 {serviceType.descricao ?? "Sem descrição."}
               </p>
             )}
@@ -72,7 +72,7 @@ export default async function ServiceTypeDetailPage({
         </div>
 
         <div>
-          <h2 className="mb-4 font-heading text-lg text-kmp-graphite">
+          <h2 className="mb-4 font-heading text-lg text-kmp-text">
             Etapas do pipeline
           </h2>
           <CaseStagesPanel
@@ -84,11 +84,11 @@ export default async function ServiceTypeDetailPage({
       </div>
 
       <div>
-        <h2 className="mb-4 font-heading text-lg text-kmp-graphite">
+        <h2 className="mb-4 font-heading text-lg text-kmp-text">
           Checklist
         </h2>
         {serviceType.checklist_template_id ? (
-          <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
+          <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
             <Link
               href={`/configuracoes/checklists/${serviceType.checklist_template_id}`}
               className="text-sm font-medium text-kmp-orange hover:underline"
@@ -97,8 +97,8 @@ export default async function ServiceTypeDetailPage({
             </Link>
           </div>
         ) : isAdmin ? (
-          <div className="rounded-lg bg-white p-6 shadow-sm">
-            <p className="text-sm text-kmp-graphite/60">
+          <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+            <p className="text-sm text-kmp-text/60">
               Este tipo de serviço ainda não tem um template de checklist.
             </p>
             <form
@@ -106,14 +106,14 @@ export default async function ServiceTypeDetailPage({
               className="mt-4 flex items-end gap-2"
             >
               <div className="flex-1">
-                <label className="block text-sm font-medium text-kmp-graphite">
+                <label className="block text-sm font-medium text-kmp-text">
                   Nome do template
                 </label>
                 <input
                   name="nome"
                   required
                   defaultValue={`Checklist ${serviceType.nome}`}
-                  className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+                  className="mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
                 />
               </div>
               <button
@@ -125,7 +125,7 @@ export default async function ServiceTypeDetailPage({
             </form>
           </div>
         ) : (
-          <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 text-sm text-white/50 shadow-md shadow-kmp-config/20">
+          <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
             Nenhum template de checklist configurado.
           </p>
         )}

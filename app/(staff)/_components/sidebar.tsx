@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import type { ComponentType } from "react";
 import { ACCENT_STYLES, type Accent } from "@/lib/ui/accent";
+import { ThemeToggle } from "./theme-toggle";
 
 type NavItem = {
   href: string;
@@ -200,7 +201,7 @@ export function Sidebar() {
   const currentView = useSearchParams().get("view");
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col border-r border-black/5 bg-white">
+    <aside className="flex w-64 shrink-0 flex-col border-r border-kmp-divider bg-kmp-surface">
       <div className="px-6 py-5">
         <div className="flex w-fit items-center gap-2 rounded-lg bg-kmp-orange px-3 py-1.5">
           {/* eslint-disable-next-line @next/next/no-img-element -- logo
@@ -217,7 +218,7 @@ export function Sidebar() {
         {NAV_GROUPS.map((group, index) => (
           <div key={group.label ?? `group-${index}`}>
             {group.label ? (
-              <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-kmp-graphite/40">
+              <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-kmp-text/40">
                 {group.label}
               </p>
             ) : null}
@@ -238,7 +239,7 @@ export function Sidebar() {
                     className={`flex items-center gap-3 rounded-xl px-2.5 py-2 text-sm font-medium transition ${
                       active
                         ? styles.activeRow
-                        : "text-kmp-graphite/70 hover:bg-black/5 hover:text-kmp-graphite"
+                        : "text-kmp-text/70 hover:bg-kmp-divider hover:text-kmp-text"
                     }`}
                   >
                     <span
@@ -255,8 +256,9 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-black/5 px-6 py-4 text-xs text-kmp-graphite/40">
-        KMP Hub · v1.0
+      <div className="border-t border-kmp-divider px-3 py-3">
+        <ThemeToggle />
+        <p className="mt-1 px-2 text-xs text-kmp-text/40">KMP Hub · v1.0</p>
       </div>
     </aside>
   );

@@ -17,13 +17,13 @@ export default async function MyProfilePage() {
   return (
     <div className="max-w-lg space-y-6">
       <div>
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Meu perfil
         </h1>
-        <p className="text-sm text-kmp-graphite/60">{member.email}</p>
+        <p className="text-sm text-kmp-text/60">{member.email}</p>
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
+      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
         <AvatarUploadForm userId={member.userId} fotoUrl={member.fotoUrl} />
       </div>
 

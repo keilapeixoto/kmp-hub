@@ -72,7 +72,7 @@ export function DocumentUploadClassifier({
           dragOver ? "border-kmp-orange bg-kmp-orange/5" : "border-black/15"
         }`}
       >
-        <p className="text-sm text-kmp-graphite/70">
+        <p className="text-sm text-kmp-text/70">
           Arraste documentos aqui — o sistema identifica o tipo e vincula ao checklist sozinho
         </p>
         <label className="mt-3 inline-block cursor-pointer rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90">
@@ -101,7 +101,7 @@ export function DocumentUploadClassifier({
                     ? "bg-amber-50 text-amber-800"
                     : it.status === "erro"
                       ? "bg-red-50 text-red-800"
-                      : "bg-black/5 text-kmp-graphite/60"
+                      : "bg-kmp-divider text-kmp-text/60"
               }`}
             >
               <span className="font-medium">{it.fileName}</span> — {it.message}

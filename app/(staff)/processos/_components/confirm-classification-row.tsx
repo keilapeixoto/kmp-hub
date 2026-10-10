@@ -38,17 +38,17 @@ export function ConfirmClassificationRow({
   }
 
   return (
-    <li className="rounded-md bg-white p-3">
+    <li className="rounded-md bg-kmp-surface p-3">
       <a
         href={url ?? "#"}
         target="_blank"
         rel="noreferrer"
-        className="text-sm font-medium text-kmp-graphite hover:text-kmp-orange"
+        className="text-sm font-medium text-kmp-text hover:text-kmp-orange"
       >
         {fileName}
       </a>
       {suggestedType ? (
-        <p className="mt-0.5 text-xs text-kmp-graphite/60">
+        <p className="mt-0.5 text-xs text-kmp-text/60">
           Sugestão da IA: {suggestedType} ({Math.round((suggestedConfidence ?? 0) * 100)}% de
           confiança)
         </p>
@@ -58,7 +58,7 @@ export function ConfirmClassificationRow({
           value={documentType}
           onChange={(e) => setDocumentType(e.target.value)}
           disabled={pending}
-          className="rounded-md border border-black/10 px-2 py-1 text-xs text-kmp-graphite"
+          className="rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
         >
           {DOCUMENT_TYPES.map((t) => (
             <option key={t.slug} value={t.slug}>
@@ -72,13 +72,13 @@ export function ConfirmClassificationRow({
           onChange={(e) => setNomePersonalizado(e.target.value)}
           disabled={pending}
           placeholder="Nome do arquivo (opcional)"
-          className="min-w-[180px] flex-1 rounded-md border border-black/10 px-2 py-1 text-xs text-kmp-graphite"
+          className="min-w-[180px] flex-1 rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
         />
         <select
           value={checklistItemId}
           onChange={(e) => setChecklistItemId(e.target.value)}
           disabled={pending}
-          className="rounded-md border border-black/10 px-2 py-1 text-xs text-kmp-graphite"
+          className="rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
         >
           <option value="">Sem vínculo com item do checklist</option>
           {checklistItemOptions.map((item) => (

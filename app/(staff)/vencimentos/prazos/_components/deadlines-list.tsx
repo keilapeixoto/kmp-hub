@@ -19,16 +19,16 @@ export function DeadlinesList({
 }) {
   if (deadlines.length === 0) {
     return (
-      <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
+      <p className="rounded-lg bg-kmp-surface p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
         Nenhum prazo de 28 dias cadastrado ainda.
       </p>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+    <div className="overflow-x-auto rounded-lg bg-kmp-surface shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
       <table className="w-full min-w-[860px] text-left text-sm">
-        <thead className="border-b border-white/10 text-xs uppercase text-white/50">
+        <thead className="border-b border-kmp-divider text-xs uppercase text-kmp-text/50">
           <tr>
             <th className="px-4 py-3 font-medium">Cliente</th>
             <th className="px-4 py-3 font-medium">Tipo de pedido</th>
@@ -47,7 +47,7 @@ export function DeadlinesList({
             return (
               <tr
                 key={d.id}
-                className={`border-b border-white/10 last:border-0 ${
+                className={`border-b border-kmp-divider last:border-0 ${
                   urgente ? "bg-red-50" : extensao ? "bg-amber-50" : ""
                 }`}
               >
@@ -55,17 +55,17 @@ export function DeadlinesList({
                   {d.client_id ? (
                     <Link
                       href={`/clientes/${d.client_id}`}
-                      className={`font-medium hover:text-kmp-orange ${urgente || extensao ? "text-kmp-graphite" : "text-white"}`}
+                      className={`font-medium hover:text-kmp-orange ${urgente || extensao ? "text-kmp-graphite" : "text-kmp-text"}`}
                     >
                       {d.client_nome}
                     </Link>
                   ) : urgente || extensao ? (
                     <span className="text-kmp-graphite">{d.client_nome}</span>
                   ) : (
-                    <span className="text-white">{d.client_nome}</span>
+                    <span className="text-kmp-text">{d.client_nome}</span>
                   )}
                 </td>
-                <td className={`px-4 py-3 ${urgente || extensao ? "text-kmp-graphite/80" : "text-white/70"}`}>
+                <td className={`px-4 py-3 ${urgente || extensao ? "text-kmp-graphite/80" : "text-kmp-text/70"}`}>
                   {REQUEST_TYPE_LABELS[d.tipo_pedido] ?? d.tipo_pedido}
                   {extensao ? (
                     <span className="ml-2 rounded-full bg-amber-200 px-2 py-0.5 text-[11px] font-medium text-amber-900">
@@ -73,10 +73,10 @@ export function DeadlinesList({
                     </span>
                   ) : null}
                 </td>
-                <td className={`px-4 py-3 ${urgente || extensao ? "text-kmp-graphite/80" : "text-white/70"}`}>{formatDate(d.data_pedido)}</td>
-                <td className={`px-4 py-3 ${urgente || extensao ? "text-kmp-graphite/80" : "text-white/70"}`}>{formatDate(d.prazo_final)}</td>
+                <td className={`px-4 py-3 ${urgente || extensao ? "text-kmp-graphite/80" : "text-kmp-text/70"}`}>{formatDate(d.data_pedido)}</td>
+                <td className={`px-4 py-3 ${urgente || extensao ? "text-kmp-graphite/80" : "text-kmp-text/70"}`}>{formatDate(d.prazo_final)}</td>
                 <td
-                  className={`px-4 py-3 font-medium ${urgente ? "text-red-700" : extensao ? "text-kmp-graphite/80" : "text-white/70"}`}
+                  className={`px-4 py-3 font-medium ${urgente ? "text-red-700" : extensao ? "text-kmp-graphite/80" : "text-kmp-text/70"}`}
                 >
                   {dias < 0 ? `${Math.abs(dias)}d atrás` : `${dias}d`}
                 </td>
@@ -88,7 +88,7 @@ export function DeadlinesList({
                     {d.status === "aguardando_documento" ? (
                       <SendReminderControl deadlineId={d.id} />
                     ) : (
-                      <span className={urgente || extensao ? "text-xs text-kmp-graphite/40" : "text-xs text-white/40"}>—</span>
+                      <span className={urgente || extensao ? "text-xs text-kmp-graphite/40" : "text-xs text-kmp-text/40"}>—</span>
                     )}
                   </td>
                 ) : null}

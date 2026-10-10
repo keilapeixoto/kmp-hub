@@ -2,7 +2,7 @@ import type { ChecklistTemplateItem } from "@/lib/checklists/types";
 import { addChecklistTemplateItem, removeChecklistTemplateItem } from "../actions";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
 
 export function TemplateItemsPanel({
   templateId,
@@ -17,13 +17,13 @@ export function TemplateItemsPanel({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         {items.length === 0 ? (
-          <p className="p-6 text-center text-sm text-white/50">
+          <p className="p-6 text-center text-sm text-kmp-text/50">
             Nenhum item cadastrado ainda.
           </p>
         ) : (
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {items.map((item) => {
               const removeWithIds = removeChecklistTemplateItem.bind(
                 null,
@@ -34,24 +34,24 @@ export function TemplateItemsPanel({
                 <li key={item.id} className="p-4 text-sm">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <span className="mr-2 text-white/40">
+                      <span className="mr-2 text-kmp-text/40">
                         {item.ordem}.
                       </span>
-                      <span className="font-medium text-white">
+                      <span className="font-medium text-kmp-text">
                         {item.nome}
                       </span>
                       {!item.obrigatorio ? (
-                        <span className="ml-2 text-xs text-white/40">
+                        <span className="ml-2 text-xs text-kmp-text/40">
                           (opcional)
                         </span>
                       ) : null}
                       {item.condicional ? (
-                        <span className="ml-2 text-xs text-white/40">
+                        <span className="ml-2 text-xs text-kmp-text/40">
                           (condicional)
                         </span>
                       ) : null}
                       {item.descricao ? (
-                        <p className="mt-1 text-xs text-white/50">
+                        <p className="mt-1 text-xs text-kmp-text/50">
                           {item.descricao}
                         </p>
                       ) : null}
@@ -60,7 +60,7 @@ export function TemplateItemsPanel({
                       <form action={removeWithIds}>
                         <button
                           type="submit"
-                          className="shrink-0 text-xs text-white/50 transition hover:text-red-400"
+                          className="shrink-0 text-xs text-kmp-text/50 transition hover:text-red-400"
                         >
                           Remover
                         </button>
@@ -75,19 +75,19 @@ export function TemplateItemsPanel({
       </div>
 
       {isAdmin ? (
-        <div className="rounded-lg bg-white p-6 shadow-sm">
-          <h2 className="font-heading text-lg text-kmp-graphite">
+        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+          <h2 className="font-heading text-lg text-kmp-text">
             Adicionar item
           </h2>
           <form action={addWithId} className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Nome
               </label>
               <input name="nome" required className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Ordem
               </label>
               <input
@@ -100,19 +100,19 @@ export function TemplateItemsPanel({
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Descrição
               </label>
               <textarea name="descricao" rows={2} className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Exemplo
               </label>
               <input name="exemplo" className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Formato aceito
               </label>
               <input
@@ -122,7 +122,7 @@ export function TemplateItemsPanel({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Validade (dias, opcional)
               </label>
               <input
@@ -133,11 +133,11 @@ export function TemplateItemsPanel({
               />
             </div>
             <div className="flex items-center gap-6 sm:col-span-2">
-              <label className="flex items-center gap-2 text-sm text-kmp-graphite">
+              <label className="flex items-center gap-2 text-sm text-kmp-text">
                 <input type="checkbox" name="obrigatorio" defaultChecked />
                 Obrigatório
               </label>
-              <label className="flex items-center gap-2 text-sm text-kmp-graphite">
+              <label className="flex items-center gap-2 text-sm text-kmp-text">
                 <input type="checkbox" name="condicional" />
                 Condicional
               </label>

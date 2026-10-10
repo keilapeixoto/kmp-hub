@@ -45,16 +45,16 @@ export default async function NovoProcessoPage({
       <div>
         <Link
           href="/processos"
-          className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+          className="text-sm text-kmp-text/60 hover:text-kmp-orange"
         >
           ← Processos
         </Link>
-        <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
+        <h1 className="mt-1 font-heading text-2xl text-kmp-text">
           Novo processo
         </h1>
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
+      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
         <CaseForm
           action={createCase}
           clients={clients}

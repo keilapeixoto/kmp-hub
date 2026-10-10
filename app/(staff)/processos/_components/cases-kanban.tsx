@@ -53,11 +53,11 @@ export function CasesKanban({
               const caseId = e.dataTransfer.getData("text/case-id");
               if (caseId) handleDrop(stage.id, caseId);
             }}
-            className="flex w-64 shrink-0 flex-col rounded-lg bg-black/5 p-3"
+            className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3"
           >
-            <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-graphite">
+            <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-text">
               {stage.nome}
-              <span className="rounded-full bg-white px-2 py-0.5 text-xs text-kmp-graphite/60">
+              <span className="rounded-full bg-kmp-surface px-2 py-0.5 text-xs text-kmp-text/60">
                 {stageCases.length}
               </span>
             </h3>
@@ -70,18 +70,18 @@ export function CasesKanban({
                   onDragStart={(e) =>
                     e.dataTransfer.setData("text/case-id", c.id)
                   }
-                  className="block rounded-md bg-white p-3 text-sm shadow-sm transition hover:shadow-md"
+                  className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md"
                 >
-                  <p className="font-medium text-kmp-graphite">
+                  <p className="font-medium text-kmp-text">
                     {clientName(c.client_id)}
                   </p>
-                  <p className="mt-1 text-xs text-kmp-graphite/60">
+                  <p className="mt-1 text-xs text-kmp-text/60">
                     {consultantName(c.consultor_id)}
                   </p>
                 </Link>
               ))}
               {stageCases.length === 0 ? (
-                <p className="rounded-md border border-dashed border-black/10 p-3 text-center text-xs text-kmp-graphite/40">
+                <p className="rounded-md border border-dashed border-kmp-divider p-3 text-center text-xs text-kmp-text/40">
                   Vazio
                 </p>
               ) : null}
@@ -91,8 +91,8 @@ export function CasesKanban({
       })}
 
       {semEtapa.length > 0 ? (
-        <div className="flex w-64 shrink-0 flex-col rounded-lg bg-black/5 p-3">
-          <h3 className="mb-3 font-heading text-sm text-kmp-graphite">
+        <div className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3">
+          <h3 className="mb-3 font-heading text-sm text-kmp-text">
             Sem etapa
           </h3>
           <div className="flex flex-col gap-2">
@@ -100,7 +100,7 @@ export function CasesKanban({
               <Link
                 key={c.id}
                 href={`/processos/${c.id}`}
-                className="block rounded-md bg-white p-3 text-sm shadow-sm"
+                className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm"
               >
                 {clientName(c.client_id)}
               </Link>

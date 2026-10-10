@@ -27,12 +27,12 @@ export default async function InvoiceDetailPage({
       <div>
         <Link
           href="/financeiro"
-          className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+          className="text-sm text-kmp-text/60 hover:text-kmp-orange"
         >
           ← Financeiro
         </Link>
         <div className="mt-1 flex items-center justify-between">
-          <h1 className="font-heading text-2xl text-kmp-graphite">
+          <h1 className="font-heading text-2xl text-kmp-text">
             {invoice.numero}
           </h1>
           {invoice.status === "rascunho" ? (

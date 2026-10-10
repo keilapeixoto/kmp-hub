@@ -5,7 +5,7 @@ import { CANAL_LABELS, type MessageTemplate } from "@/lib/message-templates/cons
 import { updateMessageTemplate } from "../actions";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
 
 /**
  * Card de template com edição inline — existe pra Keila poder ajustar
@@ -23,8 +23,8 @@ export function EditTemplateForm({ template }: { template: MessageTemplate }) {
       <div>
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h2 className="text-sm font-medium text-kmp-graphite">{template.nome}</h2>
-            <p className="text-xs text-kmp-graphite/50">
+            <h2 className="text-sm font-medium text-kmp-text">{template.nome}</h2>
+            <p className="text-xs text-kmp-text/50">
               {CANAL_LABELS[template.canal] ?? template.canal} ·{" "}
               {template.idioma === "en" ? "English" : "Português"}
               {isSystemTemplate ? " · usado automaticamente pelo sistema" : ""}
@@ -33,17 +33,17 @@ export function EditTemplateForm({ template }: { template: MessageTemplate }) {
           <button
             type="button"
             onClick={() => setEditing(true)}
-            className="shrink-0 rounded-md bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-graphite transition hover:bg-kmp-orange hover:text-white"
+            className="shrink-0 rounded-md bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
           >
             Editar
           </button>
         </div>
         {template.assunto ? (
-          <p className="mt-3 text-xs text-kmp-graphite/60">
+          <p className="mt-3 text-xs text-kmp-text/60">
             Assunto: <span className="font-medium">{template.assunto}</span>
           </p>
         ) : null}
-        <p className="mt-1 whitespace-pre-wrap rounded-md bg-black/5 p-3 text-xs text-kmp-graphite/80">
+        <p className="mt-1 whitespace-pre-wrap rounded-md bg-kmp-divider p-3 text-xs text-kmp-text/80">
           {template.corpo}
         </p>
       </div>
@@ -63,11 +63,11 @@ export function EditTemplateForm({ template }: { template: MessageTemplate }) {
     >
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div>
-          <label className="block text-xs font-medium text-kmp-graphite">Nome</label>
+          <label className="block text-xs font-medium text-kmp-text">Nome</label>
           <input name="nome" defaultValue={template.nome} required className={inputClass} />
         </div>
         <div>
-          <label className="block text-xs font-medium text-kmp-graphite">Canal</label>
+          <label className="block text-xs font-medium text-kmp-text">Canal</label>
           <select name="canal" defaultValue={template.canal} className={inputClass}>
             <option value="email">E-mail</option>
             <option value="whatsapp">WhatsApp</option>
@@ -75,7 +75,7 @@ export function EditTemplateForm({ template }: { template: MessageTemplate }) {
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-kmp-graphite">Idioma</label>
+          <label className="block text-xs font-medium text-kmp-text">Idioma</label>
           <select name="idioma" defaultValue={template.idioma} className={inputClass}>
             <option value="pt">Português</option>
             <option value="en">English</option>
@@ -83,13 +83,13 @@ export function EditTemplateForm({ template }: { template: MessageTemplate }) {
         </div>
       </div>
       <div>
-        <label className="block text-xs font-medium text-kmp-graphite">
+        <label className="block text-xs font-medium text-kmp-text">
           Assunto (só usado em e-mail)
         </label>
         <input name="assunto" defaultValue={template.assunto ?? ""} className={inputClass} />
       </div>
       <div>
-        <label className="block text-xs font-medium text-kmp-graphite">
+        <label className="block text-xs font-medium text-kmp-text">
           Corpo (use {"{{nome_estudante}}"}, {"{{tipo_documento}}"}, {"{{data_limite}}"},{" "}
           {"{{dias_restantes}}"} ou as variáveis do seu template)
         </label>
@@ -120,7 +120,7 @@ export function EditTemplateForm({ template }: { template: MessageTemplate }) {
           type="button"
           disabled={pending}
           onClick={() => setEditing(false)}
-          className="rounded-md bg-kmp-graphite/10 px-3 py-1.5 text-xs font-medium text-kmp-graphite transition hover:bg-black/10"
+          className="rounded-md bg-kmp-graphite/10 px-3 py-1.5 text-xs font-medium text-kmp-text transition hover:bg-kmp-divider"
         >
           Cancelar
         </button>

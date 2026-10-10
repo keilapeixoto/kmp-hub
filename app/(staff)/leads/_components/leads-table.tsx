@@ -15,16 +15,16 @@ export function LeadsTable({
 
   if (leads.length === 0) {
     return (
-      <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
+      <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         Nenhum lead encontrado com esses filtros.
       </p>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+    <div className="overflow-x-auto rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
       <table className="w-full min-w-[900px] text-left text-sm">
-        <thead className="border-b border-white/10 text-xs uppercase text-white/50">
+        <thead className="border-b border-kmp-divider text-xs uppercase text-kmp-text/50">
           <tr>
             <th className="px-4 py-3 font-medium">Nome</th>
             <th className="px-4 py-3 font-medium">Contato</th>
@@ -38,28 +38,28 @@ export function LeadsTable({
         </thead>
         <tbody>
           {leads.map((lead) => (
-            <tr key={lead.id} className="border-b border-white/10 last:border-0">
+            <tr key={lead.id} className="border-b border-kmp-divider last:border-0">
               <td className="px-4 py-3">
                 <Link
                   href={`/leads/${lead.id}`}
-                  className="font-medium text-white hover:text-kmp-orange"
+                  className="font-medium text-kmp-text hover:text-kmp-orange"
                 >
                   {lead.nome}
                 </Link>
               </td>
-              <td className="px-4 py-3 text-white/70">
+              <td className="px-4 py-3 text-kmp-text/70">
                 {lead.telefone ?? lead.email ?? "—"}
               </td>
-              <td className="px-4 py-3 text-white/70">
+              <td className="px-4 py-3 text-kmp-text/70">
                 {lead.pais ?? "—"}
               </td>
-              <td className="px-4 py-3 text-white/70">
+              <td className="px-4 py-3 text-kmp-text/70">
                 {lead.origem ?? "—"}
               </td>
-              <td className="px-4 py-3 text-white/70">
+              <td className="px-4 py-3 text-kmp-text/70">
                 {lead.servico_interesse ?? "—"}
               </td>
-              <td className="px-4 py-3 text-white/70">
+              <td className="px-4 py-3 text-kmp-text/70">
                 {consultantName(lead.consultor_id)}
               </td>
               <td className="px-4 py-3">
@@ -69,7 +69,7 @@ export function LeadsTable({
                 {isLeadInactive(lead) ? (
                   <InactivityBadge days={daysSinceLastContact(lead)} />
                 ) : (
-                  <span className="text-white/40">—</span>
+                  <span className="text-kmp-text/40">—</span>
                 )}
               </td>
             </tr>

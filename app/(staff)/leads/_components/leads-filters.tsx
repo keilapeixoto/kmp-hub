@@ -3,8 +3,8 @@ import { LEAD_STATUSES } from "@/lib/leads/constants";
 import type { ConsultantOption, LeadFilters } from "@/lib/leads/types";
 
 const selectClass =
-  "mt-1 w-full rounded-md border border-black/10 px-2 py-1.5 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
-const labelClass = "block text-xs font-medium text-kmp-graphite/70";
+  "mt-1 w-full rounded-md border border-kmp-divider px-2 py-1.5 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+const labelClass = "block text-xs font-medium text-kmp-text/70";
 
 export function LeadsFilters({
   filters,
@@ -24,7 +24,7 @@ export function LeadsFilters({
   return (
     <form
       method="GET"
-      className="grid grid-cols-2 gap-3 rounded-lg bg-white p-4 shadow-sm sm:grid-cols-3 lg:grid-cols-7"
+      className="grid grid-cols-2 gap-3 rounded-lg bg-kmp-surface p-4 shadow-sm sm:grid-cols-3 lg:grid-cols-7"
     >
       <input type="hidden" name="view" value={view} />
 
@@ -139,7 +139,7 @@ export function LeadsFilters({
         </button>
         <Link
           href={`/leads?view=${view}`}
-          className="rounded-md px-4 py-1.5 text-sm font-medium text-kmp-graphite/70 transition hover:text-kmp-orange"
+          className="rounded-md px-4 py-1.5 text-sm font-medium text-kmp-text/70 transition hover:text-kmp-orange"
         >
           Limpar filtros
         </Link>

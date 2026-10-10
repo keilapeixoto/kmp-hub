@@ -11,8 +11,8 @@ import type { TaskFormState } from "../actions";
 const initialState: TaskFormState = { error: null };
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
-const labelClass = "block text-sm font-medium text-kmp-graphite";
+  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+const labelClass = "block text-sm font-medium text-kmp-text";
 
 export function TaskForm({
   action,

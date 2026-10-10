@@ -13,8 +13,8 @@ import { getClient } from "@/lib/clients/data";
 import { saveAppointmentSummary } from "../actions";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
-const labelClass = "block text-sm font-medium text-kmp-graphite";
+  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+const labelClass = "block text-sm font-medium text-kmp-text";
 
 export default async function CompromissoDetailPage({
   params,
@@ -39,20 +39,20 @@ export default async function CompromissoDetailPage({
       <div>
         <Link
           href="/agenda"
-          className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+          className="text-sm text-kmp-text/60 hover:text-kmp-orange"
         >
           ← Agenda
         </Link>
-        <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
+        <h1 className="mt-1 font-heading text-2xl text-kmp-text">
           {appointment.titulo}
         </h1>
-        <p className="mt-1 text-sm text-kmp-graphite/70">
+        <p className="mt-1 text-sm text-kmp-text/70">
           {formatDateSydney(appointment.inicio)} ·{" "}
           {formatTimesInAllZones(appointment.inicio)}
           {appointment.fim ? ` — fim ${formatTimesInAllZones(appointment.fim)}` : ""}
         </p>
         {client ? (
-          <p className="mt-1 text-sm text-kmp-graphite/70">
+          <p className="mt-1 text-sm text-kmp-text/70">
             Cliente:{" "}
             <Link
               href={`/clientes/${client.id}`}
@@ -71,11 +71,11 @@ export default async function CompromissoDetailPage({
         </p>
       ) : null}
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
-        <h2 className="font-heading text-lg text-kmp-graphite">
+      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+        <h2 className="font-heading text-lg text-kmp-text">
           Resumo pós-consulta
         </h2>
-        <p className="mt-1 text-xs text-kmp-graphite/50">
+        <p className="mt-1 text-xs text-kmp-text/50">
           Nota interna — nunca aparece no portal do cliente.
         </p>
 

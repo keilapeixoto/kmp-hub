@@ -12,16 +12,16 @@ export default async function NovoCompromissoPage() {
       <div>
         <Link
           href="/agenda"
-          className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+          className="text-sm text-kmp-text/60 hover:text-kmp-orange"
         >
           ← Agenda
         </Link>
-        <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
+        <h1 className="mt-1 font-heading text-2xl text-kmp-text">
           Novo compromisso
         </h1>
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
+      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
         <AppointmentForm
           action={createAppointment}
           clients={clients}

@@ -16,8 +16,8 @@ import type { InvoiceFormState } from "../actions";
 import type { InvoiceWithItems } from "@/lib/invoices/types";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
-const labelClass = "block text-sm font-medium text-kmp-graphite";
+  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+const labelClass = "block text-sm font-medium text-kmp-text";
 
 type ItemRow = { descricao: string; quantidade: string; valor_unitario: string };
 
@@ -135,7 +135,7 @@ export function InvoiceForm({
       <input type="hidden" name="items_json" value={JSON.stringify(items)} />
 
       <section>
-        <h2 className="font-heading text-lg text-kmp-graphite">Fatura</h2>
+        <h2 className="font-heading text-lg text-kmp-text">Fatura</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <div className="flex items-center justify-between">
@@ -167,7 +167,7 @@ export function InvoiceForm({
             </select>
 
             {showNovoCliente ? (
-              <div className="mt-2 space-y-2 rounded-md border border-black/10 bg-black/5 p-3">
+              <div className="mt-2 space-y-2 rounded-md border border-kmp-divider bg-kmp-divider p-3">
                 <input
                   type="text"
                   value={novoClienteNome}
@@ -298,7 +298,7 @@ export function InvoiceForm({
       </section>
 
       <section>
-        <h2 className="font-heading text-lg text-kmp-graphite">Itens do serviço</h2>
+        <h2 className="font-heading text-lg text-kmp-text">Itens do serviço</h2>
         <div className="mt-4 space-y-2">
           {items.map((item, index) => (
             <div key={index} className="grid grid-cols-[2fr_1fr_1fr_auto] gap-2">
@@ -331,7 +331,7 @@ export function InvoiceForm({
                 onClick={() => removeItem(index)}
                 disabled={items.length === 1}
                 aria-label="Remover item"
-                className="mt-1 rounded-md border border-black/10 px-3 text-kmp-alert-deep transition hover:bg-kmp-alert/10 disabled:opacity-30"
+                className="mt-1 rounded-md border border-kmp-divider px-3 text-kmp-alert-deep transition hover:bg-kmp-alert/10 disabled:opacity-30"
               >
                 ×
               </button>
@@ -348,7 +348,7 @@ export function InvoiceForm({
       </section>
 
       <section>
-        <h2 className="font-heading text-lg text-kmp-graphite">Desconto e GST</h2>
+        <h2 className="font-heading text-lg text-kmp-text">Desconto e GST</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
             <label htmlFor="desconto_tipo" className={labelClass}>
@@ -383,7 +383,7 @@ export function InvoiceForm({
             />
           </div>
           <div className="flex items-end pb-2">
-            <label className="flex items-center gap-2 text-sm text-kmp-graphite">
+            <label className="flex items-center gap-2 text-sm text-kmp-text">
               <input
                 type="checkbox"
                 name="gst_incluido"
@@ -396,18 +396,18 @@ export function InvoiceForm({
           </div>
         </div>
 
-        <div className="mt-4 rounded-md bg-black/5 p-4 text-sm">
+        <div className="mt-4 rounded-md bg-kmp-divider p-4 text-sm">
           <div className="flex justify-between">
-            <span className="text-kmp-graphite/60">Subtotal</span>
+            <span className="text-kmp-text/60">Subtotal</span>
             <span>{formatMoeda(totals.subtotal, moeda)}</span>
           </div>
           {totals.gstValor > 0 ? (
             <div className="flex justify-between">
-              <span className="text-kmp-graphite/60">GST (10%)</span>
+              <span className="text-kmp-text/60">GST (10%)</span>
               <span>{formatMoeda(totals.gstValor, moeda)}</span>
             </div>
           ) : null}
-          <div className="mt-1 flex justify-between border-t border-black/10 pt-1 font-heading text-lg font-extrabold text-kmp-orange-deep">
+          <div className="mt-1 flex justify-between border-t border-kmp-divider pt-1 font-heading text-lg font-extrabold text-kmp-orange-deep">
             <span>Total</span>
             <span>{formatMoeda(totals.total, moeda)}</span>
           </div>
@@ -415,7 +415,7 @@ export function InvoiceForm({
       </section>
 
       <section>
-        <h2 className="font-heading text-lg text-kmp-graphite">Forma de pagamento</h2>
+        <h2 className="font-heading text-lg text-kmp-text">Forma de pagamento</h2>
         <div className="mt-4 flex gap-2">
           {INVOICE_PAYMENT_METHODS.map((m) => (
             <button
@@ -425,7 +425,7 @@ export function InvoiceForm({
               className={`flex-1 rounded-md border px-3 py-2 text-sm font-medium transition ${
                 formaPagamento === m.value
                   ? "border-kmp-orange bg-kmp-orange text-white"
-                  : "border-black/10 text-kmp-graphite hover:border-kmp-orange"
+                  : "border-kmp-divider text-kmp-text hover:border-kmp-orange"
               }`}
             >
               {m.label}

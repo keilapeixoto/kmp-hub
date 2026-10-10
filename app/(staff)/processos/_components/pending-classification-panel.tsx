@@ -30,10 +30,10 @@ export async function PendingClassificationPanel({
 
   return (
     <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-      <h2 className="font-heading text-lg text-kmp-graphite">
+      <h2 className="font-heading text-lg text-kmp-text">
         Documentos aguardando confirmação de tipo ({pending.length})
       </h2>
-      <p className="mt-1 text-xs text-kmp-graphite/60">
+      <p className="mt-1 text-xs text-kmp-text/60">
         Confirme o tipo e, se aplicável, o item do checklist — ou digite um nome se nenhum tipo da
         lista descrever bem o documento.
       </p>

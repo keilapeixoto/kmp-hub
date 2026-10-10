@@ -22,7 +22,7 @@ export function ArchiveCaseButton({ caseId }: { caseId: string }) {
           await archiveCase(caseId);
         });
       }}
-      className="text-sm text-kmp-graphite/70 transition hover:text-kmp-orange disabled:opacity-60"
+      className="text-sm text-kmp-text/70 transition hover:text-kmp-orange disabled:opacity-60"
     >
       {pending ? "Arquivando…" : "Arquivar processo"}
     </button>

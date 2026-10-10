@@ -47,7 +47,7 @@ export default async function LeadsPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl text-kmp-graphite">Leads</h1>
+        <h1 className="font-heading text-2xl text-kmp-text">Leads</h1>
         <Link
           href="/leads/novo"
           className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
@@ -71,7 +71,7 @@ export default async function LeadsPage({
           className={`rounded-md px-3 py-1.5 font-medium ${
             view === "list"
               ? "bg-kmp-graphite text-white"
-              : "bg-white text-kmp-graphite/70 hover:text-kmp-orange"
+              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-orange"
           }`}
         >
           Lista
@@ -81,7 +81,7 @@ export default async function LeadsPage({
           className={`rounded-md px-3 py-1.5 font-medium ${
             view === "kanban"
               ? "bg-kmp-graphite text-white"
-              : "bg-white text-kmp-graphite/70 hover:text-kmp-orange"
+              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-orange"
           }`}
         >
           Pipeline

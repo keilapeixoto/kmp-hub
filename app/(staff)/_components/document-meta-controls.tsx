@@ -26,7 +26,7 @@ export function PastaEditor({
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="rounded-full bg-black/5 px-2 py-0.5 text-xs text-kmp-graphite/50 transition hover:bg-black/10"
+        className="rounded-full bg-kmp-divider px-2 py-0.5 text-xs text-kmp-text/50 transition hover:bg-kmp-divider"
         title="Mover para pasta"
       >
         {pasta ?? "+ pasta"}
@@ -49,7 +49,7 @@ export function PastaEditor({
         defaultValue={pasta ?? ""}
         placeholder="Nome da pasta"
         onBlur={(e) => e.currentTarget.form?.requestSubmit()}
-        className="w-28 rounded border border-black/10 px-1.5 py-0.5 text-xs text-kmp-graphite"
+        className="w-28 rounded border border-kmp-divider px-1.5 py-0.5 text-xs text-kmp-text"
       />
     </form>
   );

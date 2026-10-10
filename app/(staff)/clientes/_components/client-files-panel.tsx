@@ -37,7 +37,7 @@ export function ClientFilesPanel({
 
   if (documents.length === 0) {
     return (
-      <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
+      <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         Nenhum arquivo enviado para este cliente ainda.
       </p>
     );
@@ -54,14 +54,14 @@ export function ClientFilesPanel({
   return (
     <div className="space-y-6">
       {Array.from(byCategoria.entries()).map(([categoria, docs]) => (
-        <div key={categoria} className="rounded-lg bg-white shadow-sm">
-          <h3 className="border-b border-black/5 px-4 py-3 text-xs font-medium uppercase tracking-wide text-kmp-graphite/60">
+        <div key={categoria} className="rounded-lg bg-kmp-surface shadow-sm">
+          <h3 className="border-b border-kmp-divider px-4 py-3 text-xs font-medium uppercase tracking-wide text-kmp-text/60">
             {categoria}
-            <span className="ml-2 rounded-full bg-black/5 px-2 py-0.5 text-kmp-graphite/50 normal-case tracking-normal">
+            <span className="ml-2 rounded-full bg-kmp-divider px-2 py-0.5 text-kmp-text/50 normal-case tracking-normal">
               {docs.length}
             </span>
           </h3>
-          <ul className="divide-y divide-black/5">
+          <ul className="divide-y divide-kmp-divider">
             {docs.map((doc) => {
               const archiveWithIds = archiveClientFile.bind(null, clientId, doc.id);
               const renameWithIds = renameClientFile.bind(null, clientId, doc.id);
@@ -77,7 +77,7 @@ export function ClientFilesPanel({
                   className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm"
                 >
                   <span className="flex min-w-0 flex-1 items-center gap-2">
-                    <FileText className="h-4 w-4 shrink-0 text-kmp-graphite/40" />
+                    <FileText className="h-4 w-4 shrink-0 text-kmp-text/40" />
                     <DocumentNameEditor
                       nome={displayName(doc)}
                       href={`/api/documents/${doc.id}/download`}
@@ -96,7 +96,7 @@ export function ClientFilesPanel({
                     <form action={archiveWithIds}>
                       <button
                         type="submit"
-                        className="text-xs text-kmp-graphite/50 transition hover:text-red-600"
+                        className="text-xs text-kmp-text/50 transition hover:text-red-600"
                       >
                         Arquivar
                       </button>
@@ -110,7 +110,7 @@ export function ClientFilesPanel({
       ))}
 
       {archived.length > 0 ? (
-        <p className="text-xs text-kmp-graphite/50">
+        <p className="text-xs text-kmp-text/50">
           {archived.length} arquivo{archived.length === 1 ? "" : "s"} arquivado
           {archived.length === 1 ? "" : "s"} (visível{archived.length === 1 ? "" : "is"} só para admin).
         </p>

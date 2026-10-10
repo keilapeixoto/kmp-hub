@@ -13,12 +13,12 @@ export function StatusLabelsForm({ labels }: { labels: CaseStatusLabel[] }) {
   );
 
   return (
-    <form action={formAction} className="space-y-5 rounded-lg bg-white p-6 shadow-sm">
+    <form action={formAction} className="space-y-5 rounded-lg bg-kmp-surface p-6 shadow-sm">
       {labels.map((l) => (
         <div key={l.id}>
           <label
             htmlFor={`label_${l.status_slug}`}
-            className="block text-sm font-medium text-kmp-graphite"
+            className="block text-sm font-medium text-kmp-text"
           >
             Coluna &quot;{l.status_slug}&quot;
           </label>
@@ -27,7 +27,7 @@ export function StatusLabelsForm({ labels }: { labels: CaseStatusLabel[] }) {
             name={`label_${l.status_slug}`}
             defaultValue={l.label}
             required
-            className="mt-1 w-full max-w-sm rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+            className="mt-1 w-full max-w-sm rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
           />
         </div>
       ))}

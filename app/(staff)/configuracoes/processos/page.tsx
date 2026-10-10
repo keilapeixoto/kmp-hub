@@ -14,10 +14,10 @@ export default async function ProcessosSettingsPage() {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Nomes de status de processos
         </h1>
-        <p className="text-sm text-kmp-graphite/60">
+        <p className="text-sm text-kmp-text/60">
           Textos exibidos nas colunas da Pipeline, na tabela de processos e no
           histórico. As etapas de cada tipo de serviço são configuradas em
           Tipos de serviço, não aqui.

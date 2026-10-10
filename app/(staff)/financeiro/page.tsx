@@ -77,7 +77,7 @@ export default async function FinanceiroPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl text-kmp-graphite">Financeiro</h1>
+        <h1 className="font-heading text-2xl text-kmp-text">Financeiro</h1>
         <Link
           href="/financeiro/nova"
           className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
@@ -89,16 +89,16 @@ export default async function FinanceiroPage({
       <div className="space-y-4">
         {summary.map((row) => (
           <div key={row.moeda} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
-              <p className="text-xs font-semibold uppercase tracking-wide text-white/50">
+            <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-4 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+              <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/50">
                 Recebido no mês · {row.moeda}
               </p>
               <p className="mt-2 font-heading text-xl font-extrabold text-green-400">
                 {formatMoeda(row.recebidoMes, row.moeda)}
               </p>
             </div>
-            <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
-              <p className="text-xs font-semibold uppercase tracking-wide text-white/50">
+            <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-4 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+              <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/50">
                 Pendente a receber · {row.moeda}
               </p>
               <p className="mt-2 font-heading text-xl font-extrabold text-kmp-orange">
@@ -116,7 +116,7 @@ export default async function FinanceiroPage({
             className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
               !periodo
                 ? "border-kmp-orange bg-kmp-orange text-white"
-                : "border-black/10 text-kmp-graphite/70 hover:border-kmp-orange hover:text-kmp-orange"
+                : "border-kmp-divider text-kmp-text/70 hover:border-kmp-orange hover:text-kmp-orange"
             }`}
           >
             Todos os meses
@@ -128,7 +128,7 @@ export default async function FinanceiroPage({
               className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
                 periodo === p
                   ? "border-kmp-orange bg-kmp-orange text-white"
-                  : "border-black/10 text-kmp-graphite/70 hover:border-kmp-orange hover:text-kmp-orange"
+                  : "border-kmp-divider text-kmp-text/70 hover:border-kmp-orange hover:text-kmp-orange"
               }`}
             >
               {periodoLabel(p)}
@@ -139,7 +139,7 @@ export default async function FinanceiroPage({
 
       <form
         method="GET"
-        className="grid grid-cols-1 gap-3 rounded-lg bg-white p-4 shadow-sm sm:grid-cols-3"
+        className="grid grid-cols-1 gap-3 rounded-lg bg-kmp-surface p-4 shadow-sm sm:grid-cols-3"
       >
         <input type="hidden" name="periodo" value={periodo} />
         <input
@@ -148,13 +148,13 @@ export default async function FinanceiroPage({
           defaultValue={q}
           placeholder="Buscar por número ou cliente"
           aria-label="Buscar por número ou cliente"
-          className="rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange sm:col-span-2"
+          className="rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange sm:col-span-2"
         />
         <select
           name="status"
           defaultValue={status}
           aria-label="Filtrar por status"
-          className="rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+          className="rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
         >
           <option value="">Todos os status</option>
           {INVOICE_STATUSES.map((s) => (
@@ -173,7 +173,7 @@ export default async function FinanceiroPage({
           {q || status || periodo ? (
             <Link
               href="/financeiro"
-              className="ml-3 text-sm text-kmp-graphite/70 hover:text-kmp-orange"
+              className="ml-3 text-sm text-kmp-text/70 hover:text-kmp-orange"
             >
               Limpar filtros
             </Link>
@@ -181,15 +181,15 @@ export default async function FinanceiroPage({
         </div>
       </form>
 
-      <div className="overflow-x-auto rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+      <div className="overflow-x-auto rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         {invoices.length === 0 ? (
-          <p className="p-8 text-center text-sm text-white/50">
+          <p className="p-8 text-center text-sm text-kmp-text/50">
             Nenhuma invoice encontrada.
           </p>
         ) : (
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-xs font-semibold uppercase tracking-wide text-white/50">
+              <tr className="border-b border-kmp-divider text-xs font-semibold uppercase tracking-wide text-kmp-text/50">
                 <th className="px-4 py-3">Data</th>
                 <th className="px-4 py-3">Nome</th>
                 <th className="px-4 py-3">Nº invoice</th>
@@ -198,27 +198,27 @@ export default async function FinanceiroPage({
                 <th className="px-4 py-3 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/10">
+            <tbody className="divide-y divide-kmp-divider">
               {invoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-white/5">
-                  <td className="whitespace-nowrap px-4 py-3 text-white/60">
+                <tr key={inv.id} className="hover:bg-kmp-divider">
+                  <td className="whitespace-nowrap px-4 py-3 text-kmp-text/60">
                     {formatData(inv.data_emissao)}
                   </td>
                   <td className="px-4 py-3">
                     <Link
                       href={`/financeiro/${inv.id}`}
-                      className="font-medium text-white hover:text-kmp-orange"
+                      className="font-medium text-kmp-text hover:text-kmp-orange"
                     >
                       {inv.client_nome}
                     </Link>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-white/60">
+                  <td className="whitespace-nowrap px-4 py-3 text-kmp-text/60">
                     {inv.numero}
                   </td>
-                  <td className="px-4 py-3 text-white/60">
+                  <td className="px-4 py-3 text-kmp-text/60">
                     {inv.servico_referente ?? "—"}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-right font-heading font-bold text-white">
+                  <td className="whitespace-nowrap px-4 py-3 text-right font-heading font-bold text-kmp-text">
                     {formatMoeda(inv.total, inv.moeda)}
                   </td>
                   <td className="px-4 py-3 text-right">

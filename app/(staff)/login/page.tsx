@@ -10,15 +10,15 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-kmp-bg px-4">
-      <div className="w-full max-w-sm rounded-lg bg-white p-8 shadow-sm">
-        <h1 className="font-heading text-3xl text-kmp-graphite">KMP Hub</h1>
-        <p className="mt-1 text-sm text-kmp-graphite/70">Acesso da equipe</p>
+      <div className="w-full max-w-sm rounded-lg bg-kmp-surface p-8 shadow-sm">
+        <h1 className="font-heading text-3xl text-kmp-text">KMP Hub</h1>
+        <p className="mt-1 text-sm text-kmp-text/70">Acesso da equipe</p>
 
         <form action={formAction} className="mt-8 space-y-4">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-kmp-graphite"
+              className="block text-sm font-medium text-kmp-text"
             >
               E mail
             </label>
@@ -28,14 +28,14 @@ export default function LoginPage() {
               type="email"
               autoComplete="email"
               required
-              className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+              className="mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
             />
           </div>
 
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-kmp-graphite"
+              className="block text-sm font-medium text-kmp-text"
             >
               Senha
             </label>
@@ -45,7 +45,7 @@ export default function LoginPage() {
               type="password"
               autoComplete="current-password"
               required
-              className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+              className="mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
             />
           </div>
 

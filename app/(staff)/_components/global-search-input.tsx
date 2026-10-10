@@ -66,7 +66,7 @@ export function GlobalSearchInput() {
       className="relative max-w-md flex-1"
       onSubmit={() => setOpen(false)}
     >
-      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kmp-graphite/40" />
+      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kmp-text/40" />
       <input
         type="search"
         name="q"
@@ -77,17 +77,17 @@ export function GlobalSearchInput() {
         placeholder="Buscar leads, clientes, tarefas, guias…"
         aria-label="Busca global"
         autoComplete="off"
-        className="w-full rounded-md border border-black/10 bg-white py-2 pl-9 pr-3 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+        className="w-full rounded-md border border-kmp-divider bg-kmp-surface py-2 pl-9 pr-3 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
       />
 
       {showDropdown ? (
-        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-80 overflow-y-auto rounded-md border border-black/10 bg-white shadow-lg">
+        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-80 overflow-y-auto rounded-md border border-kmp-divider bg-kmp-surface shadow-lg">
           {results.length === 0 ? (
-            <p className="p-3 text-sm text-kmp-graphite/50">
+            <p className="p-3 text-sm text-kmp-text/50">
               Nada encontrado para &quot;{query}&quot;.
             </p>
           ) : (
-            <ul className="divide-y divide-black/5">
+            <ul className="divide-y divide-kmp-divider">
               {results.map((r, i) => (
                 <li key={i}>
                   <button
@@ -96,18 +96,18 @@ export function GlobalSearchInput() {
                       e.preventDefault();
                       goTo(r.href);
                     }}
-                    className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition hover:bg-black/[0.03]"
+                    className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition hover:bg-kmp-divider"
                   >
                     <span className="flex min-w-0 items-center gap-2">
-                      <span className="shrink-0 rounded-full bg-kmp-graphite/10 px-2 py-0.5 text-xs font-medium text-kmp-graphite/70">
+                      <span className="shrink-0 rounded-full bg-kmp-divider px-2 py-0.5 text-xs font-medium text-kmp-text/70">
                         {r.categoria}
                       </span>
-                      <span className="truncate font-medium text-kmp-graphite">
+                      <span className="truncate font-medium text-kmp-text">
                         {r.titulo}
                       </span>
                     </span>
                     {r.detalhe ? (
-                      <span className="shrink-0 text-xs text-kmp-graphite/50">
+                      <span className="shrink-0 text-xs text-kmp-text/50">
                         {r.detalhe}
                       </span>
                     ) : null}
@@ -116,7 +116,7 @@ export function GlobalSearchInput() {
               ))}
             </ul>
           )}
-          <div className="border-t border-black/5">
+          <div className="border-t border-kmp-divider">
             <button
               type="submit"
               onMouseDown={(e) => {
@@ -124,7 +124,7 @@ export function GlobalSearchInput() {
                 router.push(`/busca?q=${encodeURIComponent(query.trim())}`);
                 setOpen(false);
               }}
-              className="w-full px-3 py-2 text-left text-xs font-medium text-kmp-orange hover:bg-black/[0.03]"
+              className="w-full px-3 py-2 text-left text-xs font-medium text-kmp-orange hover:bg-kmp-divider"
             >
               Ver todos os resultados →
             </button>

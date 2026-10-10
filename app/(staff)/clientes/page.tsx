@@ -35,7 +35,7 @@ export default async function ClientesPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl text-kmp-graphite">Clientes</h1>
+        <h1 className="font-heading text-2xl text-kmp-text">Clientes</h1>
         <Link
           href="/clientes/novo"
           className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"

@@ -33,10 +33,10 @@ export default async function StorageAdminPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-2xl text-kmp-graphite">
+          <h1 className="font-heading text-2xl text-kmp-text">
             Armazenamento
           </h1>
-          <p className="text-sm text-kmp-graphite/60">
+          <p className="text-sm text-kmp-text/60">
             Controle de espaço ocupado por documentos — visão só de
             administradores.
           </p>
@@ -44,45 +44,45 @@ export default async function StorageAdminPage() {
         <div className="flex items-center gap-4 text-sm">
           <Link
             href="/configuracoes/armazenamento/relatorio"
-            className="text-kmp-graphite/70 hover:text-kmp-orange"
+            className="text-kmp-text/70 hover:text-kmp-orange"
           >
             Relatório mensal
           </Link>
           <Link
             href="/configuracoes/armazenamento/ajustes"
-            className="text-kmp-graphite/70 hover:text-kmp-orange"
+            className="text-kmp-text/70 hover:text-kmp-orange"
           >
             Ajustes
           </Link>
         </div>
       </div>
 
-      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
+      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-sm text-white/50">Total utilizado</p>
-            <p className="font-heading text-3xl text-white">
+            <p className="text-sm text-kmp-text/50">Total utilizado</p>
+            <p className="font-heading text-3xl text-kmp-text">
               {formatBytes(data.totalBytes)}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-kmp-text/50">
               de {formatBytes(data.limiteBytes)} ({pct.toFixed(1)}%)
             </p>
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-kmp-text/40">
               {formatBytes(data.totalBytesAtivos)} ativos ·{" "}
               {formatBytes(data.totalBytesArquivados)} arquivados
             </p>
           </div>
         </div>
-        <div className="mt-3 h-3 rounded-full bg-white/10">
+        <div className="mt-3 h-3 rounded-full bg-kmp-divider">
           <div
             className={`h-3 rounded-full transition-all ${thresholdColor(pct)}`}
             style={{ width: `${Math.min(pct, 100)}%` }}
           />
         </div>
         {data.semMetadados > 0 ? (
-          <p className="mt-2 text-xs text-white/40">
+          <p className="mt-2 text-xs text-kmp-text/40">
             {data.semMetadados} documento{data.semMetadados === 1 ? "" : "s"}{" "}
             ainda sem tamanho registrado (enviados antes do controle de
             armazenamento) — rode o backfill pra completar o histórico.
@@ -92,11 +92,11 @@ export default async function StorageAdminPage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {data.growth.map((g) => (
-          <div key={g.dias} className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20">
-            <p className="text-xs uppercase tracking-wide text-white/50">
+          <div key={g.dias} className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-4 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+            <p className="text-xs uppercase tracking-wide text-kmp-text/50">
               Crescimento em {g.dias} dias
             </p>
-            <p className="mt-1 text-lg font-medium text-white">
+            <p className="mt-1 text-lg font-medium text-kmp-text">
               {formatDelta(g.deltaBytes)}
             </p>
           </div>
@@ -104,21 +104,21 @@ export default async function StorageAdminPage() {
       </div>
 
       {alerts.length > 0 ? (
-        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
-          <h2 className="border-b border-white/10 px-4 py-3 font-heading text-lg text-white">
+        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Alertas recentes
           </h2>
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {alerts.map((a) => (
               <li
                 key={a.id}
                 className="flex items-center justify-between px-4 py-3 text-sm"
               >
                 <span>
-                  <span className="font-medium text-white">
+                  <span className="font-medium text-kmp-text">
                     {a.threshold_pct}%
                   </span>{" "}
-                  <span className="text-white/50">
+                  <span className="text-kmp-text/50">
                     atingido em{" "}
                     {new Date(a.triggered_at).toLocaleDateString("pt-BR")} ·{" "}
                     {formatBytes(a.total_bytes)} · e-mail:{" "}
@@ -126,7 +126,7 @@ export default async function StorageAdminPage() {
                   </span>
                 </span>
                 {a.reconhecido_em ? (
-                  <span className="text-xs text-white/40">
+                  <span className="text-xs text-kmp-text/40">
                     reconhecido
                   </span>
                 ) : (
@@ -139,11 +139,11 @@ export default async function StorageAdminPage() {
       ) : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
-          <h2 className="border-b border-white/10 px-4 py-3 font-heading text-lg text-white">
+        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Por cliente
           </h2>
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {data.byClient.map((c) => (
               <li
                 key={c.clientId}
@@ -151,11 +151,11 @@ export default async function StorageAdminPage() {
               >
                 <Link
                   href={`/clientes/${c.clientId}`}
-                  className="text-white hover:text-kmp-orange"
+                  className="text-kmp-text hover:text-kmp-orange"
                 >
                   {c.nome}
                 </Link>
-                <span className="text-white/50">
+                <span className="text-kmp-text/50">
                   {formatBytes(c.bytes)} · {c.arquivos}
                 </span>
               </li>
@@ -163,11 +163,11 @@ export default async function StorageAdminPage() {
           </ul>
         </div>
 
-        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
-          <h2 className="border-b border-white/10 px-4 py-3 font-heading text-lg text-white">
+        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Por processo
           </h2>
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {data.byCase.map((c) => (
               <li
                 key={c.caseId}
@@ -175,18 +175,18 @@ export default async function StorageAdminPage() {
               >
                 <Link
                   href={`/processos/${c.caseId}`}
-                  className="text-white hover:text-kmp-orange"
+                  className="text-kmp-text hover:text-kmp-orange"
                 >
                   {c.label}
                 </Link>
-                <span className="text-white/50">
+                <span className="text-kmp-text/50">
                   {formatBytes(c.bytes)} · {c.arquivos}
                 </span>
               </li>
             ))}
           </ul>
           {data.orfaosSemProcesso > 0 ? (
-            <p className="border-t border-white/10 px-4 py-2 text-xs text-white/40">
+            <p className="border-t border-kmp-divider px-4 py-2 text-xs text-kmp-text/40">
               {data.orfaosSemProcesso} documentos ainda sem processo vinculado
               (normal para clientes importados antes de você criar o
               processo).
@@ -194,18 +194,18 @@ export default async function StorageAdminPage() {
           ) : null}
         </div>
 
-        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
-          <h2 className="border-b border-white/10 px-4 py-3 font-heading text-lg text-white">
+        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Por categoria
           </h2>
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {data.byCategoria.map((c) => (
               <li
                 key={c.categoriaId ?? "sem-categoria"}
                 className="flex items-center justify-between px-4 py-2 text-sm"
               >
-                <span className="text-white">{c.nome}</span>
-                <span className="text-white/50">
+                <span className="text-kmp-text">{c.nome}</span>
+                <span className="text-kmp-text/50">
                   {formatBytes(c.bytes)} · {c.arquivos}
                 </span>
               </li>
@@ -213,20 +213,20 @@ export default async function StorageAdminPage() {
           </ul>
         </div>
 
-        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
-          <h2 className="border-b border-white/10 px-4 py-3 font-heading text-lg text-white">
+        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Maiores arquivos
           </h2>
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {data.heaviestFiles.slice(0, 10).map((f) => (
               <li
                 key={f.documentId}
                 className="flex items-center justify-between px-4 py-2 text-sm"
               >
-                <span className="truncate text-white" title={f.nome}>
-                  {f.nome} <span className="text-white/40">· {f.clienteNome}</span>
+                <span className="truncate text-kmp-text" title={f.nome}>
+                  {f.nome} <span className="text-kmp-text/40">· {f.clienteNome}</span>
                 </span>
-                <span className="shrink-0 text-white/50">
+                <span className="shrink-0 text-kmp-text/50">
                   {formatBytes(f.bytes)}
                 </span>
               </li>
@@ -235,22 +235,22 @@ export default async function StorageAdminPage() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
-        <h2 className="border-b border-white/10 px-4 py-3 font-heading text-lg text-white">
+      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
           Possíveis duplicados
         </h2>
         {data.duplicateGroups.length === 0 ? (
-          <p className="p-6 text-center text-sm text-white/50">
+          <p className="p-6 text-center text-sm text-kmp-text/50">
             Nenhum arquivo duplicado detectado até agora.
           </p>
         ) : (
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {data.duplicateGroups.map((g) => (
               <li key={g.hash} className="px-4 py-3 text-sm">
-                <p className="text-white/50">
+                <p className="text-kmp-text/50">
                   {g.documentos.length} cópias · {formatBytes(g.bytes)} cada
                 </p>
-                <ul className="mt-1 space-y-0.5 text-xs text-white/40">
+                <ul className="mt-1 space-y-0.5 text-xs text-kmp-text/40">
                   {g.documentos.map((d) => (
                     <li key={d.documentId}>
                       {d.nome} — {d.clienteNome}
@@ -264,13 +264,13 @@ export default async function StorageAdminPage() {
       </div>
 
       {auditRuns.length > 0 ? (
-        <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
-          <h2 className="border-b border-white/10 px-4 py-3 font-heading text-lg text-white">
+        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Últimas verificações automáticas
           </h2>
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {auditRuns.map((r) => (
-              <li key={r.id} className="px-4 py-2 text-xs text-white/50">
+              <li key={r.id} className="px-4 py-2 text-xs text-kmp-text/50">
                 {new Date(r.run_at).toLocaleString("pt-BR")} —{" "}
                 {formatBytes(r.total_bytes)} · {r.orfaos_sem_processo} sem
                 processo · {r.duplicados_grupos} grupos duplicados ·{" "}

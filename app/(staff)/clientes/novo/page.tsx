@@ -18,16 +18,16 @@ export default async function NovoClientePage() {
       <div>
         <Link
           href="/clientes"
-          className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+          className="text-sm text-kmp-text/60 hover:text-kmp-orange"
         >
           ← Clientes
         </Link>
-        <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
+        <h1 className="mt-1 font-heading text-2xl text-kmp-text">
           Novo cliente
         </h1>
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
+      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
         <ClientForm
           action={createClientRecord}
           consultants={consultants}

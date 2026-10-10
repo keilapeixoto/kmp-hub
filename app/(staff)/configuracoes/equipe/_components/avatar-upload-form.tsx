@@ -19,7 +19,7 @@ export function AvatarUploadForm({
           className="h-16 w-16 rounded-full object-cover"
         />
       ) : (
-        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-kmp-graphite/10 text-xl font-medium text-kmp-graphite/60">
+        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-kmp-graphite/10 text-xl font-medium text-kmp-text/60">
           ?
         </span>
       )}
@@ -29,11 +29,11 @@ export function AvatarUploadForm({
           name="file"
           accept="image/*"
           required
-          className="flex-1 text-xs text-kmp-graphite/70"
+          className="flex-1 text-xs text-kmp-text/70"
         />
         <button
           type="submit"
-          className="rounded-md bg-kmp-graphite/10 px-3 py-1.5 text-xs font-medium text-kmp-graphite transition hover:bg-kmp-orange hover:text-white"
+          className="rounded-md bg-kmp-graphite/10 px-3 py-1.5 text-xs font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
         >
           Enviar foto
         </button>

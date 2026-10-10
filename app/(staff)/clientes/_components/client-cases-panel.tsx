@@ -28,27 +28,27 @@ export async function ClientCasesPanel({
         </Link>
       </div>
 
-      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         {cases.length === 0 ? (
-          <p className="p-6 text-center text-sm text-white/50">
+          <p className="p-6 text-center text-sm text-kmp-text/50">
             Nenhum processo cadastrado para este cliente.
           </p>
         ) : (
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {cases.map((c) => (
               <li key={c.id} className="flex items-center justify-between p-4 text-sm">
                 <div>
                   <Link
                     href={`/processos/${c.id}`}
-                    className="font-medium text-white hover:text-kmp-orange"
+                    className="font-medium text-kmp-text hover:text-kmp-orange"
                   >
                     {serviceTypeName(c.service_type_id)}
                   </Link>
-                  <p className="text-white/50">
+                  <p className="text-kmp-text/50">
                     {c.etapa_id ? (stagesById[c.etapa_id]?.nome ?? "—") : "Sem etapa"}
                   </p>
                 </div>
-                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white/80">
+                <span className="rounded-full bg-kmp-divider px-2.5 py-0.5 text-xs font-medium text-kmp-text/80">
                   {statusLabels[c.status] ?? c.status}
                 </span>
               </li>

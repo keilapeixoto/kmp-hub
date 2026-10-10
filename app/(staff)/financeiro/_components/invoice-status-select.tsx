@@ -8,7 +8,7 @@ import { updateInvoiceStatus } from "../actions";
 
 // Mesma cor por status da tela de detalhe (invoice-status-control.tsx).
 const STATUS_SELECT_STYLE: Record<InvoiceStatus, string> = {
-  rascunho: "border-white/20 bg-white/10 text-white/80",
+  rascunho: "border-kmp-divider bg-kmp-divider text-kmp-text/80",
   enviada: "border-blue-200 bg-blue-50 text-blue-700",
   paga: "border-green-200 bg-green-50 text-green-700",
   vencida: "border-amber-200 bg-amber-50 text-amber-700",

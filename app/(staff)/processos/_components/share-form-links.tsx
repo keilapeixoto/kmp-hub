@@ -32,7 +32,7 @@ export function ShareFormLinks({
           setCopiado(true);
           setTimeout(() => setCopiado(false), 2000);
         }}
-        className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-graphite transition hover:bg-kmp-orange hover:text-white"
+        className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
       >
         {copiado ? "Copiado!" : "Copiar link"}
       </button>
@@ -40,13 +40,13 @@ export function ShareFormLinks({
         href={whatsappHref}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-graphite transition hover:bg-kmp-orange hover:text-white"
+        className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
       >
         WhatsApp
       </a>
       <a
         href={emailHref}
-        className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-graphite transition hover:bg-kmp-orange hover:text-white"
+        className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
       >
         E-mail
       </a>

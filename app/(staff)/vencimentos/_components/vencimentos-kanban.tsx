@@ -19,7 +19,7 @@ const BUCKET_COLUMN_STYLE: Record<VisaBucket, string> = {
   critico: "bg-red-50",
   atencao: "bg-orange-50",
   monitorar: "bg-amber-50",
-  sem_urgencia: "bg-black/5",
+  sem_urgencia: "bg-kmp-divider",
   sem_data: "bg-gray-100",
 };
 
@@ -72,9 +72,9 @@ export function VencimentosKanban({
             }}
             className={`flex w-64 shrink-0 flex-col rounded-lg p-3 ${BUCKET_COLUMN_STYLE[bucket]}`}
           >
-            <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-graphite">
+            <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-text">
               {BUCKET_LABELS[bucket]}
-              <span className="rounded-full bg-white px-2 py-0.5 text-xs text-kmp-graphite/60">
+              <span className="rounded-full bg-kmp-surface px-2 py-0.5 text-xs text-kmp-text/60">
                 {rows.length}
               </span>
             </h3>
@@ -91,13 +91,13 @@ export function VencimentosKanban({
                     onDragStart={(e) =>
                       e.dataTransfer.setData("text/client-id", c.id)
                     }
-                    className="block rounded-md bg-white p-3 text-sm shadow-sm transition hover:shadow-md"
+                    className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md"
                   >
-                    <p className="font-medium text-kmp-graphite">{c.nome}</p>
-                    <p className="mt-1 text-xs text-kmp-graphite/60">
+                    <p className="font-medium text-kmp-text">{c.nome}</p>
+                    <p className="mt-1 text-xs text-kmp-text/60">
                       {c.visto_atual_subclasse ?? "Subclasse não informada"}
                     </p>
-                    <p className="mt-0.5 text-xs text-kmp-graphite/50">
+                    <p className="mt-0.5 text-xs text-kmp-text/50">
                       {c.visto_atual_validade && dias !== null
                         ? `${formatDate(c.visto_atual_validade)} · ${
                             dias < 0 ? `${Math.abs(dias)}d atrás` : `${dias}d`
@@ -108,7 +108,7 @@ export function VencimentosKanban({
                 );
               })}
               {rows.length === 0 ? (
-                <p className="rounded-md border border-dashed border-black/10 p-3 text-center text-xs text-kmp-graphite/40">
+                <p className="rounded-md border border-dashed border-kmp-divider p-3 text-center text-xs text-kmp-text/40">
                   Vazio
                 </p>
               ) : null}

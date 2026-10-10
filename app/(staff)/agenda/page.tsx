@@ -38,7 +38,7 @@ export default async function AgendaPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl text-kmp-graphite">Agenda</h1>
+        <h1 className="font-heading text-2xl text-kmp-text">Agenda</h1>
         <Link
           href="/agenda/novo"
           className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
@@ -58,7 +58,7 @@ export default async function AgendaPage() {
               <li key={ap.id}>
                 <Link
                   href={`/agenda/${ap.id}`}
-                  className="text-kmp-graphite hover:text-kmp-orange"
+                  className="text-kmp-text hover:text-kmp-orange"
                 >
                   {ap.titulo}
                   {clientName(ap.client_id) ? ` · ${clientName(ap.client_id)}` : ""} —{" "}
@@ -71,16 +71,16 @@ export default async function AgendaPage() {
       ) : null}
 
       {days.length === 0 ? (
-        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
+        <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
           Nenhum compromisso na agenda.
         </p>
       ) : (
         days.map(([dayKey, dayAppointments]) => (
-          <div key={dayKey} className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
-            <h2 className="border-b border-white/10 px-4 py-3 font-heading text-sm text-white">
+          <div key={dayKey} className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+            <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-sm text-kmp-text">
               {formatDateSydney(dayAppointments[0].inicio)}
             </h2>
-            <ul className="divide-y divide-white/10">
+            <ul className="divide-y divide-kmp-divider">
               {dayAppointments.map((ap) => {
                 const past = isPastIso(ap.inicio);
                 const missingSummary = past && !summarized.has(ap.id);
@@ -90,20 +90,20 @@ export default async function AgendaPage() {
                       href={`/agenda/${ap.id}`}
                       className="flex flex-wrap items-center justify-between gap-2"
                     >
-                      <span className="text-sm font-medium text-white hover:text-kmp-orange">
+                      <span className="text-sm font-medium text-kmp-text hover:text-kmp-orange">
                         {ap.titulo}
                         {ap.tipo ? (
-                          <span className="ml-2 text-xs text-white/40">
+                          <span className="ml-2 text-xs text-kmp-text/40">
                             {ap.tipo}
                           </span>
                         ) : null}
                         {clientName(ap.client_id) ? (
-                          <span className="ml-2 text-xs text-white/40">
+                          <span className="ml-2 text-xs text-kmp-text/40">
                             · {clientName(ap.client_id)}
                           </span>
                         ) : null}
                       </span>
-                      <span className="text-xs text-white/50">
+                      <span className="text-xs text-kmp-text/50">
                         {formatTimesInAllZones(ap.inicio)}
                         {missingSummary ? (
                           <span className="ml-2 font-medium text-kmp-orange">

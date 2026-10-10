@@ -21,28 +21,28 @@ export function PortalAccessCard({
   });
 
   return (
-    <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
-      <h2 className="font-heading text-lg text-white">
+    <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <h2 className="font-heading text-lg text-kmp-text">
         Acesso ao portal
       </h2>
 
       {hasAccess || state.success ? (
-        <p className="mt-4 text-sm text-white/70">
+        <p className="mt-4 text-sm text-kmp-text/70">
           Este cliente já tem acesso ao portal — entra por link enviado ao
           e-mail cadastrado (magic link), sem senha.
         </p>
       ) : !hasEmail ? (
-        <p className="mt-4 text-sm text-white/50">
+        <p className="mt-4 text-sm text-kmp-text/50">
           Cadastre um e-mail para o cliente na aba &quot;Dados&quot; antes de
           convidar.
         </p>
       ) : !canInvite ? (
-        <p className="mt-4 text-sm text-white/50">
+        <p className="mt-4 text-sm text-kmp-text/50">
           Só admin ou diretor pode enviar o convite.
         </p>
       ) : (
         <form action={formAction} className="mt-4">
-          <p className="mb-3 text-sm text-white/50">
+          <p className="mb-3 text-sm text-kmp-text/50">
             Envia um e-mail com link de acesso direto ao portal — o cliente
             passa a ver o processo dele e enviar documentos sozinho.
           </p>

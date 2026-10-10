@@ -47,11 +47,11 @@ export default async function LeadDetailPage({
         <div>
           <Link
             href="/leads"
-            className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+            className="text-sm text-kmp-text/60 hover:text-kmp-orange"
           >
             ← Leads
           </Link>
-          <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
+          <h1 className="mt-1 font-heading text-2xl text-kmp-text">
             {lead.nome}
           </h1>
         </div>
@@ -71,7 +71,7 @@ export default async function LeadDetailPage({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-lg bg-white p-6 shadow-sm lg:col-span-2">
+        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm lg:col-span-2">
           <LeadForm
             action={updateLeadWithId}
             lead={lead}
@@ -85,8 +85,8 @@ export default async function LeadDetailPage({
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-lg bg-white p-6 shadow-sm">
-            <h2 className="font-heading text-lg text-kmp-graphite">
+          <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+            <h2 className="font-heading text-lg text-kmp-text">
               Registrar contato
             </h2>
             <form action={registerContactWithId} className="mt-4 space-y-3">
@@ -94,7 +94,7 @@ export default async function LeadDetailPage({
                 name="descricao"
                 rows={3}
                 placeholder="O que foi conversado?"
-                className="w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+                className="w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
               />
               <button
                 type="submit"
@@ -105,8 +105,8 @@ export default async function LeadDetailPage({
             </form>
           </div>
 
-          <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
-            <h2 className="font-heading text-lg text-white">
+          <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+            <h2 className="font-heading text-lg text-kmp-text">
               Linha do tempo
             </h2>
             <div className="mt-4">

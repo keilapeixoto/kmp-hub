@@ -56,10 +56,10 @@ export default async function VencimentosPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Vencimento de vistos
         </h1>
-        <p className="text-sm text-kmp-graphite/60">
+        <p className="text-sm text-kmp-text/60">
           Clientes com processo em andamento. Arraste um cliente para outra
           coluna para reclassificar rapidamente — para o vencimento exato,
           edite pelo cadastro do cliente.

@@ -14,10 +14,10 @@ export default async function StorageSettingsPage() {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Ajustes de armazenamento
         </h1>
-        <p className="text-sm text-kmp-graphite/60">
+        <p className="text-sm text-kmp-text/60">
           O bloqueio de formatos perigosos (executáveis, scripts) é sempre
           aplicado no código, independente do que estiver aqui.
         </p>

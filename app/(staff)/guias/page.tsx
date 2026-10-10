@@ -17,7 +17,7 @@ export default async function GuiasPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Guias internos
         </h1>
         {isAdmin ? (
@@ -30,22 +30,22 @@ export default async function GuiasPage() {
         ) : null}
       </div>
 
-      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         {guides.length === 0 ? (
-          <p className="p-8 text-center text-sm text-white/50">
+          <p className="p-8 text-center text-sm text-kmp-text/50">
             Nenhum guia cadastrado ainda.
           </p>
         ) : (
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {guides.map((guide) => (
               <li key={guide.id} className="p-4 text-sm">
                 <Link
                   href={`/guias/${guide.id}`}
-                  className="font-medium text-white hover:text-kmp-orange"
+                  className="font-medium text-kmp-text hover:text-kmp-orange"
                 >
                   {guide.titulo}
                 </Link>
-                <p className="mt-1 text-xs text-white/40">
+                <p className="mt-1 text-xs text-kmp-text/40">
                   Versão {guide.versao}
                   {serviceTypeName(guide.service_type_id)
                     ? ` · ${serviceTypeName(guide.service_type_id)}`

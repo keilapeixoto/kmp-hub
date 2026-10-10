@@ -18,7 +18,7 @@ export function SendReminderControl({ deadlineId }: { deadlineId: string }) {
           setResult(null);
         }}
         disabled={pending}
-        className="rounded-md border border-black/10 px-1.5 py-1 text-xs text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange disabled:opacity-60"
+        className="rounded-md border border-kmp-divider px-1.5 py-1 text-xs text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange disabled:opacity-60"
       >
         {REMINDER_MILESTONES.map((m) => (
           <option key={m} value={m}>

@@ -12,9 +12,9 @@ export function ImportForm() {
   );
 
   return (
-    <form action={formAction} className="space-y-4 rounded-lg bg-white p-6 shadow-sm">
+    <form action={formAction} className="space-y-4 rounded-lg bg-kmp-surface p-6 shadow-sm">
       <div>
-        <label htmlFor="arquivo" className="block text-sm font-medium text-kmp-graphite">
+        <label htmlFor="arquivo" className="block text-sm font-medium text-kmp-text">
           Arquivo CSV
         </label>
         <input
@@ -22,12 +22,12 @@ export function ImportForm() {
           name="arquivo"
           type="file"
           accept=".csv,text/csv"
-          className="mt-1 block w-full text-sm text-kmp-graphite"
+          className="mt-1 block w-full text-sm text-kmp-text"
         />
       </div>
 
       <div>
-        <label htmlFor="conteudo" className="block text-sm font-medium text-kmp-graphite">
+        <label htmlFor="conteudo" className="block text-sm font-medium text-kmp-text">
           Ou cole o conteúdo do CSV
         </label>
         <textarea
@@ -35,9 +35,9 @@ export function ImportForm() {
           name="conteudo"
           rows={10}
           placeholder="nome,codigo_anzsco,categoria,autoridade_avaliadora,nivel_habilidade,na_csol,na_mltssl_legada,fonte"
-          className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 font-mono text-xs text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+          className="mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 font-mono text-xs text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
         />
-        <p className="mt-1 text-xs text-kmp-graphite/50">
+        <p className="mt-1 text-xs text-kmp-text/50">
           Colunas de visto (opcionais): visto_189, visto_190, visto_491,
           visto_482, visto_494, visto_186, visto_407, visto_485. Aceitam
           sim/não (ou true/false); em branco fica como &quot;não

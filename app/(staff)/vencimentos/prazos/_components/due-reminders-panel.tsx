@@ -14,10 +14,10 @@ function DueReminderRow({ item, canSend }: { item: DueReminder; canSend: boolean
     <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="font-medium text-kmp-graphite">
+          <p className="font-medium text-kmp-text">
             {deadline.client_nome} · marco de {milestone}d
           </p>
-          <p className="text-xs text-kmp-graphite/60">
+          <p className="text-xs text-kmp-text/60">
             {deadline.client_email ?? "sem e-mail cadastrado"} · assunto: &quot;{preview.subject}
             &quot;
           </p>
@@ -39,9 +39,9 @@ function DueReminderRow({ item, canSend }: { item: DueReminder; canSend: boolean
         ) : null}
       </div>
       {result && !result.ok ? <p className="mt-2 text-xs text-red-700">{result.error}</p> : null}
-      <details className="mt-2 text-xs text-kmp-graphite/70">
+      <details className="mt-2 text-xs text-kmp-text/70">
         <summary className="cursor-pointer">Ver texto do e-mail</summary>
-        <div className="mt-1 space-y-2 rounded-md bg-white p-3">
+        <div className="mt-1 space-y-2 rounded-md bg-kmp-surface p-3">
           {preview.paragraphs.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
@@ -62,10 +62,10 @@ export function DueRemindersPanel({
 
   return (
     <div className="space-y-2">
-      <h2 className="font-heading text-lg text-kmp-graphite">
+      <h2 className="font-heading text-lg text-kmp-text">
         Lembretes pendentes de hoje ({dueReminders.length})
       </h2>
-      <p className="text-xs text-kmp-graphite/60">
+      <p className="text-xs text-kmp-text/60">
         Modo revisão manual — nada é enviado sozinho ainda. Revise o texto e clique em enviar.
       </p>
       <div className="space-y-2">

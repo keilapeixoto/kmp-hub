@@ -36,7 +36,7 @@ export default async function OcupacoesPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl text-kmp-graphite">Ocupações</h1>
+        <h1 className="font-heading text-2xl text-kmp-text">Ocupações</h1>
         {isAdmin ? (
           <Link
             href="/configuracoes/ocupacoes"
@@ -49,7 +49,7 @@ export default async function OcupacoesPage({
 
       <form
         method="GET"
-        className="grid grid-cols-1 gap-3 rounded-lg bg-white p-4 shadow-sm sm:grid-cols-3"
+        className="grid grid-cols-1 gap-3 rounded-lg bg-kmp-surface p-4 shadow-sm sm:grid-cols-3"
       >
         <input
           type="text"
@@ -57,13 +57,13 @@ export default async function OcupacoesPage({
           defaultValue={q}
           placeholder="Buscar por nome ou código ANZSCO"
           aria-label="Buscar por nome ou código ANZSCO"
-          className="rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange sm:col-span-2"
+          className="rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange sm:col-span-2"
         />
         <select
           name="categoria"
           defaultValue={categoria}
           aria-label="Filtrar por categoria"
-          className="rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+          className="rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
         >
           <option value="">Todas as categorias</option>
           {OCCUPATION_CATEGORIES.map((cat) => (
@@ -82,7 +82,7 @@ export default async function OcupacoesPage({
           {q || categoria ? (
             <Link
               href="/ocupacoes"
-              className="ml-3 text-sm text-kmp-graphite/70 hover:text-kmp-orange"
+              className="ml-3 text-sm text-kmp-text/70 hover:text-kmp-orange"
             >
               Limpar filtros
             </Link>
@@ -90,22 +90,22 @@ export default async function OcupacoesPage({
         </div>
       </form>
 
-      <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         {occupations.length === 0 ? (
-          <p className="p-8 text-center text-sm text-white/50">
+          <p className="p-8 text-center text-sm text-kmp-text/50">
             Nenhuma ocupação encontrada.
           </p>
         ) : (
-          <ul className="divide-y divide-white/10">
+          <ul className="divide-y divide-kmp-divider">
             {occupations.map((o) => (
               <li key={o.id} className="p-4 text-sm">
                 <Link
                   href={`/ocupacoes/${o.id}`}
-                  className="font-medium text-white hover:text-kmp-orange"
+                  className="font-medium text-kmp-text hover:text-kmp-orange"
                 >
                   {o.nome} · {o.codigo_anzsco}
                 </Link>
-                <p className="mt-1 text-xs text-white/40">
+                <p className="mt-1 text-xs text-kmp-text/40">
                   {o.categoria} · {o.autoridade_avaliadora}
                 </p>
                 <div className="mt-2 flex gap-2">
@@ -127,7 +127,7 @@ export default async function OcupacoesPage({
       </div>
 
       {totalPages > 1 ? (
-        <div className="flex items-center justify-between text-sm text-kmp-graphite/70">
+        <div className="flex items-center justify-between text-sm text-kmp-text/70">
           <span>
             Página {page} de {totalPages} · {total} ocupações
           </span>

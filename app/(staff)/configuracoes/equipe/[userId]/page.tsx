@@ -31,17 +31,17 @@ export default async function EditTeamMemberPage({
     <div className="max-w-lg space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-2xl text-kmp-graphite">
+          <h1 className="font-heading text-2xl text-kmp-text">
             {member.nome}
           </h1>
-          <p className="text-sm text-kmp-graphite/60">{member.email}</p>
+          <p className="text-sm text-kmp-text/60">{member.email}</p>
         </div>
         {!isSelf ? (
           <DeleteTeamMemberButton userId={member.userId} nome={member.nome} />
         ) : null}
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
+      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
         <AvatarUploadForm userId={member.userId} fotoUrl={member.fotoUrl} />
       </div>
 

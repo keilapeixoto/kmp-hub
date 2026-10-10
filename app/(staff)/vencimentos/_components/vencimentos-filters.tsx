@@ -1,14 +1,14 @@
 import Link from "next/link";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-2 py-1.5 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
-const labelClass = "block text-xs font-medium text-kmp-graphite/70";
+  "mt-1 w-full rounded-md border border-kmp-divider px-2 py-1.5 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+const labelClass = "block text-xs font-medium text-kmp-text/70";
 
 export function VencimentosFilters({ busca }: { busca: string }) {
   return (
     <form
       method="GET"
-      className="flex flex-wrap items-end gap-3 rounded-lg bg-white p-4 shadow-sm"
+      className="flex flex-wrap items-end gap-3 rounded-lg bg-kmp-surface p-4 shadow-sm"
     >
       <div className="min-w-[220px] flex-1">
         <label className={labelClass}>Buscar por nome</label>
@@ -29,7 +29,7 @@ export function VencimentosFilters({ busca }: { busca: string }) {
         </button>
         <Link
           href="/vencimentos"
-          className="rounded-md px-4 py-1.5 text-sm font-medium text-kmp-graphite/70 transition hover:text-kmp-orange"
+          className="rounded-md px-4 py-1.5 text-sm font-medium text-kmp-text/70 transition hover:text-kmp-orange"
         >
           Limpar
         </Link>

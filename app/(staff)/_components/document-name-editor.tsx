@@ -34,7 +34,7 @@ export function DocumentNameEditor({
           name="nome"
           defaultValue={nome}
           autoFocus
-          className="min-w-0 flex-1 rounded border border-black/10 px-1.5 py-0.5 text-xs"
+          className="min-w-0 flex-1 rounded border border-kmp-divider px-1.5 py-0.5 text-xs"
         />
         <button
           type="submit"
@@ -45,7 +45,7 @@ export function DocumentNameEditor({
         <button
           type="button"
           onClick={() => setEditing(false)}
-          className="shrink-0 text-xs text-kmp-graphite/40"
+          className="shrink-0 text-xs text-kmp-text/40"
         >
           Cancelar
         </button>
@@ -60,7 +60,7 @@ export function DocumentNameEditor({
           href={href}
           target="_blank"
           rel="noreferrer"
-          className="min-w-0 truncate text-kmp-graphite hover:text-kmp-orange"
+          className="min-w-0 truncate text-kmp-text hover:text-kmp-orange"
         >
           {nome}
         </a>
@@ -72,7 +72,7 @@ export function DocumentNameEditor({
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="shrink-0 text-xs text-kmp-graphite/40 hover:text-kmp-orange"
+        className="shrink-0 text-xs text-kmp-text/40 hover:text-kmp-orange"
       >
         Renomear
       </button>

@@ -30,11 +30,11 @@ export default async function ChecklistTemplateDetailPage({
       <div>
         <Link
           href={`/configuracoes/servicos/${template.service_type_id}`}
-          className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+          className="text-sm text-kmp-text/60 hover:text-kmp-orange"
         >
           ← {serviceType?.nome ?? "Tipo de serviço"}
         </Link>
-        <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
+        <h1 className="mt-1 font-heading text-2xl text-kmp-text">
           {template.nome}
         </h1>
       </div>

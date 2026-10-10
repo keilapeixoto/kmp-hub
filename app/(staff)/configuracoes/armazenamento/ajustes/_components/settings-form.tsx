@@ -13,9 +13,9 @@ export function SettingsForm({ settings }: { settings: StorageSettings }) {
   );
 
   return (
-    <form action={formAction} className="space-y-5 rounded-lg bg-white p-6 shadow-sm">
+    <form action={formAction} className="space-y-5 rounded-lg bg-kmp-surface p-6 shadow-sm">
       <div>
-        <label className="block text-sm font-medium text-kmp-graphite">
+        <label className="block text-sm font-medium text-kmp-text">
           Tamanho máximo por arquivo (MB)
         </label>
         <input
@@ -24,12 +24,12 @@ export function SettingsForm({ settings }: { settings: StorageSettings }) {
           step="1"
           min="1"
           defaultValue={Math.round(settings.max_file_size_bytes / 1024 / 1024)}
-          className="mt-1 w-40 rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite"
+          className="mt-1 w-40 rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-kmp-graphite">
+        <label className="block text-sm font-medium text-kmp-text">
           Aviso de arquivo grande (MB) — só informa, nunca comprime
         </label>
         <input
@@ -40,36 +40,36 @@ export function SettingsForm({ settings }: { settings: StorageSettings }) {
           defaultValue={Math.round(
             settings.large_file_warning_bytes / 1024 / 1024,
           )}
-          className="mt-1 w-40 rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite"
+          className="mt-1 w-40 rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-kmp-graphite">
+        <label className="block text-sm font-medium text-kmp-text">
           Formatos permitidos (separados por vírgula)
         </label>
         <textarea
           name="allowed_extensions"
           rows={2}
           defaultValue={settings.allowed_extensions.join(", ")}
-          className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite"
+          className="mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-kmp-graphite">
+        <label className="block text-sm font-medium text-kmp-text">
           Níveis de alerta (% separados por vírgula)
         </label>
         <input
           type="text"
           name="alert_thresholds_pct"
           defaultValue={settings.alert_thresholds_pct.join(", ")}
-          className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite"
+          className="mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-kmp-graphite">
+        <label className="block text-sm font-medium text-kmp-text">
           E-mails que recebem os alertas (um por linha ou por vírgula)
         </label>
         <textarea
@@ -77,12 +77,12 @@ export function SettingsForm({ settings }: { settings: StorageSettings }) {
           rows={3}
           defaultValue={settings.alert_emails.join("\n")}
           placeholder="ex.: admin@kmpconsulting.com.au"
-          className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite"
+          className="mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-kmp-graphite">
+        <label className="block text-sm font-medium text-kmp-text">
           Limite interno de armazenamento (GB)
         </label>
         <input
@@ -93,12 +93,12 @@ export function SettingsForm({ settings }: { settings: StorageSettings }) {
           defaultValue={Math.round(
             settings.internal_limit_bytes / 1024 / 1024 / 1024,
           )}
-          className="mt-1 w-40 rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite"
+          className="mt-1 w-40 rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-kmp-graphite">
+        <label className="block text-sm font-medium text-kmp-text">
           Prazo para revisão de processos arquivados (dias)
         </label>
         <input
@@ -107,7 +107,7 @@ export function SettingsForm({ settings }: { settings: StorageSettings }) {
           step="1"
           min="1"
           defaultValue={settings.archived_case_review_days}
-          className="mt-1 w-40 rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite"
+          className="mt-1 w-40 rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text"
         />
       </div>
 

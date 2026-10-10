@@ -11,7 +11,7 @@ const TIPO_LABELS: Record<LeadEvent["tipo"], string> = {
 export function LeadTimeline({ events }: { events: LeadEvent[] }) {
   if (events.length === 0) {
     return (
-      <p className="text-sm text-white/50">
+      <p className="text-sm text-kmp-text/50">
         Nenhum evento registrado ainda.
       </p>
     );
@@ -21,11 +21,11 @@ export function LeadTimeline({ events }: { events: LeadEvent[] }) {
     <ol className="space-y-4">
       {events.map((event) => (
         <li key={event.id} className="border-l-2 border-kmp-orange/30 pl-4">
-          <p className="text-xs uppercase tracking-wide text-white/40">
+          <p className="text-xs uppercase tracking-wide text-kmp-text/40">
             {TIPO_LABELS[event.tipo] ?? event.tipo} ·{" "}
             {new Date(event.created_at).toLocaleString("pt-BR")}
           </p>
-          <p className="mt-0.5 text-sm text-white/90">
+          <p className="mt-0.5 text-sm text-kmp-text/90">
             {event.descricao}
           </p>
         </li>

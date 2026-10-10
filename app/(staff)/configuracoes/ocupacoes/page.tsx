@@ -12,10 +12,10 @@ export default async function ImportarOcupacoesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Importar ocupações
         </h1>
-        <p className="mt-1 text-sm text-kmp-graphite/60">
+        <p className="mt-1 text-sm text-kmp-text/60">
           Colunas esperadas, nessa ordem, com cabeçalho na primeira linha:
           nome, codigo_anzsco, categoria, autoridade_avaliadora,
           nivel_habilidade, na_csol, na_mltssl_legada, fonte. Categorias

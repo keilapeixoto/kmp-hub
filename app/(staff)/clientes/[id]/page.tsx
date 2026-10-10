@@ -86,11 +86,11 @@ export default async function ClientDetailPage({
       <div>
         <Link
           href="/clientes"
-          className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+          className="text-sm text-kmp-text/60 hover:text-kmp-orange"
         >
           ← Clientes
         </Link>
-        <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
+        <h1 className="mt-1 font-heading text-2xl text-kmp-text">
           {client.nome}
         </h1>
       </div>
@@ -110,7 +110,7 @@ export default async function ClientDetailPage({
       ) : null}
 
       {tab === "dados" ? (
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
           <ClientForm
             action={updateWithId}
             client={client}
@@ -126,13 +126,13 @@ export default async function ClientDetailPage({
       {tab === "documentos" ? (
         <div className="space-y-8">
           <div>
-            <h2 className="mb-4 font-heading text-lg text-kmp-graphite">
+            <h2 className="mb-4 font-heading text-lg text-kmp-text">
               Arquivos do cliente
             </h2>
             <ClientFilesPanel clientId={id} documents={clientFiles} />
           </div>
           <div>
-            <h2 className="mb-4 font-heading text-lg text-kmp-graphite">
+            <h2 className="mb-4 font-heading text-lg text-kmp-text">
               Documentos de identidade
             </h2>
             <DocumentsPanel clientId={id} documents={documents} />
@@ -169,22 +169,22 @@ async function ClientTimeline({
 
   if (entries.length === 0) {
     return (
-      <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
+      <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         Nenhum evento registrado ainda.
       </p>
     );
   }
 
   return (
-    <div className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-6 shadow-md shadow-kmp-config/20">
+    <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
       <ol className="space-y-4">
         {entries.map((entry, index) => (
           <li key={index} className="border-l-2 border-kmp-orange/30 pl-4">
-            <p className="text-xs uppercase tracking-wide text-white/40">
+            <p className="text-xs uppercase tracking-wide text-kmp-text/40">
               {entry.categoria} ·{" "}
               {new Date(entry.quando).toLocaleString("pt-BR")}
             </p>
-            <p className="mt-0.5 text-sm text-white/90">{entry.descricao}</p>
+            <p className="mt-0.5 text-sm text-kmp-text/90">{entry.descricao}</p>
           </li>
         ))}
       </ol>

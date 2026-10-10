@@ -11,10 +11,10 @@ export default async function NewTeamMemberPage() {
   return (
     <div className="max-w-lg space-y-6">
       <div>
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Novo usuário
         </h1>
-        <p className="text-sm text-kmp-graphite/60">
+        <p className="text-sm text-kmp-text/60">
           A pessoa recebe um e-mail de convite para definir a senha e acessar
           o painel.
         </p>

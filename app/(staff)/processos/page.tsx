@@ -68,7 +68,7 @@ export default async function ProcessosPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Processos
         </h1>
         <Link
@@ -92,7 +92,7 @@ export default async function ProcessosPage({
           className={`rounded-md px-3 py-1.5 font-medium ${
             view === "list"
               ? "bg-kmp-graphite text-white"
-              : "bg-white text-kmp-graphite/70 hover:text-kmp-orange"
+              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-orange"
           }`}
         >
           Lista
@@ -102,7 +102,7 @@ export default async function ProcessosPage({
           className={`rounded-md px-3 py-1.5 font-medium ${
             view === "kanban"
               ? "bg-kmp-graphite text-white"
-              : "bg-white text-kmp-graphite/70 hover:text-kmp-orange"
+              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-orange"
           }`}
         >
           Pipeline
@@ -112,7 +112,7 @@ export default async function ProcessosPage({
           className={`rounded-md px-3 py-1.5 font-medium ${
             view === "fila"
               ? "bg-kmp-graphite text-white"
-              : "bg-white text-kmp-graphite/70 hover:text-kmp-orange"
+              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-orange"
           }`}
         >
           Fila
@@ -138,7 +138,7 @@ export default async function ProcessosPage({
           />
         ) : (
           <>
-            <p className="text-sm text-kmp-graphite/60">
+            <p className="text-sm text-kmp-text/60">
               Visão geral por status, com todos os tipos de serviço juntos —
               arraste os cards entre as colunas. Para acompanhar etapa a
               etapa de um tipo específico (485, Turista, etc.), escolha-o no

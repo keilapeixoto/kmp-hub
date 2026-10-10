@@ -126,7 +126,7 @@ export function InvoicePdfButton({
       >
         {pending ? "Gerando…" : "Baixar PDF"}
       </button>
-      {status ? <p className="mt-2 text-xs text-kmp-graphite/60">{status}</p> : null}
+      {status ? <p className="mt-2 text-xs text-kmp-text/60">{status}</p> : null}
 
       <div className="mt-6 overflow-x-auto">
         <div ref={previewRef}>

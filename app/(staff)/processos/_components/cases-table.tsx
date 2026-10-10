@@ -21,7 +21,7 @@ const STATUS_BADGE: Record<
   pausado: { icon: PauseCircle, className: "bg-amber-50 text-amber-700" },
   concluido: { icon: CheckCircle2, className: "bg-green-50 text-green-700" },
   cancelado: { icon: XCircle, className: "bg-red-50 text-red-700" },
-  arquivado: { icon: Archive, className: "bg-gray-100 text-kmp-graphite/70" },
+  arquivado: { icon: Archive, className: "bg-gray-100 text-kmp-text/70" },
 };
 
 function StatusBadge({
@@ -53,12 +53,12 @@ function EtapaBadge({
   isLast: boolean;
 }) {
   if (!stage) {
-    return <span className="text-white/40">—</span>;
+    return <span className="text-kmp-text/40">—</span>;
   }
   const className = isLast
     ? "bg-green-50 text-green-700"
     : isFirst
-      ? "bg-kmp-graphite/10 text-kmp-graphite/70"
+      ? "bg-kmp-graphite/10 text-kmp-text/70"
       : "bg-orange-50 text-kmp-orange";
   return (
     <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${className}`}>
@@ -90,7 +90,7 @@ export async function CasesTable({
 
   if (cases.length === 0) {
     return (
-      <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
+      <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
         Nenhum processo encontrado com esses filtros.
       </p>
     );
@@ -130,15 +130,15 @@ export async function CasesTable({
 
         return (
           <div key={groupName}>
-            <h3 className="mb-2 text-sm font-semibold text-kmp-graphite">
+            <h3 className="mb-2 text-sm font-semibold text-kmp-text">
               {groupName}{" "}
-              <span className="font-normal text-kmp-graphite/50">
+              <span className="font-normal text-kmp-text/50">
                 ({groupCases.length})
               </span>
             </h3>
-            <div className="overflow-x-auto rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep shadow-md shadow-kmp-config/20">
+            <div className="overflow-x-auto rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
               <table className="w-full min-w-[900px] text-left text-sm">
-                <thead className="border-b border-white/10 text-xs uppercase text-white/50">
+                <thead className="border-b border-kmp-divider text-xs uppercase text-kmp-text/50">
                   <tr>
                     <th className="px-4 py-3 font-medium">Cliente</th>
                     <th className="px-4 py-3 font-medium">Etapa</th>
@@ -150,11 +150,11 @@ export async function CasesTable({
                 </thead>
                 <tbody>
                   {groupCases.map((c) => (
-                    <tr key={c.id} className="border-b border-white/10 last:border-0">
+                    <tr key={c.id} className="border-b border-kmp-divider last:border-0">
                       <td className="px-4 py-3">
                         <Link
                           href={`/processos/${c.id}`}
-                          className="font-medium text-white hover:text-kmp-orange"
+                          className="font-medium text-kmp-text hover:text-kmp-orange"
                         >
                           {clientName(c.client_id)}
                         </Link>
@@ -169,13 +169,13 @@ export async function CasesTable({
                       <td className="px-4 py-3">
                         <StatusBadge status={c.status} statusLabels={statusLabels} />
                       </td>
-                      <td className="px-4 py-3 text-white/70">
+                      <td className="px-4 py-3 text-kmp-text/70">
                         {CASE_PRIORITY_LABELS[c.prioridade] ?? c.prioridade}
                       </td>
-                      <td className="px-4 py-3 text-white/70">
+                      <td className="px-4 py-3 text-kmp-text/70">
                         {consultantName(c.consultor_id)}
                       </td>
-                      <td className="px-4 py-3 text-white/70">
+                      <td className="px-4 py-3 text-kmp-text/70">
                         {c.prazo ? new Date(c.prazo).toLocaleDateString("pt-BR") : "—"}
                       </td>
                     </tr>

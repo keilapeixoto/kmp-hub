@@ -40,7 +40,7 @@ export function UploadDocumentForm({
           <select
             name="categoria_id"
             defaultValue=""
-            className="rounded-md border border-black/10 py-1 text-xs text-kmp-graphite/70"
+            className="rounded-md border border-kmp-divider py-1 text-xs text-kmp-text/70"
           >
             <option value="">Categoria…</option>
             {categories.map((c) => (
@@ -54,7 +54,7 @@ export function UploadDocumentForm({
           type="file"
           name="file"
           required
-          className="flex-1 text-xs text-kmp-graphite/70"
+          className="flex-1 text-xs text-kmp-text/70"
         />
         {state.duplicates && state.duplicates.length > 0 ? (
           <input
@@ -66,7 +66,7 @@ export function UploadDocumentForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-graphite transition hover:bg-kmp-orange hover:text-white disabled:opacity-60"
+          className="rounded-md bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white disabled:opacity-60"
         >
           {pending ? "Enviando…" : "Enviar"}
         </button>

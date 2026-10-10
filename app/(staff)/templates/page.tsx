@@ -6,7 +6,7 @@ import { CopyTemplateButton } from "./_components/copy-template-button";
 import { EditTemplateForm } from "./_components/edit-template-form";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
 
 export default async function TemplatesPage() {
   const [role, templates] = await Promise.all([
@@ -18,17 +18,17 @@ export default async function TemplatesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl text-kmp-graphite">
+        <h1 className="font-heading text-2xl text-kmp-text">
           Templates de mensagem
         </h1>
-        <p className="mt-1 text-sm text-kmp-graphite/60">
+        <p className="mt-1 text-sm text-kmp-text/60">
           Nesta fase o envio é manual: copie o texto e cole no e-mail ou
           WhatsApp, substituindo as variáveis {"{{assim}}"}.
         </p>
       </div>
 
       {templates.length === 0 ? (
-        <p className="rounded-lg border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-8 text-center text-sm text-white/50 shadow-md shadow-kmp-config/20">
+        <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
           Nenhum template cadastrado ainda.
         </p>
       ) : (
@@ -37,22 +37,22 @@ export default async function TemplatesPage() {
             const deleteWithId = deleteMessageTemplate.bind(null, template.id);
             const isSystemTemplate = template.chave !== null;
             return (
-              <div key={template.id} className="rounded-lg bg-white p-4 shadow-sm">
+              <div key={template.id} className="rounded-lg bg-kmp-surface p-4 shadow-sm">
                 {isAdmin ? (
                   <EditTemplateForm template={template} />
                 ) : (
                   <div>
-                    <h2 className="text-sm font-medium text-kmp-graphite">{template.nome}</h2>
-                    <p className="text-xs text-kmp-graphite/50">
+                    <h2 className="text-sm font-medium text-kmp-text">{template.nome}</h2>
+                    <p className="text-xs text-kmp-text/50">
                       {CANAL_LABELS[template.canal] ?? template.canal} ·{" "}
                       {template.idioma === "en" ? "English" : "Português"}
                     </p>
                     {template.assunto ? (
-                      <p className="mt-3 text-xs text-kmp-graphite/60">
+                      <p className="mt-3 text-xs text-kmp-text/60">
                         Assunto: <span className="font-medium">{template.assunto}</span>
                       </p>
                     ) : null}
-                    <p className="mt-1 whitespace-pre-wrap rounded-md bg-black/5 p-3 text-xs text-kmp-graphite/80">
+                    <p className="mt-1 whitespace-pre-wrap rounded-md bg-kmp-divider p-3 text-xs text-kmp-text/80">
                       {template.corpo}
                     </p>
                   </div>
@@ -63,7 +63,7 @@ export default async function TemplatesPage() {
                     <form action={deleteWithId}>
                       <button
                         type="submit"
-                        className="text-xs text-kmp-graphite/50 transition hover:text-red-600"
+                        className="text-xs text-kmp-text/50 transition hover:text-red-600"
                       >
                         Excluir
                       </button>
@@ -77,8 +77,8 @@ export default async function TemplatesPage() {
       )}
 
       {isAdmin ? (
-        <div className="rounded-lg bg-white p-6 shadow-sm">
-          <h2 className="font-heading text-lg text-kmp-graphite">
+        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+          <h2 className="font-heading text-lg text-kmp-text">
             Novo template
           </h2>
           <form
@@ -86,13 +86,13 @@ export default async function TemplatesPage() {
             className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3"
           >
             <div>
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Nome
               </label>
               <input name="nome" required className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Canal
               </label>
               <select name="canal" defaultValue="email" className={inputClass}>
@@ -102,7 +102,7 @@ export default async function TemplatesPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Idioma
               </label>
               <select name="idioma" defaultValue="pt" className={inputClass}>
@@ -111,13 +111,13 @@ export default async function TemplatesPage() {
               </select>
             </div>
             <div className="sm:col-span-3">
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Assunto (só usado em e-mail)
               </label>
               <input name="assunto" className={inputClass} />
             </div>
             <div className="sm:col-span-3">
-              <label className="block text-sm font-medium text-kmp-graphite">
+              <label className="block text-sm font-medium text-kmp-text">
                 Corpo (use {"{{nome_cliente}}"}, {"{{consultor}}"} etc.)
               </label>
               <textarea name="corpo" rows={5} required className={inputClass} />

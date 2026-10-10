@@ -14,7 +14,7 @@ export function CopyTemplateButton({ corpo }: { corpo: string }) {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       }}
-      className="rounded-md bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-graphite transition hover:bg-kmp-orange hover:text-white"
+      className="rounded-md bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
     >
       {copied ? "Copiado" : "Copiar"}
     </button>

@@ -9,6 +9,13 @@
   --color-kmp-graphite: #2c2c2c;
   --color-kmp-bg: #f8f7f5;
 
+  /* Painel escuro (Dashboard) — pedido da Keila inspirado numa referência
+     visual externa ("central de comando"), usando o azul que já existia
+     (kmp-config) em vez de inventar cor nova. Só o fundo/borda do painel;
+     os ícones de cada StatCard continuam na cor do próprio módulo. */
+  --color-kmp-panel: #1a1c20;
+  --color-kmp-panel-deep: #121316;
+
   /* Uma cor por módulo (navegação/ícones) — o laranja continua a cor de
      maior peso (Dashboard, cartão em destaque, maior fatia de gráfico);
      estas são só para diferenciar os outros módulos entre si. */

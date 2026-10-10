@@ -80,6 +80,23 @@ laranja + "consulting." branco, pensado pra sentar sobre um fundo
 laranja) seguido de "Hub" em texto branco. O laranja existe só ali, pra
 dar contraste ao logo — nenhum outro elemento do chrome muda.
 
+**Atualização (out/2026): painel escuro no Dashboard (só ali, não é dark
+mode — ver seção "Dark mode" abaixo).** Mesma referência visual de "central
+de comando" — a Keila viu algumas variações (cards claros com toque tech,
+cards escuros isolados, painel escuro completo) em laranja e em azul antes
+de decidir: painel escuro completo, em azul. Os 5 `StatCard` do topo do
+Dashboard (`app/(staff)/dashboard/page.tsx`) agora ficam dentro de um
+container `bg-kmp-panel-deep rounded-2xl p-5`, e cada card usa
+`border-kmp-config/40` + `shadow-kmp-config/20` (o mesmo azul de
+Configurações — não um tom novo) com fundo
+`bg-gradient-to-br from-kmp-panel to-kmp-panel-deep`, label em
+`text-white/60` e número em `text-white`. O ícone de cada card continua na
+cor do próprio módulo (`ACCENT_STYLES[accent].tile`, sem mudança) — é só o
+chrome do card que fica escuro, a mesma lógica já usada no selo do logo.
+Tokens novos em `app/globals.css`: `--color-kmp-panel` (`#1A1C20`) e
+`--color-kmp-panel-deep` (`#121316`). Escopo por enquanto é só o Dashboard;
+não foi pedido ainda pra outras telas.
+
 ## Paleta funcional (estados, não é sobre marca)
 
 Além das cores de marca, o sistema usa uma paleta funcional consistente para

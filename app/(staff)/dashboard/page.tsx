@@ -36,9 +36,9 @@ function StatCard({
   return (
     <Link
       href={href}
-      className="rounded-2xl bg-white p-4 shadow-sm transition hover:shadow-md"
+      className="rounded-2xl border border-kmp-config/40 bg-gradient-to-br from-kmp-panel to-kmp-panel-deep p-4 shadow-md shadow-kmp-config/20 transition hover:border-kmp-config/70"
     >
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-kmp-graphite/50">
+      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-white/60">
         <span
           className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${styles.tile}`}
         >
@@ -46,7 +46,7 @@ function StatCard({
         </span>
         {label}
       </div>
-      <p className="mt-3 font-heading text-2xl font-extrabold text-kmp-graphite">
+      <p className="mt-3 font-heading text-2xl font-extrabold text-white">
         {value}
       </p>
     </Link>
@@ -78,44 +78,46 @@ export default async function DashboardPage() {
         Bem-vindo(a){profile?.nome ? `, ${profile.nome}` : ""}
       </h1>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-        <StatCard
-          label="Novos leads (30d)"
-          value={metrics.novosLeads30d}
-          href="/leads"
-          icon={TrendingUp}
-          accent="leads"
-        />
-        <StatCard
-          label="Conversão"
-          value={metrics.conversaoPct === null ? "—" : `${metrics.conversaoPct}%`}
-          href="/leads"
-          icon={Percent}
-          accent="leads"
-        />
-        <StatCard
-          label="Clientes ativos"
-          value={metrics.clientesAtivos}
-          href="/clientes"
-          icon={UserCircle}
-          accent="clientes"
-        />
-        <StatCard
-          label={`Processos parados (${STALLED_CASE_DAYS}d)`}
-          value={metrics.processosParados}
-          warn={metrics.processosParados > 0}
-          href="/processos"
-          icon={AlertTriangle}
-          accent="processos"
-        />
-        <StatCard
-          label="Tarefas vencidas"
-          value={metrics.tarefasVencidas}
-          warn={metrics.tarefasVencidas > 0}
-          href="/tarefas"
-          icon={CheckSquare}
-          accent="agenda"
-        />
+      <div className="rounded-2xl bg-kmp-panel-deep p-5">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+          <StatCard
+            label="Novos leads (30d)"
+            value={metrics.novosLeads30d}
+            href="/leads"
+            icon={TrendingUp}
+            accent="leads"
+          />
+          <StatCard
+            label="Conversão"
+            value={metrics.conversaoPct === null ? "—" : `${metrics.conversaoPct}%`}
+            href="/leads"
+            icon={Percent}
+            accent="leads"
+          />
+          <StatCard
+            label="Clientes ativos"
+            value={metrics.clientesAtivos}
+            href="/clientes"
+            icon={UserCircle}
+            accent="clientes"
+          />
+          <StatCard
+            label={`Processos parados (${STALLED_CASE_DAYS}d)`}
+            value={metrics.processosParados}
+            warn={metrics.processosParados > 0}
+            href="/processos"
+            icon={AlertTriangle}
+            accent="processos"
+          />
+          <StatCard
+            label="Tarefas vencidas"
+            value={metrics.tarefasVencidas}
+            warn={metrics.tarefasVencidas > 0}
+            href="/tarefas"
+            icon={CheckSquare}
+            accent="agenda"
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

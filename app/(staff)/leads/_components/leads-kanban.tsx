@@ -48,11 +48,11 @@ export function LeadsKanban({
               const leadId = e.dataTransfer.getData("text/lead-id");
               if (leadId) handleDrop(column.slug, leadId);
             }}
-            className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3"
+            className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3 dark:border dark:border-white/10 dark:bg-white/5"
           >
             <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-text">
               {column.label}
-              <span className="rounded-full bg-kmp-surface px-2 py-0.5 text-xs text-kmp-text/60">
+              <span className="rounded-full bg-kmp-surface px-2 py-0.5 text-xs text-kmp-text/60 dark:bg-white/10">
                 {columnLeads.length}
               </span>
             </h3>
@@ -65,7 +65,7 @@ export function LeadsKanban({
                   onDragStart={(e) =>
                     e.dataTransfer.setData("text/lead-id", lead.id)
                   }
-                  className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md"
+                  className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md dark:border dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
                 >
                   <p className="font-medium text-kmp-text">{lead.nome}</p>
                   {lead.servico_interesse ? (

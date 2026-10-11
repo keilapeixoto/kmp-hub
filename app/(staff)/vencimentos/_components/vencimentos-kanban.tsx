@@ -15,12 +15,12 @@ const BUCKET_LABELS: Record<VisaBucket, string> = {
 };
 
 const BUCKET_COLUMN_STYLE: Record<VisaBucket, string> = {
-  vencido: "bg-red-100",
-  critico: "bg-red-50",
-  atencao: "bg-orange-50",
-  monitorar: "bg-amber-50",
-  sem_urgencia: "bg-kmp-divider",
-  sem_data: "bg-gray-100",
+  vencido: "bg-red-100 dark:border dark:border-red-400/20 dark:bg-red-400/10",
+  critico: "bg-red-50 dark:border dark:border-red-400/20 dark:bg-red-400/10",
+  atencao: "bg-orange-50 dark:border dark:border-orange-400/20 dark:bg-orange-400/10",
+  monitorar: "bg-amber-50 dark:border dark:border-amber-400/20 dark:bg-amber-400/10",
+  sem_urgencia: "bg-kmp-divider dark:border dark:border-white/10 dark:bg-white/5",
+  sem_data: "bg-gray-100 dark:border dark:border-white/10 dark:bg-white/5",
 };
 
 function formatDate(iso: string) {
@@ -74,7 +74,7 @@ export function VencimentosKanban({
           >
             <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-text">
               {BUCKET_LABELS[bucket]}
-              <span className="rounded-full bg-kmp-surface px-2 py-0.5 text-xs text-kmp-text/60">
+              <span className="rounded-full bg-kmp-surface px-2 py-0.5 text-xs text-kmp-text/60 dark:bg-white/10">
                 {rows.length}
               </span>
             </h3>
@@ -91,7 +91,7 @@ export function VencimentosKanban({
                     onDragStart={(e) =>
                       e.dataTransfer.setData("text/client-id", c.id)
                     }
-                    className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md"
+                    className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md dark:border dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
                   >
                     <p className="font-medium text-kmp-text">{c.nome}</p>
                     <p className="mt-1 text-xs text-kmp-text/60">

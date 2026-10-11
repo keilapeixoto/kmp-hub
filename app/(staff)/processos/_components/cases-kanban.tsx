@@ -53,11 +53,11 @@ export function CasesKanban({
               const caseId = e.dataTransfer.getData("text/case-id");
               if (caseId) handleDrop(stage.id, caseId);
             }}
-            className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3"
+            className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3 dark:border dark:border-white/10 dark:bg-white/5"
           >
             <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-text">
               {stage.nome}
-              <span className="rounded-full bg-kmp-surface px-2 py-0.5 text-xs text-kmp-text/60">
+              <span className="rounded-full bg-kmp-surface px-2 py-0.5 text-xs text-kmp-text/60 dark:bg-white/10">
                 {stageCases.length}
               </span>
             </h3>
@@ -70,7 +70,7 @@ export function CasesKanban({
                   onDragStart={(e) =>
                     e.dataTransfer.setData("text/case-id", c.id)
                   }
-                  className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md"
+                  className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md dark:border dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
                 >
                   <p className="font-medium text-kmp-text">
                     {clientName(c.client_id)}
@@ -91,7 +91,7 @@ export function CasesKanban({
       })}
 
       {semEtapa.length > 0 ? (
-        <div className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3">
+        <div className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3 dark:border dark:border-white/10 dark:bg-white/5">
           <h3 className="mb-3 font-heading text-sm text-kmp-text">
             Sem etapa
           </h3>
@@ -100,7 +100,7 @@ export function CasesKanban({
               <Link
                 key={c.id}
                 href={`/processos/${c.id}`}
-                className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm"
+                className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm dark:border dark:border-white/10 dark:bg-white/10"
               >
                 {clientName(c.client_id)}
               </Link>

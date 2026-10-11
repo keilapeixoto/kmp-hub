@@ -107,6 +107,30 @@ export async function updateCaseStatusDrag(id: string, status: string) {
   revalidatePath("/processos");
 }
 
+export async function updateCasePrioridadeInline(id: string, prioridade: string) {
+  const supabase = await createClient();
+  await supabase.from("cases").update({ prioridade }).eq("id", id);
+  revalidatePath("/processos");
+}
+
+export async function updateCaseConsultorInline(id: string, consultorId: string) {
+  const supabase = await createClient();
+  await supabase
+    .from("cases")
+    .update({ consultor_id: consultorId || null })
+    .eq("id", id);
+  revalidatePath("/processos");
+}
+
+export async function updateCasePrazoInline(id: string, prazo: string) {
+  const supabase = await createClient();
+  await supabase
+    .from("cases")
+    .update({ prazo: prazo || null })
+    .eq("id", id);
+  revalidatePath("/processos");
+}
+
 export async function deleteCase(id: string) {
   const supabase = await createClient();
   await supabase.from("cases").delete().eq("id", id);

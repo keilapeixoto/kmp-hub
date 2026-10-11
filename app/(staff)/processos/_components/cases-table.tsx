@@ -1,71 +1,15 @@
 import Link from "next/link";
-import {
-  Archive,
-  CheckCircle2,
-  CircleDot,
-  PauseCircle,
-  XCircle,
-} from "lucide-react";
-import { CASE_PRIORITY_LABELS } from "@/lib/cases/constants";
-import type { CaseStatus } from "@/lib/cases/constants";
 import { getCaseStatusLabels } from "@/lib/cases/data";
 import type { Case, CaseStage, ServiceType } from "@/lib/cases/types";
 import type { ConsultantOption } from "@/lib/leads/types";
 import type { Client } from "@/lib/clients/types";
-
-const STATUS_BADGE: Record<
-  CaseStatus,
-  { icon: typeof CircleDot; className: string }
-> = {
-  ativo: { icon: CircleDot, className: "bg-blue-50 text-blue-700" },
-  pausado: { icon: PauseCircle, className: "bg-amber-50 text-amber-700" },
-  concluido: { icon: CheckCircle2, className: "bg-green-50 text-green-700" },
-  cancelado: { icon: XCircle, className: "bg-red-50 text-red-700" },
-  arquivado: { icon: Archive, className: "bg-gray-100 text-kmp-text/70" },
-};
-
-function StatusBadge({
-  status,
-  statusLabels,
-}: {
-  status: CaseStatus;
-  statusLabels: Record<string, string>;
-}) {
-  const badge = STATUS_BADGE[status] ?? STATUS_BADGE.ativo;
-  const Icon = badge.icon;
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${badge.className}`}
-    >
-      <Icon className="h-3.5 w-3.5" />
-      {statusLabels[status] ?? status}
-    </span>
-  );
-}
-
-function EtapaBadge({
-  stage,
-  isFirst,
-  isLast,
-}: {
-  stage: CaseStage | undefined;
-  isFirst: boolean;
-  isLast: boolean;
-}) {
-  if (!stage) {
-    return <span className="text-kmp-text/40">—</span>;
-  }
-  const className = isLast
-    ? "bg-green-50 text-green-700"
-    : isFirst
-      ? "bg-kmp-graphite/10 text-kmp-text/70"
-      : "bg-orange-50 text-kmp-orange";
-  return (
-    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${className}`}>
-      {stage.nome}
-    </span>
-  );
-}
+import {
+  CaseConsultorSelect,
+  CaseEtapaSelect,
+  CasePrazoInput,
+  CasePrioridadeSelect,
+  CaseStatusSelect,
+} from "./case-inline-edit";
 
 export async function CasesTable({
   cases,
@@ -83,8 +27,6 @@ export async function CasesTable({
   const statusLabels = await getCaseStatusLabels();
   const clientName = (id: string) =>
     clients.find((c) => c.id === id)?.nome ?? "—";
-  const consultantName = (id: string) =>
-    consultants.find((c) => c.user_id === id)?.nome ?? "—";
   const serviceTypeName = (id: string) =>
     serviceTypes.find((st) => st.id === id)?.nome ?? "Sem tipo de serviço";
 
@@ -125,8 +67,6 @@ export async function CasesTable({
       {sortedGroupNames.map((groupName) => {
         const groupCases = groups.get(groupName)!;
         const stages = stagesByServiceType.get(groupCases[0].service_type_id) ?? [];
-        const firstStageId = stages[0]?.id;
-        const lastStageId = stages[stages.length - 1]?.id;
 
         return (
           <div key={groupName}>
@@ -160,23 +100,31 @@ export async function CasesTable({
                         </Link>
                       </td>
                       <td className="px-4 py-3">
-                        <EtapaBadge
-                          stage={c.etapa_id ? stagesById[c.etapa_id] : undefined}
-                          isFirst={c.etapa_id === firstStageId}
-                          isLast={c.etapa_id === lastStageId}
+                        <CaseEtapaSelect
+                          caseId={c.id}
+                          etapaId={c.etapa_id}
+                          stages={stages}
                         />
                       </td>
                       <td className="px-4 py-3">
-                        <StatusBadge status={c.status} statusLabels={statusLabels} />
+                        <CaseStatusSelect
+                          caseId={c.id}
+                          status={c.status}
+                          statusLabels={statusLabels}
+                        />
                       </td>
-                      <td className="px-4 py-3 text-kmp-text/70">
-                        {CASE_PRIORITY_LABELS[c.prioridade] ?? c.prioridade}
+                      <td className="px-4 py-3">
+                        <CasePrioridadeSelect caseId={c.id} prioridade={c.prioridade} />
                       </td>
-                      <td className="px-4 py-3 text-kmp-text/70">
-                        {consultantName(c.consultor_id)}
+                      <td className="px-4 py-3">
+                        <CaseConsultorSelect
+                          caseId={c.id}
+                          consultorId={c.consultor_id}
+                          consultants={consultants}
+                        />
                       </td>
-                      <td className="px-4 py-3 text-kmp-text/70">
-                        {c.prazo ? new Date(c.prazo).toLocaleDateString("pt-BR") : "—"}
+                      <td className="px-4 py-3">
+                        <CasePrazoInput caseId={c.id} prazo={c.prazo} />
                       </td>
                     </tr>
                   ))}

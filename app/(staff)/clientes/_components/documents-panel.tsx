@@ -92,7 +92,7 @@ export function DocumentsPanel({
                   </div>
                   <div className="flex items-center gap-3">
                     {expiring ? (
-                      <span className="rounded-full bg-kmp-orange/10 px-2.5 py-0.5 text-xs font-medium text-kmp-orange-deep">
+                      <span className="rounded-full bg-kmp-orange/10 px-2.5 py-0.5 text-xs font-medium text-orange-800">
                         ⚠{" "}
                         {daysUntil(doc.validade!) < 0
                           ? "vencido"

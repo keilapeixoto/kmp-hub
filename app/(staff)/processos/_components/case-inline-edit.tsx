@@ -79,7 +79,7 @@ export function CaseEtapaSelect({
       ? "bg-green-50 text-green-700"
       : isFirst
         ? "bg-kmp-graphite/10 text-kmp-text/70"
-        : "bg-orange-50 text-kmp-orange-deep";
+        : "bg-orange-50 text-orange-800";
 
   if (stages.length === 0) {
     return <span className="text-kmp-text/40">—</span>;

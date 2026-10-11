@@ -49,7 +49,7 @@ export default async function AgendaPage() {
 
       {pendingSummaries.length > 0 ? (
         <div className="rounded-lg border border-kmp-orange/30 bg-kmp-orange/5 p-4 text-sm">
-          <p className="font-medium text-kmp-orange-deep">
+          <p className="font-medium text-orange-800">
             ⚠ {pendingSummaries.length} compromisso
             {pendingSummaries.length === 1 ? "" : "s"} sem resumo pós-consulta
           </p>

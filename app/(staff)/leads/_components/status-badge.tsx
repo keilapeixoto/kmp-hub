@@ -11,7 +11,7 @@ export function StatusBadge({ status }: { status: string }) {
 export function InactivityBadge({ days }: { days: number }) {
   return (
     <span
-      className="inline-flex items-center gap-1 rounded-full bg-kmp-orange/10 px-2.5 py-0.5 text-xs font-medium text-kmp-orange"
+      className="inline-flex items-center gap-1 rounded-full bg-kmp-orange/10 px-2.5 py-0.5 text-xs font-medium text-kmp-orange-deep"
       title={`Sem contato há ${days} dias`}
     >
       ⚠ {days}d

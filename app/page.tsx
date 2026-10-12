@@ -7,5 +7,5 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  redirect(user ? "/processos?view=kanban" : "/login");
+  redirect(user ? "/inicio" : "/login");
 }

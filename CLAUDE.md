@@ -100,6 +100,25 @@ fixo/percentual, GST 10% opcional). Sem Stripe/Xero/cobrança automática —
 fora de escopo até serem pedidos. Portal do cliente não vê invoices ainda
 (decisão da Keila, v1 é só uso interno da equipe).
 
+**Portal de entrada / tela "Início" (out/2026):** nova tela `/inicio`
+(`app/(staff)/inicio/`), primeira coisa que a equipe vê após o login (trocou
+`/processos?view=kanban` — Pipeline continua existindo, só não é mais a
+porta de entrada). Saudação, cartões de resumo do dia (tarefas vencidas,
+processos parados, leads novos, agenda de hoje), atalhos de prioridade
+("Visões rápidas", reaproveitando a mesma lógica da Fila), compromissos de
+hoje, atalhos pros módulos principais e links externos fixos (ImmiAccount,
+e-mail). Seção "Novidades de imigração" — pedido da Keila, estilo "jornal do
+dia" — usa tabela nova `immigration_news` (`20261012120000_immigration_news.sql`,
+**ainda não aplicada no Supabase de dev**, RLS em
+`019_immigration_news_rls.test.sql`; admin/diretor publicam, equipe lê),
+conteúdo **manual** por enquanto — puxar automaticamente de um site de
+imigração (pedido original da Keila) esbarrou em falta de RLS/feed oficial
+confiável do Department of Home Affairs e em bloqueio de rede do ambiente de
+desenvolvimento; fica para quando ela liberar o domínio e topar manter um
+scraper. O card de publicar novidade fica sempre claro (fora do tema
+escuro), mesmo padrão dos outros cartões com formulário — ver "Dark mode" em
+`docs/architecture/05-design-system.md`.
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

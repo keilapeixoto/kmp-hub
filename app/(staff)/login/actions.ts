@@ -33,5 +33,5 @@ export async function login(
     return { error: "E mail ou senha incorretos." };
   }
 
-  redirect("/processos?view=kanban");
+  redirect("/inicio");
 }

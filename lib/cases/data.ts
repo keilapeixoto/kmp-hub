@@ -80,6 +80,34 @@ export async function getCases(filters: CaseFilters): Promise<Case[]> {
   return (data ?? []) as Case[];
 }
 
+export type QueueCounts = {
+  ativos: number;
+  prioridadeAlta: number;
+  atrasados: number;
+  pausados: number;
+};
+
+/** Contagens rápidas pra tela de Início — mesma lógica de filterByQueue de cases-fila.tsx. */
+export async function getQueueCounts(): Promise<QueueCounts> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("cases")
+    .select("status, prioridade, prazo")
+    .in("status", ["ativo", "pausado"]);
+
+  const rows = data ?? [];
+  const today = new Date().toDateString();
+  const isOverdue = (r: { status: string; prazo: string | null }) =>
+    r.status === "ativo" && !!r.prazo && new Date(r.prazo) < new Date(today);
+
+  return {
+    ativos: rows.filter((r) => r.status === "ativo").length,
+    prioridadeAlta: rows.filter((r) => r.status === "ativo" && r.prioridade === "alta").length,
+    atrasados: rows.filter(isOverdue).length,
+    pausados: rows.filter((r) => r.status === "pausado").length,
+  };
+}
+
 export async function getCase(id: string): Promise<Case | null> {
   const supabase = await createSupabaseClient();
   const { data } = await supabase

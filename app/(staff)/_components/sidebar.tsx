@@ -12,6 +12,7 @@ import {
   FileText,
   Globe,
   HardDrive,
+  Home,
   Kanban,
   LayoutDashboard,
   MessageSquare,
@@ -46,6 +47,13 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: null,
     items: [
+      {
+        href: "/inicio",
+        label: "Início",
+        icon: Home,
+        exact: true,
+        accent: "brand",
+      },
       {
         href: "/processos?view=kanban",
         label: "Pipeline",

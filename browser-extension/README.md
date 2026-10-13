@@ -74,14 +74,16 @@ página 5/20 (Travelling companions — se tem acompanhante na viagem),
 página 6/20 (Contact details — endereço residencial no formato
 internacional, telefones) e parte da página 18/20 (Visa history — 2
 das 3 perguntas, com o "Give details" condicional preenchido junto
-quando o cliente respondeu "Sim"). Na página 6, o campo "Endereço
-para correspondência" do Hub (texto livre, só preenchido quando
-diferente do residencial) fica de fora — o ImmiAccount pede
-Country/Address/Suburb/State/Postcode separados pra isso, não dá pra
-quebrar um texto livre em campos estruturados com segurança; a
-pergunta "Is the postal address the same as the residential
-address?" já vem com "Yes" marcado por padrão no ImmiAccount, que é o
-caso comum. A terceira pergunta da página 18 ("Has the applicant held or
+quando o cliente respondeu "Sim"). Na página 6, quando o Hub tem um
+"Endereço para correspondência" preenchido (diferente do residencial)
+e a pergunta "Is the postal address the same as the residential
+address?" ainda não foi respondida, a extensão marca "No" sozinha e
+cola o texto inteiro no campo "Address" daquela seção — mas não tenta
+separar rua/bairro/cidade/estado/CEP desse texto livre (o Hub coleta
+sem estrutura), então a Keila completa Suburb/State/Postcode
+manualmente lendo o mesmo texto antes de avançar.
+
+A terceira pergunta da página 18 ("Has the applicant held or
 does the applicant currently hold a visa to Australia or any other
 country?") não tem campo equivalente no formulário do Hub ainda — ele
 só pergunta se já *solicitou* visto pra Austrália, que não é a mesma

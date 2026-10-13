@@ -391,6 +391,34 @@ const FIELD_MAP = [
   // enviar.
 ];
 
+// ---------------------------------------------------------------------------
+// Endereço de correspondência — tratado à parte do FIELD_MAP porque não é
+// um mapeamento direto de 1 label: primeiro marca "No" na pergunta "Is the
+// postal address the same as the residential address?" (só quando o Hub
+// tem texto preenchido nesse campo e a pergunta ainda não foi respondida —
+// nunca mexe numa resposta que já existe), o que revela os campos de
+// endereço de correspondência, e então cola o texto inteiro no campo
+// "Address" daquela seção. Não tenta separar rua/bairro/cidade/estado/CEP
+// do texto — o Hub coleta esse campo como texto livre, sem estrutura, então
+// a Keila confere e completa Suburb/State/Postcode manualmente antes de
+// avançar (igual já faz com todo o resto que a extensão preenche).
+// ---------------------------------------------------------------------------
+function preencherEnderecoCorrespondencia(respostas) {
+  const texto = respostas["Endereço para correspondência"];
+  if (!texto) return 0;
+
+  const pergunta = acharControlePorLabel(
+    "Is the postal address the same as the residential address?",
+  );
+  if (!pergunta || jaPreenchido(pergunta)) return 0;
+
+  if (!preencherControle(pergunta, "No")) return 0;
+
+  const campoEndereco = acharControlePorLabel("Address", "Postal address");
+  if (campoEndereco && preencherControle(campoEndereco, texto)) return 2;
+  return 1;
+}
+
 function montarRespostas(kmpVisaData) {
   const respostas = {};
   for (const etapa of kmpVisaData.etapas || []) {
@@ -428,6 +456,8 @@ async function rodar() {
       }
     }
   }
+
+  preenchidos += preencherEnderecoCorrespondencia(respostas);
 
   if (preenchidos > 0) {
     atualizarSelo(

@@ -66,9 +66,11 @@ enviar manualmente.
 Os campos do ImmiAccount usam `id`/`name` gerados de novo a cada sessão
 — a extensão acha cada campo pelo **texto da label em inglês**
 (`browser-extension/visa-autofill.js`, `FIELD_MAP`), que é estável.
-Cobertura atual: páginas 1–3 de 20 (Terms and Conditions, Application
-context, Applicant — nome/sexo/nascimento/passaporte). As demais 17
-páginas (contato, família, viagem, trabalho/finanças, histórico,
-saúde/caráter, declaração) ainda não foram mapeadas — precisam do
-`outerHTML` de cada uma (mesmo processo usado pra mapear as 3 primeiras)
+Cobertura atual: página 2/20 (Application context — localização atual)
+e página 3/20 (Applicant — nome/sexo/nascimento/passaporte). Página 1
+(Terms and Conditions) não precisa de mapeamento, é só o aceite dos
+termos, deixado manual de propósito. As demais 17 páginas (contato,
+família, viagem, trabalho/finanças, histórico, saúde/caráter,
+declaração) ainda não foram mapeadas — precisam do `outerHTML` de cada
+uma (mesmo processo usado pra mapear as duas primeiras)
 antes de a extensão preencher algo nelas.

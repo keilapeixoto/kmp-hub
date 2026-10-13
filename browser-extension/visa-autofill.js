@@ -185,7 +185,9 @@ function preencherControle(controle, valorBruto, opcoes = {}) {
 // Dicionário de campos — rótulo do formulário do Hub (PT) -> rótulo do
 // ImmiAccount (EN) + tipo de preenchimento. Construído página a página
 // conforme a Keila manda o HTML real; cobre por enquanto as páginas
-// 1-3/20 (Terms, Application context, Applicant).
+// 2-3/20 (Application context, Applicant). Página 1 (Terms and
+// Conditions) não precisa de mapeamento — é só o checkbox de aceite,
+// deixado manual de propósito.
 // ---------------------------------------------------------------------------
 
 const SIM_NAO = { Sim: "Yes", Não: "No" };
@@ -200,7 +202,16 @@ const ESTADO_CIVIL = {
   "Noivo(a)": "Engaged",
 };
 
+const DENTRO_FORA_AUSTRALIA = { Austrália: "No", "Fora da Austrália": "Yes" };
+
 const FIELD_MAP = [
+  // Página 2/20 — Application context
+  {
+    pt: "Localização atual",
+    en: "Is the applicant currently outside Australia?",
+    valueMap: DENTRO_FORA_AUSTRALIA,
+  },
+
   // Página 3/20 — Applicant (nome, sexo, nascimento, passaporte)
   { pt: "Nome", en: "Given names" },
   { pt: "Sobrenome", en: "Family name" },

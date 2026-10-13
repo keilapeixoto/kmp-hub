@@ -1,6 +1,9 @@
 // Roda só em online.immi.gov.au/lusc/* (ver manifest.json). Detecta a tela
 // de código de autenticação do ImmiAccount, busca o código mais recente
-// no Gmail (via API do Hub) e preenche + envia sozinho.
+// no Gmail (via API do Hub) e preenche + envia sozinho. Depois do login,
+// avança automaticamente a tela "Login successful" — e só essa, de
+// propósito: nunca clica "Next" numa etapa de formulário de visto de
+// verdade, só nessa tela específica de confirmação de login.
 
 const API_BASE = "https://kmp-hub.vercel.app";
 const MAX_TENTATIVAS = 15;
@@ -92,4 +95,23 @@ async function rodar() {
   setTimeout(() => selo.remove(), 6000);
 }
 
+/**
+ * Avança sozinho só a tela "Login successful" (confirmação pós-login do
+ * ImmiAccount) — checa o título da página pra nunca arriscar clicar um
+ * botão "Next" de uma etapa real de formulário de visto mais adiante.
+ */
+function avancarLoginSucesso() {
+  const titulo = document.querySelector("h1.panelHeading");
+  if (!titulo || !titulo.textContent.includes("Login successful")) return;
+
+  const botao = document.querySelector('button[type="submit"][name="next"]');
+  if (!botao) return;
+
+  const selo = criarSelo();
+  atualizarSelo(selo, "login confirmado, avançando...");
+  botao.click();
+  setTimeout(() => selo.remove(), 3000);
+}
+
+avancarLoginSucesso();
 rodar();

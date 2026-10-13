@@ -185,9 +185,10 @@ function preencherControle(controle, valorBruto, opcoes = {}) {
 // Dicionário de campos — rótulo do formulário do Hub (PT) -> rótulo do
 // ImmiAccount (EN) + tipo de preenchimento. Construído página a página
 // conforme a Keila manda o HTML real; cobre por enquanto as páginas
-// 2-4/20 (Application context, Applicant, Critical data confirmation).
-// Página 1 (Terms and Conditions) não precisa de mapeamento — é só o
-// checkbox de aceite, deixado manual de propósito.
+// 2-5/20 (Application context, Applicant, Critical data confirmation,
+// Travelling companions). Página 1 (Terms and Conditions) não precisa
+// de mapeamento — é só o checkbox de aceite, deixado manual de
+// propósito.
 // ---------------------------------------------------------------------------
 
 const SIM_NAO = { Sim: "Yes", Não: "No" };
@@ -237,6 +238,15 @@ const FIELD_MAP = [
   // pergunta "Is the above information correct?" fica de propósito sem
   // preenchimento automático: é a confirmação da Keila, não da extensão.
   { pt: "E-mail", en: "Email address" },
+
+  // Página 5/20 — Travelling companions. A pergunta sobre viajar com pai/mãe
+  // ou responsável só aparece pra menores de 18 — sem campo correspondente
+  // no formulário do Hub (público adulto), fica de fora por enquanto.
+  {
+    pt: "Alguém está te acompanhando nesta viagem?",
+    en: "Are there any other persons travelling with the applicant to Australia?",
+    valueMap: SIM_NAO,
+  },
 ];
 
 function montarRespostas(kmpVisaData) {

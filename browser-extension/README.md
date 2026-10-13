@@ -67,14 +67,15 @@ Os campos do ImmiAccount usam `id`/`name` gerados de novo a cada sessão
 — a extensão acha cada campo pelo **texto da label em inglês**
 (`browser-extension/visa-autofill.js`, `FIELD_MAP`), que é estável.
 Cobertura atual: página 2/20 (Application context — localização
-atual), página 3/20 (Applicant — nome/sexo/nascimento/passaporte) e
+atual), página 3/20 (Applicant — nome/sexo/nascimento/passaporte),
 página 4/20 (Critical data confirmation — só o e-mail é editável, o
-resto é conferência somente-leitura dos dados da página anterior).
+resto é conferência somente-leitura dos dados da página anterior) e
+página 5/20 (Travelling companions — se tem acompanhante na viagem).
 Página 1 (Terms and Conditions) não precisa de mapeamento, é só o
 aceite dos termos, deixado manual de propósito — e a pergunta "Is the
 above information correct?" da página 4 também fica sempre manual de
 propósito, por ser a confirmação da própria Keila. As demais páginas
-(família, viagem, trabalho/finanças, histórico, saúde/caráter,
-declaração) ainda não foram mapeadas — precisam do `outerHTML` de cada
-uma (mesmo processo usado pra mapear as anteriores)
+(trabalho/finanças, histórico, saúde/caráter, declaração etc.) ainda
+não foram mapeadas — precisam do `outerHTML` de cada uma (mesmo
+processo usado pra mapear as anteriores)
 antes de a extensão preencher algo nelas.

@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "KMP Hub — ImmiAccount Autofill",
+  "version": "1.0.0",
+  "description": "Preenche automaticamente o código de verificação do ImmiAccount usando o e-mail conectado no KMP Hub.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://online.immi.gov.au/*",
+    "https://kmp-hub.vercel.app/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://online.immi.gov.au/lusc/*"],
+      "js": ["content-script.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

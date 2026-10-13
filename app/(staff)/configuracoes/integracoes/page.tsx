@@ -3,8 +3,10 @@ import { Mail } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUserRole } from "@/lib/auth";
 import { getGoogleConnection } from "@/lib/google/connections";
+import { getExtensionTokenInfo } from "@/lib/extension/tokens";
 import { GoogleLogo } from "@/app/(staff)/_components/brand-icons";
 import { DisconnectGoogleButton } from "./_components/disconnect-google-button";
+import { ExtensionTokenCard } from "./_components/extension-token-card";
 
 const ERROR_MESSAGES: Record<string, string> = {
   state_invalido: "A conexão expirou ou foi iniciada de outro lugar — tente de novo.",
@@ -30,6 +32,7 @@ export default async function IntegracoesPage({
   } = await supabase.auth.getUser();
 
   const connection = user ? await getGoogleConnection(user.id) : null;
+  const tokenInfo = user ? await getExtensionTokenInfo(user.id) : null;
 
   return (
     <div className="space-y-6">
@@ -100,6 +103,8 @@ export default async function IntegracoesPage({
           </p>
         </div>
       </div>
+
+      {connection ? <ExtensionTokenCard info={tokenInfo} /> : null}
     </div>
   );
 }

@@ -36,7 +36,7 @@ Repositório e schema novos (não evolução do CRM atual) — motivo: RLS por f
 - **Notas internas e riscos** ficam em colunas/tabelas separadas, com política RLS que exclui a função `client` incondicionalmente — nunca aparecem no portal.
 - **Documentos**: soft delete apenas (arquivamento), nunca exclusão permanente; só admin acessa arquivados.
 - **Fusos horários**: tudo em UTC no banco, conversão só na interface (BR, Sydney, Brisbane, fuso do cliente).
-- **Fases rígidas**: nada da Fase 2 (portal, formulários públicos, propostas, invoices, integrações externas, IA) entra antes da Fase 1 estar validada em uso real. **Exceção aberta (set/2026):** emissão de invoices adiantada a pedido da Keila, antes da Fase 1 fechar (Sprint 8/checklist da seção 32 e projeto Supabase de produção ainda pendentes). Escopo inicial: registro/emissão interna (sem Stripe/Xero — essas integrações continuam fora de escopo até serem pedidas). **Exceção aberta (out/2026):** integração com Google Calendar/Gmail (agenda real + e-mail não lido/urgente no Início, envio de e-mail pelo Gmail), também adiantada a pedido da Keila — ver "Integração Google" em Estado atual.
+- **Fases rígidas**: nada da Fase 2 (portal, formulários públicos, propostas, invoices, integrações externas, IA) entra antes da Fase 1 estar validada em uso real. **Exceção aberta (set/2026):** emissão de invoices adiantada a pedido da Keila, antes da Fase 1 fechar (Sprint 8/checklist da seção 32 e projeto Supabase de produção ainda pendentes). Escopo inicial: registro/emissão interna (sem Stripe/Xero — essas integrações continuam fora de escopo até serem pedidas). **Exceção aberta (out/2026):** integração com Google Calendar/Gmail (agenda real + e-mail não lido/urgente no Início, envio de e-mail pelo Gmail), também adiantada a pedido da Keila — ver "Integração Google" em Estado atual. **Exceção aberta (out/2026):** extensão de navegador pra preenchimento automático do ImmiAccount (fora do app Next.js, ver "Extensão ImmiAccount Autofill" em Estado atual).
 - **Maior risco do projeto é RLS mal configurado.** Toda tabela nova precisa de teste automatizado de permissão por função, antes de qualquer deploy.
 
 ## Funções e permissões (seção 5 do plano)
@@ -149,6 +149,27 @@ assunto/remetente/trecho) ficou de fora deste primeiro corte — avaliar com
 a Keila se/quando for pedido, dado que é o ponto mais sensível (conteúdo de
 cliente).
 
+**Extensão ImmiAccount Autofill (out/2026, exceção de fase — ver Convenções
+acima):** extensão de navegador (Chrome/Edge, `browser-extension/`, fora do
+app Next.js — ver `browser-extension/README.md` pra instalar) que
+preenche sozinha o código de autenticação de duas etapas do ImmiAccount
+(Department of Home Affairs manda por e-mail) e envia o formulário de
+login. Fluxo: cada usuário gera um token em Configurações → Integrações
+(tabela `extension_tokens`, migração `20261013100000_extension_tokens.sql`,
+**ainda não aplicada no Supabase de dev**; mesmo padrão de
+`google_connections` — RLS ativado sem nenhuma política, só
+`createAdminClient()` acessa, teste em
+`021_extension_tokens_rls.test.sql`), cola na extensão; o content script
+roda só em `online.immi.gov.au/lusc/*`, detecta o campo
+`#authenticationCode`, chama `GET /api/extension/immiaccount-code`
+(autenticado por esse token, não por cookie de sessão — CORS liberado
+porque o token já é a autenticação) que busca no Gmail já conectado
+(`lib/google/gmail.ts getLatestImmiAccountCode`, filtra e-mail de
+`noreply-lusc@homeaffairs.gov.au` dos últimos 10 min pra nunca reusar
+código velho). Escopo desta primeira etapa: só o passo de autenticação
+(login) — preenchimento automático do formulário de visto em si (a
+segunda parte do pedido original da Keila, com formulário pro cliente
+preencher) ainda não foi construído, fica pra próxima etapa.
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

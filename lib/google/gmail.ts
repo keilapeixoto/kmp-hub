@@ -62,6 +62,67 @@ export async function getUnreadSummary(
   };
 }
 
+function decodeBase64Url(input: string): string {
+  const padded = input.replace(/-/g, "+").replace(/_/g, "/");
+  return Buffer.from(padded, "base64").toString("utf-8");
+}
+
+function extractBodyText(payload: unknown): string {
+  const part = payload as {
+    body?: { data?: string };
+    parts?: unknown[];
+    mimeType?: string;
+  };
+  if (part.body?.data) return decodeBase64Url(part.body.data);
+  if (part.parts) {
+    for (const sub of part.parts) {
+      const text = extractBodyText(sub);
+      if (text) return text;
+    }
+  }
+  return "";
+}
+
+/**
+ * Busca o código de autenticação do ImmiAccount mais recente (Department
+ * of Home Affairs manda um e-mail com "ImmiAccount: 123456" no corpo
+ * sempre que a etapa de verificação é acionada). Só considera e-mail
+ * recebido nos últimos `maxAgeMinutes` — evita reusar um código antigo de
+ * uma tentativa de login anterior.
+ */
+export async function getLatestImmiAccountCode(
+  accessToken: string,
+  maxAgeMinutes = 10,
+): Promise<{ code: string; receivedAt: string } | null> {
+  const params = new URLSearchParams({
+    q: 'from:noreply-lusc@homeaffairs.gov.au subject:"ImmiAccount authentication code"',
+    maxResults: "1",
+  });
+  const listRes = await fetch(`${GMAIL_BASE}/messages?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!listRes.ok) throw new Error(`Gmail respondeu ${listRes.status} ao listar`);
+  const listData = await listRes.json();
+  const id: string | undefined = listData.messages?.[0]?.id;
+  if (!id) return null;
+
+  const msgRes = await fetch(`${GMAIL_BASE}/messages/${id}?format=full`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!msgRes.ok) throw new Error(`Gmail respondeu ${msgRes.status} ao buscar mensagem`);
+  const msg = await msgRes.json();
+
+  const internalDate = Number(msg.internalDate ?? 0);
+  const ageMinutes = (Date.now() - internalDate) / 60000;
+  if (ageMinutes > maxAgeMinutes) return null;
+
+  const body = extractBodyText(msg.payload) || (msg.snippet ?? "");
+  const match = body.match(/ImmiAccount:\s*(\d{6})/);
+  if (!match) return null;
+
+  return { code: match[1], receivedAt: new Date(internalDate).toISOString() };
+}
+
 function toBase64Url(input: string): string {
   return Buffer.from(input, "utf-8")
     .toString("base64")

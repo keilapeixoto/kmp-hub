@@ -111,6 +111,13 @@ const stillPending = [];
 
 for (const row of pending) {
   if (SKIP_PATHS.has(row.caminho)) {
+    // Registra a decisão em map.csv como "pular" — se só descartarmos a
+    // linha, o próximo scan não tem como saber que já foi revisada e ela
+    // volta pra pendentes.csv de novo.
+    if (!approvedPaths.has(row.caminho)) {
+      approved.push({ ...row, cliente: "", acao: "pular" });
+      approvedPaths.add(row.caminho);
+    }
     skipped++;
     continue;
   }

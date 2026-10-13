@@ -94,7 +94,11 @@ function atualizarSelo(selo, texto) {
 
 function preencherTexto(input, valor) {
   const proto =
-    input.tagName === "SELECT" ? window.HTMLSelectElement.prototype : window.HTMLInputElement.prototype;
+    input.tagName === "SELECT"
+      ? window.HTMLSelectElement.prototype
+      : input.tagName === "TEXTAREA"
+        ? window.HTMLTextAreaElement.prototype
+        : window.HTMLInputElement.prototype;
   const setter = Object.getOwnPropertyDescriptor(proto, "value").set;
   setter.call(input, valor);
   input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -172,6 +176,39 @@ function acharControlePorLabel(labelEn, scopeHeadingEn) {
   return null;
 }
 
+/**
+ * Acha o campo "Give details" (textarea) que vem logo depois de um grupo de
+ * radio Sim/Não já preenchido — usado nas páginas em que a mesma label
+ * "Give details" se repete várias vezes (ex. página 18/20, Visa history, com
+ * três perguntas Sim/Não cada uma com seu próprio "Give details"). Como
+ * várias dessas perguntas podem ficar visíveis ao mesmo tempo se o cliente
+ * respondeu "Sim" a mais de uma, não dá pra confiar só na primeira
+ * ocorrência visível da label no documento inteiro — em vez disso, anda
+ * pelos irmãos seguintes ao próprio grupo de radio já respondido.
+ */
+function acharDetalhesApos(controlePrincipal, labelDetalhesEn) {
+  const alvo = normalize(labelDetalhesEn);
+  let container = controlePrincipal.closest(".wc-panel") || controlePrincipal.parentElement;
+  let proximo = container?.nextElementSibling;
+  let tentativas = 0;
+  while (proximo && tentativas < 6) {
+    if (isVisivel(proximo)) {
+      const labels = proximo.querySelectorAll(
+        "label.wc-label[for], span.wc-label[data-wc-for]",
+      );
+      for (const lab of labels) {
+        if (normalize(lab.textContent) !== alvo) continue;
+        const forId = lab.getAttribute("for") || lab.getAttribute("data-wc-for");
+        const el = forId && document.getElementById(forId);
+        if (el && isVisivel(el)) return el;
+      }
+    }
+    proximo = proximo.nextElementSibling;
+    tentativas++;
+  }
+  return null;
+}
+
 function dataIsoParaBr(valorIso) {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(valorIso || ""));
   if (!m) return valorIso;
@@ -226,9 +263,9 @@ function preencherControle(controle, valorBruto, opcoes = {}) {
 // ImmiAccount (EN) + tipo de preenchimento. Construído página a página
 // conforme a Keila manda o HTML real; cobre por enquanto as páginas
 // 2-5/20 (Application context, Applicant, Critical data confirmation,
-// Travelling companions). Página 1 (Terms and Conditions) não precisa
-// de mapeamento — é só o checkbox de aceite, deixado manual de
-// propósito.
+// Travelling companions) e parte da página 18/20 (Visa history — 2 das 3
+// perguntas). Página 1 (Terms and Conditions) não precisa de
+// mapeamento — é só o checkbox de aceite, deixado manual de propósito.
 // ---------------------------------------------------------------------------
 
 const SIM_NAO = { Sim: "Yes", Não: "No" };
@@ -288,6 +325,31 @@ const FIELD_MAP = [
     valueMap: SIM_NAO,
   },
 
+  // Página 18/20 — Visa history. Duas das três perguntas da página batem
+  // com campos que já existem na etapa "Saúde e Caráter" do formulário do
+  // Hub ("Formulário Visto de Turista (Subclass 600) — Coleta de Dados").
+  // A terceira pergunta da página ("Has the applicant held or does the
+  // applicant currently hold a visa to Australia or any other country?")
+  // NÃO tem campo equivalente hoje — o Hub só pergunta se já *solicitou*
+  // visto pra Austrália (campo "Já solicitou visto para a Austrália
+  // antes?"), que é semanticamente diferente de "já teve/tem visto para
+  // Austrália OU qualquer outro país" — fica de fora até a Keila decidir
+  // se vale criar um campo novo pra isso.
+  {
+    pt: "Já descumpriu condições de visto ou excedeu o período autorizado de permanência em qualquer país?",
+    en: "Has the applicant ever been in Australia or any other country and not complied with visa conditions or departed outside their authorised period of stay?",
+    valueMap: SIM_NAO,
+    ptDetalhes: "Descreva o descumprimento/overstay",
+    enDetalhes: "Give details",
+  },
+  {
+    pt: "Já teve pedido de visto recusado ou cancelado em qualquer país?",
+    en: "Has the applicant ever had a visa for Australia or any other country refused or cancelled?",
+    valueMap: SIM_NAO,
+    ptDetalhes: "Descreva a recusa/cancelamento",
+    enDetalhes: "Give details",
+  },
+
   // Página 20/20 — Declarations (última página) fica de propósito sem
   // mapeamento, igual à página 1 (Terms) e à pergunta de confirmação da
   // página 4: são nove declarações/consentimentos legais ("Have read and
@@ -325,7 +387,16 @@ async function rodar() {
     const controle = acharControlePorLabel(campo.en);
     if (!controle) continue;
     const ok = preencherControle(controle, valor, { valueMap: campo.valueMap, tipo: campo.tipo });
-    if (ok) preenchidos++;
+    if (ok) {
+      preenchidos++;
+      if (campo.enDetalhes) {
+        const detalhes = campo.ptDetalhes && respostas[campo.ptDetalhes];
+        if (detalhes) {
+          const campoDetalhes = acharDetalhesApos(controle, campo.enDetalhes);
+          if (campoDetalhes && preencherControle(campoDetalhes, detalhes, {})) preenchidos++;
+        }
+      }
+    }
   }
 
   if (preenchidos > 0) {

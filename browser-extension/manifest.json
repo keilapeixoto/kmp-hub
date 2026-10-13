@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "KMP Hub — ImmiAccount Autofill",
-  "version": "1.0.0",
-  "description": "Preenche automaticamente o código de verificação do ImmiAccount usando o e-mail conectado no KMP Hub.",
+  "version": "1.1.0",
+  "description": "Preenche automaticamente o código de verificação do ImmiAccount e os dados do formulário de visto, usando o Gmail e o Hub conectados.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -25,6 +25,11 @@
     {
       "matches": ["https://online.immi.gov.au/lusc/*"],
       "js": ["content-script.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://online.immi.gov.au/elp/*"],
+      "js": ["visa-autofill.js"],
       "run_at": "document_idle"
     }
   ]

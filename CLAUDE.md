@@ -179,13 +179,18 @@ Dados" já preenchido, filtrando pelo mesmo critério de visibilidade de
 `cases` (consultor só vê os seus, admin/diretor/financeiro veem todos);
 `GET /api/extension/visa-form-data?caseId=` devolve os campos e
 respostas desse processo. O popup da extensão já busca/seleciona o
-cliente e guarda os dados em `chrome.storage.local`. **Falta** o content
-script que lê esses dados e preenche os campos de verdade nas páginas de
-aplicação do ImmiAccount — depende de mapear a URL e a estrutura real
-dessas páginas (ainda não feito, precisa de screenshots da Keila, mesmo
-processo usado pra mapear a tela de login). Princípio de segurança
-mantido em toda a etapa: a extensão só preenche, nunca clica em enviar a
-aplicação de visto.
+cliente e guarda os dados em `chrome.storage.local`.
+`browser-extension/visa-autofill.js` (content script novo, roda em
+`online.immi.gov.au/elp/*` — URL da aplicação do Visitor Visa 600,
+diferente de `/lusc/*` da tela de login) preenche os campos de verdade:
+como os `id`/`name` do ImmiAccount são gerados de novo a cada sessão,
+acha cada campo pelo **texto da label em inglês** (`FIELD_MAP`), não
+pelo id. Cobertura atual: páginas 1–3 de 20 (Terms, Application context,
+Applicant — nome/sexo/nascimento/passaporte); as outras 17 páginas
+ficam pra próxima etapa, conforme a Keila for mandando o HTML de cada
+uma. Princípio de segurança mantido em toda a etapa: a extensão só
+preenche campos — nunca clica em Previous/Next/Save/Submit, então nunca
+avança nem envia a aplicação de visto sozinha.
 
 ## Dados de demonstração
 

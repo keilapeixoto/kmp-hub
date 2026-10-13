@@ -46,16 +46,29 @@ copia o que ele já respondeu para os campos do ImmiAccount. **Nunca
 envia a aplicação sozinha** — só preenche, a Keila revisa e clica em
 enviar manualmente.
 
-O que já está pronto:
+### Como usar (visto)
 
-- No popup da extensão, a seção "Preenchimento do visto (Subclass 600)"
-  busca o cliente pelo nome (mesma regra de permissão do Hub — cada
-  consultor só vê os processos dele, salvo admin/diretor/financeiro) e
-  carrega os dados do formulário dele.
-- A busca só mostra processos com o formulário "Formulário Visto de
-  Turista (Subclass 600) — Coleta de Dados" já preenchido pelo cliente.
+1. No popup da extensão, na seção "Preenchimento do visto (Subclass 600)",
+   busque o cliente pelo nome e clique em "Usar" — carrega os dados que
+   ele já preencheu no formulário do portal (mesma regra de permissão do
+   Hub: cada consultor só vê os processos dele, salvo
+   admin/diretor/financeiro; só aparecem processos com o formulário já
+   preenchido pelo cliente).
+2. Abra a aplicação do Visitor Visa (600) no ImmiAccount normalmente
+   (`online.immi.gov.au/elp/app...`). Em cada página com campos
+   conhecidos, a extensão preenche sozinha e mostra um aviso no canto
+   com quantos campos preencheu.
+3. **Confira os campos preenchidos antes de clicar "Next"** — a
+   extensão nunca clica em Previous/Next/Save/Submit, só preenche.
 
-O que falta: o content script que lê esses dados carregados e preenche os
-campos de verdade nas páginas de aplicação do ImmiAccount — depende de
-mapear os campos reais da aplicação (URL e estrutura das páginas), ainda
-não feito.
+### Status do mapeamento de campos
+
+Os campos do ImmiAccount usam `id`/`name` gerados de novo a cada sessão
+— a extensão acha cada campo pelo **texto da label em inglês**
+(`browser-extension/visa-autofill.js`, `FIELD_MAP`), que é estável.
+Cobertura atual: páginas 1–3 de 20 (Terms and Conditions, Application
+context, Applicant — nome/sexo/nascimento/passaporte). As demais 17
+páginas (contato, família, viagem, trabalho/finanças, histórico,
+saúde/caráter, declaração) ainda não foram mapeadas — precisam do
+`outerHTML` de cada uma (mesmo processo usado pra mapear as 3 primeiras)
+antes de a extensão preencher algo nelas.

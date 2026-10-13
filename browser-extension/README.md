@@ -69,11 +69,19 @@ Os campos do ImmiAccount usam `id`/`name` gerados de novo a cada sessão
 Cobertura atual: página 2/20 (Application context — localização
 atual), página 3/20 (Applicant — nome/sexo/nascimento/passaporte),
 página 4/20 (Critical data confirmation — só o e-mail é editável, o
-resto é conferência somente-leitura dos dados da página anterior) e
-página 5/20 (Travelling companions — se tem acompanhante na viagem) e
-parte da página 18/20 (Visa history — 2 das 3 perguntas, com o "Give
-details" condicional preenchido junto quando o cliente respondeu
-"Sim"). A terceira pergunta da página 18 ("Has the applicant held or
+resto é conferência somente-leitura dos dados da página anterior),
+página 5/20 (Travelling companions — se tem acompanhante na viagem),
+página 6/20 (Contact details — endereço residencial no formato
+internacional, telefones) e parte da página 18/20 (Visa history — 2
+das 3 perguntas, com o "Give details" condicional preenchido junto
+quando o cliente respondeu "Sim"). Na página 6, o campo "Endereço
+para correspondência" do Hub (texto livre, só preenchido quando
+diferente do residencial) fica de fora — o ImmiAccount pede
+Country/Address/Suburb/State/Postcode separados pra isso, não dá pra
+quebrar um texto livre em campos estruturados com segurança; a
+pergunta "Is the postal address the same as the residential
+address?" já vem com "Yes" marcado por padrão no ImmiAccount, que é o
+caso comum. A terceira pergunta da página 18 ("Has the applicant held or
 does the applicant currently hold a visa to Australia or any other
 country?") não tem campo equivalente no formulário do Hub ainda — ele
 só pergunta se já *solicitou* visto pra Austrália, que não é a mesma
@@ -99,7 +107,7 @@ arquivo não é um campo de texto/rádio, e escolher automaticamente
 qual documento do Hub corresponde a qual tipo exigido pelo
 ImmiAccount seria uma funcionalidade bem maior, fora de escopo deste
 preenchimento). As demais páginas do meio (trabalho/finanças,
-histórico de viagens, saúde, restante do caráter — página 6/20 a
+histórico de viagens, saúde, restante do caráter — página 7/20 a
 17/20 — e a página 19/20, que ainda não recebemos) ainda não foram
 mapeadas — precisam do `outerHTML` de cada uma (mesmo processo usado
 pra mapear as anteriores) antes de a extensão preencher algo nelas.

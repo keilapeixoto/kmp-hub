@@ -261,11 +261,12 @@ function preencherControle(controle, valorBruto, opcoes = {}) {
 // ---------------------------------------------------------------------------
 // Dicionário de campos — rótulo do formulário do Hub (PT) -> rótulo do
 // ImmiAccount (EN) + tipo de preenchimento. Construído página a página
-// conforme a Keila manda o HTML real; cobre por enquanto as páginas
-// 2-5/20 (Application context, Applicant, Critical data confirmation,
-// Travelling companions) e parte da página 18/20 (Visa history — 2 das 3
-// perguntas). Página 1 (Terms and Conditions) não precisa de
-// mapeamento — é só o checkbox de aceite, deixado manual de propósito.
+// conforme a Keila manda o HTML real; cobre por enquanto a página 6/20
+// (Contact details), as páginas 2-5/20 (Application context, Applicant,
+// Critical data confirmation, Travelling companions) e parte da página
+// 18/20 (Visa history — 2 das 3 perguntas). Página 1 (Terms and
+// Conditions) não precisa de mapeamento — é só o checkbox de aceite,
+// deixado manual de propósito.
 // ---------------------------------------------------------------------------
 
 const SIM_NAO = { Sim: "Yes", Não: "No" };
@@ -324,6 +325,35 @@ const FIELD_MAP = [
     en: "Are there any other persons travelling with the applicant to Australia?",
     valueMap: SIM_NAO,
   },
+
+  // Página 6/20 — Contact details (endereço residencial, telefones).
+  // "Cidade"/"Estado"/"CEP" mapeiam pro formato internacional de endereço
+  // (Address International) — é o que aparece pra qualquer país diferente
+  // de Austrália, caso de praticamente toda a base de clientes. O
+  // scopeHeadingEn "Residential address" evita pegar os mesmos rótulos
+  // repetidos dentro do bloco de "Postal address" (que só aparece quando
+  // o cliente marca que o endereço de correspondência é diferente do
+  // residencial — por padrão vem "Yes"/mesmo endereço, então esse bloco
+  // fica escondido e nem entra no preenchimento). "País" preenche tanto o
+  // país do endereço residencial quanto o campo "Usual country of
+  // residence" do topo da página, que pede a mesma informação. O campo
+  // "Endereço para correspondência" do Hub (texto livre, só quando
+  // diferente do residencial) fica de fora — o ImmiAccount pede
+  // Country/Address/Suburb/State/Postcode separados pra isso, não dá pra
+  // quebrar um texto livre em campos estruturados com segurança.
+  {
+    pt: "Endereço residencial completo",
+    en: "Address",
+    scopeHeadingEn: "Residential address",
+  },
+  { pt: "Cidade", en: "Suburb / Town", scopeHeadingEn: "Residential address" },
+  { pt: "Estado", en: "State or Province", scopeHeadingEn: "Residential address" },
+  { pt: "CEP", en: "Postal code", scopeHeadingEn: "Residential address" },
+  { pt: "País", en: "Country", scopeHeadingEn: "Residential address", tipo: "pais" },
+  { pt: "País", en: "Usual country of residence", tipo: "pais" },
+  { pt: "Telefone residencial", en: "Home phone" },
+  { pt: "Telefone comercial", en: "Business phone" },
+  { pt: "Celular", en: "Mobile / Cell phone" },
 
   // Página 18/20 — Visa history. Duas das três perguntas da página batem
   // com campos que já existem na etapa "Saúde e Caráter" do formulário do
@@ -384,7 +414,7 @@ async function rodar() {
   for (const campo of FIELD_MAP) {
     const valor = respostas[campo.pt];
     if (!valor) continue;
-    const controle = acharControlePorLabel(campo.en);
+    const controle = acharControlePorLabel(campo.en, campo.scopeHeadingEn);
     if (!controle) continue;
     const ok = preencherControle(controle, valor, { valueMap: campo.valueMap, tipo: campo.tipo });
     if (ok) {

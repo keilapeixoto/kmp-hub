@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useTransition } from "react";
 import { generateExtensionToken, revokeExtensionTokenAction } from "../actions";
 
@@ -35,13 +36,26 @@ export function ExtensionTokenCard({
 
   return (
     <div className="rounded-lg bg-white p-6 shadow-sm">
-      <h2 className="font-heading text-lg text-kmp-graphite">
-        Extensão ImmiAccount
-      </h2>
-      <p className="mt-1 text-sm text-kmp-graphite/60">
-        Token pra extensão de navegador se conectar ao Hub e buscar o
-        código de autenticação do ImmiAccount no seu Gmail.
-      </p>
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg">
+          <Image
+            src="/immiaccount-logo.png"
+            alt="ImmiAccount"
+            width={40}
+            height={40}
+            className="h-10 w-10 object-cover"
+          />
+        </div>
+        <div>
+          <h2 className="font-heading text-lg text-kmp-graphite">
+            Extensão ImmiAccount
+          </h2>
+          <p className="mt-1 text-sm text-kmp-graphite/60">
+            Token pra extensão de navegador se conectar ao Hub e buscar o
+            código de autenticação do ImmiAccount no seu Gmail.
+          </p>
+        </div>
+      </div>
 
       {freshToken ? (
         <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3">

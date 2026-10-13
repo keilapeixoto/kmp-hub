@@ -2,6 +2,7 @@
 
 import { useActionState, useRef } from "react";
 import { sendClientEmail, type SendEmailState } from "../actions";
+import { GmailLogo } from "@/app/(staff)/_components/brand-icons";
 
 const initialState: SendEmailState = { error: null, sent: false };
 
@@ -18,7 +19,8 @@ export function SendEmailPanel({ clientEmail }: { clientEmail: string }) {
 
   return (
     <div className="rounded-lg bg-white p-6 shadow-sm">
-      <h2 className="font-heading text-lg text-kmp-graphite">
+      <h2 className="flex items-center gap-2 font-heading text-lg text-kmp-graphite">
+        <GmailLogo className="h-4 w-4" />
         Enviar e-mail
       </h2>
       <p className="mt-1 text-xs text-kmp-graphite/50">

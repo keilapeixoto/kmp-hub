@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { AlertTriangle, Calendar, Mail } from "lucide-react";
+import { AlertTriangle, Calendar } from "lucide-react";
 import type { GoogleDaySummary } from "@/lib/google/dashboard";
+import { GmailLogo, GoogleLogo } from "@/app/(staff)/_components/brand-icons";
 
 function formatHora(iso: string, diaInteiro: boolean) {
   if (diaInteiro || !iso) return "Dia todo";
@@ -23,8 +24,9 @@ export function GoogleDaySummaryCard({ summary }: { summary: GoogleDaySummary })
         </p>
         <Link
           href="/configuracoes/integracoes"
-          className="mt-3 inline-block rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+          className="mt-3 inline-flex items-center gap-2 rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
         >
+          <GoogleLogo className="h-4 w-4" />
           Conectar Google
         </Link>
       </div>
@@ -80,7 +82,7 @@ export function GoogleDaySummaryCard({ summary }: { summary: GoogleDaySummary })
 
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-kmp-text/40">
-            <Mail className="h-3.5 w-3.5" />
+            <GmailLogo className="h-3.5 w-3.5" />
             Gmail
           </div>
           <p className="mt-2 text-sm text-kmp-text">

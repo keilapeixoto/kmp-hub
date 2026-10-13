@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
-import { Calendar, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUserRole } from "@/lib/auth";
 import { getGoogleConnection } from "@/lib/google/connections";
+import { GoogleLogo } from "@/app/(staff)/_components/brand-icons";
 import { DisconnectGoogleButton } from "./_components/disconnect-google-button";
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -55,7 +56,7 @@ export default async function IntegracoesPage({
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-kmp-orange/10">
-              <Calendar className="h-5 w-5 text-kmp-orange" />
+              <GoogleLogo className="h-5 w-5" />
             </div>
             <div>
               <h2 className="font-heading text-lg text-kmp-graphite">
@@ -82,8 +83,9 @@ export default async function IntegracoesPage({
           ) : (
             <a
               href="/api/google/connect"
-              className="shrink-0 rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+              className="flex shrink-0 items-center gap-2 rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
             >
+              <GoogleLogo className="h-4 w-4" />
               Conectar
             </a>
           )}

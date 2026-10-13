@@ -29,17 +29,12 @@ export function GoogleLogo({ className }: { className?: string }) {
 
 export function GmailLogo({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
-      <path fill="#4CAF50" d="M45,16.2l-5,2.75l-5,4.75L35,40h7c1.657,0,3-1.343,3-3V16.2z" />
-      <path fill="#1E88E5" d="M3,16.2l3.614,1.71L13,23.7V40H6c-1.657,0-3-1.343-3-3V16.2z" />
-      <path fill="#E53935" d="M35,11.2l-11,8.25l-11-8.25L12,17.8v22.2h0h23h0V17.8L35,11.2z" />
-      <polygon fill="#C62828" points="3,12.298 3,16.2 13,23.7 13,17.8" />
-      <path fill="#FBC02D" d="M45,12.298V16.2l-10,7.5v-5.9L45,12.298z" />
-      <path fill="#C62828" d="M3,12.298V16.2l10,7.5v-5.9L3,12.298z" />
-      <path
-        fill="#FBC02D"
-        d="M45,12.298l-3.614,1.711L35,17.8l-11-8.25L13,17.8l-6.386-3.792L3,12.298l11-7.4h22L45,12.298z"
-      />
+    <svg viewBox="0 0 512 512" className={className} aria-hidden="true">
+      <path fill="#4285f4" d="M34.9 448h81.5V250.2L0 163v250.2C0 432.5 15.7 448 34.9 448" />
+      <path fill="#34a853" d="M395.6 448h81.5c19.3 0 34.9-15.7 34.9-34.9V163l-116.4 87.3" />
+      <path fill="#fbbc04" d="M395.6 99v151.3L512 163v-46.5c0-43.2-49.3-67.8-83.8-41.9" />
+      <path fill="#ea4335" d="M116.4 250.2V99L256 203.7 395.6 99v151.3L256 355" />
+      <path fill="#c5221f" d="M0 116.4V163l116.4 87.3V99L83.8 74.5C49.2 48.6 0 73.2 0 116.4" />
     </svg>
   );
 }

@@ -74,8 +74,24 @@ página 5/20 (Travelling companions — se tem acompanhante na viagem).
 Página 1 (Terms and Conditions) não precisa de mapeamento, é só o
 aceite dos termos, deixado manual de propósito — e a pergunta "Is the
 above information correct?" da página 4 também fica sempre manual de
-propósito, por ser a confirmação da própria Keila. As demais páginas
-(trabalho/finanças, histórico, saúde/caráter, declaração etc.) ainda
-não foram mapeadas — precisam do `outerHTML` de cada uma (mesmo
-processo usado pra mapear as anteriores)
-antes de a extensão preencher algo nelas.
+propósito, por ser a confirmação da própria Keila. Página 20/20
+(Declarations, última página numerada) também fica sempre manual de
+propósito: são nove declarações/consentimentos legais ("Have read and
+understood...", "Give consent to the collection of their fingerprints
+and facial image...", "Agree to leave Australia on or before the
+expiry..." etc.) sem campo correspondente no formulário de coleta de
+dados do Hub — não é dado do cliente pra copiar, é atestação que a
+própria Keila/o cliente precisa conferir e marcar conscientemente
+antes de enviar.
+
+Depois da página 20 vêm mais duas telas, sem numeração própria: uma
+**Review Page** (resumo de tudo que foi preenchido, todos os campos
+somente-leitura — não há nada pra autopreencher, é só conferência) e
+uma página de **Attach documents** (anexar arquivos — upload de
+arquivo não é um campo de texto/rádio, e escolher automaticamente
+qual documento do Hub corresponde a qual tipo exigido pelo
+ImmiAccount seria uma funcionalidade bem maior, fora de escopo deste
+preenchimento). As demais páginas do meio (trabalho/finanças,
+histórico, saúde/caráter etc., página 6/20 a 19/20) ainda não foram
+mapeadas — precisam do `outerHTML` de cada uma (mesmo processo usado
+pra mapear as anteriores) antes de a extensão preencher algo nelas.

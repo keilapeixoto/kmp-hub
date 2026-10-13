@@ -114,13 +114,53 @@ function isVisivel(el) {
   return true;
 }
 
+/**
+ * Já tem valor? Protege defaults que o próprio ImmiAccount já preenche
+ * (ex. "Email address" vem com vistos@kmpconsulting.com.au) — a extensão
+ * nunca sobrescreve, só preenche campo vazio.
+ */
+function jaPreenchido(controle) {
+  if (controle.tagName === "FIELDSET") {
+    return !!controle.querySelector('input[type="radio"]:checked');
+  }
+  return !!String(controle.value || "").trim();
+}
+
 // ---------------------------------------------------------------------------
 // Acha o campo pela label em inglês (normalizada) — ver comentário no topo.
+//
+// Algumas labels se repetem na mesma página (ex. "Address", "Suburb / Town",
+// "Postcode" aparecem tanto no formato de endereço australiano quanto no
+// internacional, e de novo no endereço de correspondência). Como só um dos
+// grupos fica visível por vez (o outro fica dentro de um ancestral
+// `hidden`), o filtro isVisivel() já resolve a maioria dos casos — mas
+// quando a seção toda (ex. "Residential address" vs "Postal address")
+// pode estar visível ao mesmo tempo, o parâmetro `scopeHeadingEn` restringe
+// a busca ao trecho da página sob aquele título.
 // ---------------------------------------------------------------------------
 
-function acharControlePorLabel(labelEn) {
+function acharEscopo(scopeHeadingEn) {
+  if (!scopeHeadingEn) return document;
+  const alvo = normalize(scopeHeadingEn);
+  const titulos = document.querySelectorAll(
+    "h2 .wc-labelbody, h3 .wc-labelbody, legend .wc-labelbody",
+  );
+  for (const titulo of titulos) {
+    if (normalize(titulo.textContent) !== alvo) continue;
+    const container =
+      titulo.closest('[class*="ELP-"]') ||
+      titulo.closest(".wc-panel") ||
+      titulo.closest("fieldset") ||
+      titulo.parentElement;
+    if (container) return container;
+  }
+  return document;
+}
+
+function acharControlePorLabel(labelEn, scopeHeadingEn) {
   const alvo = normalize(labelEn);
-  const labels = document.querySelectorAll(
+  const raiz = acharEscopo(scopeHeadingEn);
+  const labels = raiz.querySelectorAll(
     "label.wc-label[for], span.wc-label[data-wc-for]",
   );
   for (const lab of labels) {
@@ -247,6 +287,16 @@ const FIELD_MAP = [
     en: "Are there any other persons travelling with the applicant to Australia?",
     valueMap: SIM_NAO,
   },
+
+  // Página 20/20 — Declarations (última página) fica de propósito sem
+  // mapeamento, igual à página 1 (Terms) e à pergunta de confirmação da
+  // página 4: são nove declarações/consentimentos legais ("Have read and
+  // understood...", "Give consent to the collection of their fingerprints
+  // and facial image...", "Agree to leave Australia on or before the expiry
+  // ..." etc.) sem campo correspondente no formulário de coleta de dados do
+  // Hub — não é dado do cliente pra copiar, é atestação que a própria
+  // Keila/o cliente precisa conferir e marcar conscientemente antes de
+  // enviar.
 ];
 
 function montarRespostas(kmpVisaData) {

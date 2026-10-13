@@ -3,8 +3,8 @@
 // no Gmail (via API do Hub) e preenche + envia sozinho.
 
 const API_BASE = "https://kmp-hub.vercel.app";
-const MAX_TENTATIVAS = 6;
-const INTERVALO_MS = 2500;
+const MAX_TENTATIVAS = 15;
+const INTERVALO_MS = 3000;
 
 function criarSelo() {
   const selo = document.createElement("div");

@@ -6,7 +6,7 @@
     <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        width: 300px;
+        width: 320px;
         padding: 16px;
         color: #2c2c2c;
       }
@@ -14,6 +14,13 @@
         font-size: 14px;
         font-weight: 700;
         margin: 0 0 4px;
+      }
+      h2 {
+        font-size: 12px;
+        font-weight: 700;
+        margin: 16px 0 4px;
+        padding-top: 12px;
+        border-top: 1px solid #00000014;
       }
       p.sub {
         font-size: 12px;
@@ -44,6 +51,10 @@
         opacity: 0.6;
         cursor: default;
       }
+      button.secondary {
+        background: #00000010;
+        color: #2c2c2c;
+      }
       .status {
         margin-top: 10px;
         font-size: 12px;
@@ -57,6 +68,31 @@
       .status.off {
         background: #f5f5f5;
         color: #666;
+      }
+      .status.erro {
+        background: #fdecea;
+        color: #c62828;
+      }
+      ul#resultados {
+        list-style: none;
+        margin: 0 0 8px;
+        padding: 0;
+        max-height: 140px;
+        overflow-y: auto;
+      }
+      ul#resultados li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 6px 4px;
+        font-size: 12px;
+        border-bottom: 1px solid #00000010;
+      }
+      ul#resultados button {
+        width: auto;
+        padding: 4px 8px;
+        font-size: 11px;
       }
       a {
         color: #f27b20;
@@ -75,6 +111,20 @@
       Depois de salvo, abra a tela de código do ImmiAccount — o campo
       preenche sozinho.
     </p>
+
+    <h2>Preenchimento do visto (Subclass 600)</h2>
+    <p class="sub">
+      Busque o cliente pra carregar os dados que ele já preencheu no
+      formulário do portal. A extensão só preenche os campos — nunca envia a
+      aplicação sozinha.
+    </p>
+    <input id="buscaInput" type="text" placeholder="Nome do cliente..." autocomplete="off" />
+    <button id="buscarBtn">Buscar</button>
+    <ul id="resultados"></ul>
+    <div id="visaStatus" class="status off">Nenhum cliente carregado.</div>
+    <button id="limparBtn" class="secondary" style="margin-top: 8px">
+      Limpar dados carregados
+    </button>
   </body>
   <script src="popup.js"></script>
 </html>

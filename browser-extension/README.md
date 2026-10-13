@@ -36,3 +36,26 @@ digitar manualmente — nunca trava a tela nem impede o uso normal.
 Em Configurações → Integrações, clique em **"Revogar"** no card da
 extensão — qualquer token salvo em qualquer computador para de funcionar
 imediatamente.
+
+## Preenchimento do formulário de visto (Subclass 600 — em construção)
+
+A primeira metade do pedido (login automático) já funciona. Esta segunda
+parte reaproveita o sistema de "Formulários de coleta de dados" que já
+existe no Hub (o cliente preenche no portal, em etapas) — a extensão só
+copia o que ele já respondeu para os campos do ImmiAccount. **Nunca
+envia a aplicação sozinha** — só preenche, a Keila revisa e clica em
+enviar manualmente.
+
+O que já está pronto:
+
+- No popup da extensão, a seção "Preenchimento do visto (Subclass 600)"
+  busca o cliente pelo nome (mesma regra de permissão do Hub — cada
+  consultor só vê os processos dele, salvo admin/diretor/financeiro) e
+  carrega os dados do formulário dele.
+- A busca só mostra processos com o formulário "Formulário Visto de
+  Turista (Subclass 600) — Coleta de Dados" já preenchido pelo cliente.
+
+O que falta: o content script que lê esses dados carregados e preenche os
+campos de verdade nas páginas de aplicação do ImmiAccount — depende de
+mapear os campos reais da aplicação (URL e estrutura das páginas), ainda
+não feito.

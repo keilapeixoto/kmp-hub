@@ -156,9 +156,8 @@ preenche sozinha o código de autenticação de duas etapas do ImmiAccount
 (Department of Home Affairs manda por e-mail) e envia o formulário de
 login. Fluxo: cada usuário gera um token em Configurações → Integrações
 (tabela `extension_tokens`, migração `20261013100000_extension_tokens.sql`,
-**ainda não aplicada no Supabase de dev**; mesmo padrão de
-`google_connections` — RLS ativado sem nenhuma política, só
-`createAdminClient()` acessa, teste em
+já aplicada no Supabase de dev; mesmo padrão de `google_connections` — RLS
+ativado sem nenhuma política, só `createAdminClient()` acessa, teste em
 `021_extension_tokens_rls.test.sql`), cola na extensão; o content script
 roda só em `online.immi.gov.au/lusc/*`, detecta o campo
 `#authenticationCode`, chama `GET /api/extension/immiaccount-code`
@@ -166,10 +165,28 @@ roda só em `online.immi.gov.au/lusc/*`, detecta o campo
 porque o token já é a autenticação) que busca no Gmail já conectado
 (`lib/google/gmail.ts getLatestImmiAccountCode`, filtra e-mail de
 `noreply-lusc@homeaffairs.gov.au` dos últimos 10 min pra nunca reusar
-código velho). Escopo desta primeira etapa: só o passo de autenticação
-(login) — preenchimento automático do formulário de visto em si (a
-segunda parte do pedido original da Keila, com formulário pro cliente
-preencher) ainda não foi construído, fica pra próxima etapa.
+código velho). Também avança sozinho a tela "Login successful" (e só essa
+tela de confirmação de login — nunca um "Next" de etapa real de visto).
+
+**Preenchimento do formulário de visto (Subclass 600, em construção):**
+segunda parte do pedido original da Keila — reaproveita o sistema de
+"Formulários de coleta de dados" que já existia (`case_form_templates`,
+o cliente preenche no portal em etapas), em vez de um formulário novo.
+Dois endpoints novos autenticados pelo mesmo token da extensão
+(`lib/extension/visa-form.ts`): `GET /api/extension/visa-cases?q=` busca
+processos com o "Formulário Visto de Turista (Subclass 600) — Coleta de
+Dados" já preenchido, filtrando pelo mesmo critério de visibilidade de
+`cases` (consultor só vê os seus, admin/diretor/financeiro veem todos);
+`GET /api/extension/visa-form-data?caseId=` devolve os campos e
+respostas desse processo. O popup da extensão já busca/seleciona o
+cliente e guarda os dados em `chrome.storage.local`. **Falta** o content
+script que lê esses dados e preenche os campos de verdade nas páginas de
+aplicação do ImmiAccount — depende de mapear a URL e a estrutura real
+dessas páginas (ainda não feito, precisa de screenshots da Keila, mesmo
+processo usado pra mapear a tela de login). Princípio de segurança
+mantido em toda a etapa: a extensão só preenche, nunca clica em enviar a
+aplicação de visto.
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

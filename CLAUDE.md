@@ -90,6 +90,15 @@ Free do Supabase), projeto Supabase de produção ainda não criado, testes pgTA
 (`supabase/tests/database/`) rodados manualmente via SQL Editor. Scripts de
 importação em `scripts/`; mapeamento com nomes reais em `import/` (fora do git).
 
+**Sincronização automática da KEY MIGRATION (out/2026):** `scripts/sync-key-migration.mjs`
+roda sem supervisão (pensado para launchd/cron no computador da Keila — a
+pasta só existe localmente, nunca neste repo). Reaproveita a heurística do
+`scan-key-migration.mjs` pra varrer de novo, mas só sobe arquivo automático
+pra pasta já aprovada em `import/key-migration-map.csv` (acao=importar);
+pasta nova vai pra `import/key-migration-pendentes.csv` sem subir nada —
+evita documento de imigração ir pro cliente errado sem revisão. Aprovar uma
+pasta nova é mover a linha do pendentes pro map.csv manualmente.
+
 **Financeiro/invoices (set/2026, exceção de fase — ver Convenções acima):**
 `invoices`/`invoice_items` (`lib/invoices/`, `app/(staff)/financeiro/`), só
 `admin`/`finance` (RLS em `018_invoices_rls.test.sql`). Numeração automática

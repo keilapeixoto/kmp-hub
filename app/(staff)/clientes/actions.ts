@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getCurrentUserRole } from "@/lib/auth";
+import { getCurrentUserId, getCurrentUserRole } from "@/lib/auth";
+import { getValidAccessToken } from "@/lib/google/connections";
+import { sendGmail } from "@/lib/google/gmail";
 
 export type ClientFormState = {
   error: string | null;
@@ -298,4 +300,60 @@ export async function updateClientFileStatusRevisao(
     .eq("id", documentId);
 
   revalidatePath(`/clientes/${clientId}`);
+}
+
+export type SendEmailState = {
+  error: string | null;
+  sent: boolean;
+};
+
+/**
+ * Manda e-mail pelo Gmail de quem está logado (precisa ter conectado a
+ * conta Google em /configuracoes/integracoes) — aparece na caixa de
+ * Enviados de quem mandou, diferente do Resend (avisos automáticos de
+ * sistema, lib/storage-admin/email.ts).
+ */
+export async function sendClientEmail(
+  _prevState: SendEmailState,
+  formData: FormData,
+): Promise<SendEmailState> {
+  const to = formData.get("to");
+  const subject = formData.get("subject");
+  const body = formData.get("body");
+
+  if (typeof to !== "string" || !to.trim()) {
+    return { error: "Sem e-mail do cliente cadastrado.", sent: false };
+  }
+  if (typeof subject !== "string" || !subject.trim()) {
+    return { error: "Escreva o assunto.", sent: false };
+  }
+  if (typeof body !== "string" || !body.trim()) {
+    return { error: "Escreva a mensagem.", sent: false };
+  }
+
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return { error: "Sessão expirada — entre de novo.", sent: false };
+  }
+
+  const accessToken = await getValidAccessToken(userId);
+  if (!accessToken) {
+    return {
+      error: "Conecte sua conta Google em Configurações → Integrações primeiro.",
+      sent: false,
+    };
+  }
+
+  const html = body
+    .trim()
+    .split("\n")
+    .map((line) => `<p>${line}</p>`)
+    .join("");
+
+  const result = await sendGmail(accessToken, { to: to.trim(), subject: subject.trim(), html });
+  if (!result.ok) {
+    return { error: result.error ?? "Não foi possível enviar.", sent: false };
+  }
+
+  return { error: null, sent: true };
 }

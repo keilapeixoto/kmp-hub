@@ -5,6 +5,7 @@ import {
   FileText,
   HardDrive,
   Kanban,
+  Plug,
   UsersRound,
 } from "lucide-react";
 import type { ComponentType } from "react";
@@ -55,6 +56,12 @@ const AREAS: SettingsArea[] = [
     nome: "Armazenamento",
     descricao: "Uso de espaço, alertas e limites de upload de documentos.",
     icon: HardDrive,
+  },
+  {
+    href: "/configuracoes/integracoes",
+    nome: "Integrações",
+    descricao: "Conectar Google (Calendar + Gmail) pra agenda real e e-mail no Início.",
+    icon: Plug,
   },
 ];
 

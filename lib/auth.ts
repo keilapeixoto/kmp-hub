@@ -11,6 +11,14 @@ export async function getCurrentUserRole(): Promise<string | null> {
   return (data as string | null) ?? null;
 }
 
+export async function getCurrentUserId(): Promise<string | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
+
 /**
  * Nome/idioma do próprio perfil. Sem join com roles — esse embed é bloqueado
  * por RLS para quem não é admin/diretor (ver getCurrentUserRole acima).

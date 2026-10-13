@@ -8,13 +8,19 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { ACCENT_STYLES, type Accent } from "@/lib/ui/accent";
-import { getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
+import {
+  getCurrentUserId,
+  getCurrentUserProfile,
+  getCurrentUserRole,
+} from "@/lib/auth";
 import { formatTimesInAllZones } from "@/lib/appointments/timezones";
 import { getDashboardMetrics } from "@/lib/dashboard/data";
 import { getQueueCounts } from "@/lib/cases/data";
 import { getRecentImmigrationNews } from "@/lib/immigration-news/data";
+import { getGoogleDaySummary } from "@/lib/google/dashboard";
 import { deleteImmigrationNews } from "./actions";
 import { NewsAddForm } from "./_components/news-add-form";
+import { GoogleDaySummaryCard } from "./_components/google-day-summary";
 
 const MODULE_LINKS: {
   href: string;
@@ -67,12 +73,22 @@ function StatTile({
 }
 
 export default async function InicioPage() {
-  const [profile, role, metrics, queue, news] = await Promise.all([
+  const userId = await getCurrentUserId();
+  const [profile, role, metrics, queue, news, googleSummary] = await Promise.all([
     getCurrentUserProfile(),
     getCurrentUserRole(),
     getDashboardMetrics(),
     getQueueCounts(),
     getRecentImmigrationNews(),
+    userId
+      ? getGoogleDaySummary(userId)
+      : Promise.resolve({
+          connected: false as const,
+          eventos: [],
+          totalNaoLidos: 0,
+          mensagensUrgentes: [],
+          erro: null,
+        }),
   ]);
 
   const canManageNews = role === "admin" || role === "director";
@@ -209,6 +225,8 @@ export default async function InicioPage() {
           )}
         </div>
       </div>
+
+      <GoogleDaySummaryCard summary={googleSummary} />
 
       <div>
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-kmp-text/40">

@@ -21,6 +21,7 @@ import { ClientTabs } from "../_components/client-tabs";
 import { DependentsPanel } from "../_components/dependents-panel";
 import { PortalAccessCard } from "../_components/portal-access-card";
 import { DocumentsPanel } from "../_components/documents-panel";
+import { SendEmailPanel } from "../_components/send-email-panel";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -106,6 +107,7 @@ export default async function ClientDetailPage({
             hasAccess={hasPortalAccess}
             canInvite={role === "admin" || role === "director"}
           />
+          {client.email ? <SendEmailPanel clientEmail={client.email} /> : null}
         </div>
       ) : null}
 

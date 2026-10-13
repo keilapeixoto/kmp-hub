@@ -36,7 +36,7 @@ Repositório e schema novos (não evolução do CRM atual) — motivo: RLS por f
 - **Notas internas e riscos** ficam em colunas/tabelas separadas, com política RLS que exclui a função `client` incondicionalmente — nunca aparecem no portal.
 - **Documentos**: soft delete apenas (arquivamento), nunca exclusão permanente; só admin acessa arquivados.
 - **Fusos horários**: tudo em UTC no banco, conversão só na interface (BR, Sydney, Brisbane, fuso do cliente).
-- **Fases rígidas**: nada da Fase 2 (portal, formulários públicos, propostas, invoices, integrações externas, IA) entra antes da Fase 1 estar validada em uso real. **Exceção aberta (set/2026):** emissão de invoices adiantada a pedido da Keila, antes da Fase 1 fechar (Sprint 8/checklist da seção 32 e projeto Supabase de produção ainda pendentes). Escopo inicial: registro/emissão interna (sem Stripe/Xero — essas integrações continuam fora de escopo até serem pedidas).
+- **Fases rígidas**: nada da Fase 2 (portal, formulários públicos, propostas, invoices, integrações externas, IA) entra antes da Fase 1 estar validada em uso real. **Exceção aberta (set/2026):** emissão de invoices adiantada a pedido da Keila, antes da Fase 1 fechar (Sprint 8/checklist da seção 32 e projeto Supabase de produção ainda pendentes). Escopo inicial: registro/emissão interna (sem Stripe/Xero — essas integrações continuam fora de escopo até serem pedidas). **Exceção aberta (out/2026):** integração com Google Calendar/Gmail (agenda real + e-mail não lido/urgente no Início, envio de e-mail pelo Gmail), também adiantada a pedido da Keila — ver "Integração Google" em Estado atual.
 - **Maior risco do projeto é RLS mal configurado.** Toda tabela nova precisa de teste automatizado de permissão por função, antes de qualquer deploy.
 
 ## Funções e permissões (seção 5 do plano)
@@ -128,6 +128,27 @@ scraper. O card de publicar novidade fica sempre claro (fora do tema
 escuro), mesmo padrão dos outros cartões com formulário — ver "Dark mode" em
 `docs/architecture/05-design-system.md`.
 
+**Integração Google (out/2026, exceção de fase — ver Convenções acima):**
+cada usuário da equipe conecta sua própria conta Google em
+`/configuracoes/integracoes` (OAuth2, `lib/google/`); guardado em
+`google_connections` (migração `20261013090000_google_connections.sql`,
+**ainda não aplicada no Supabase de dev**). Essa tabela não tem **nenhuma**
+política RLS de propósito — RLS ativado + zero políticas trava total pra
+`anon`/`authenticated`, inclusive admin; só `createAdminClient()`
+(`SUPABASE_SECRET_KEY`) toca nela, porque guarda `refresh_token` do Google
+(ver teste `020_google_connections_rls.test.sql`, que confirma o bloqueio
+total em vez de testar uma política). O card "Agenda e e-mail de hoje" no
+`/inicio` mostra a agenda real do Google Calendar do dia e e-mails não
+lidos, com "urgente" sendo só o marcador `IMPORTANT` que o próprio Gmail
+calcula (nenhuma classificação nossa). Perfil do cliente ganhou "Enviar
+e-mail" (`app/(staff)/clientes/_components/send-email-panel.tsx`), que manda
+pelo Gmail de quem está logado — diferente do Resend que já existe só pros
+avisos automáticos do sistema (`lib/storage-admin/email.ts`). Leitura de
+conteúdo de e-mail (abrir corpo de mensagens específicas, não só
+assunto/remetente/trecho) ficou de fora deste primeiro corte — avaliar com
+a Keila se/quando for pedido, dado que é o ponto mais sensível (conteúdo de
+cliente).
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração
@@ -166,3 +187,4 @@ Ver `.env.local` (nunca versionado). Este projeto usa o formato novo de chaves d
 - `NEXT_PUBLIC_SUPABASE_URL` — pública, pode ir ao cliente.
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — pública (`sb_publishable_...`), respeita RLS.
 - `SUPABASE_SECRET_KEY` — **somente servidor** (`sb_secret_...`), nunca prefixo `NEXT_PUBLIC_`, nunca importada em componente client. Ignora RLS — substitui a antiga service role key.
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — **somente servidor**, credencial OAuth2 do Google Cloud Console (integração Calendar/Gmail, ver Estado atual). Passo a passo de como gerar em `docs/architecture/` ou pedir à Keila/Claude.

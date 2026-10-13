@@ -185,9 +185,9 @@ function preencherControle(controle, valorBruto, opcoes = {}) {
 // Dicionário de campos — rótulo do formulário do Hub (PT) -> rótulo do
 // ImmiAccount (EN) + tipo de preenchimento. Construído página a página
 // conforme a Keila manda o HTML real; cobre por enquanto as páginas
-// 2-3/20 (Application context, Applicant). Página 1 (Terms and
-// Conditions) não precisa de mapeamento — é só o checkbox de aceite,
-// deixado manual de propósito.
+// 2-4/20 (Application context, Applicant, Critical data confirmation).
+// Página 1 (Terms and Conditions) não precisa de mapeamento — é só o
+// checkbox de aceite, deixado manual de propósito.
 // ---------------------------------------------------------------------------
 
 const SIM_NAO = { Sim: "Yes", Não: "No" };
@@ -231,6 +231,12 @@ const FIELD_MAP = [
   { pt: "Data de emissão", en: "Date of issue" },
   { pt: "Data de validade", en: "Date of expiry" },
   { pt: "Local de emissão", en: "Place of issue / issuing authority" },
+
+  // Página 4/20 — Critical data confirmation (só os dados de novo, maioria
+  // somente-leitura — o único campo editável de verdade é o e-mail). A
+  // pergunta "Is the above information correct?" fica de propósito sem
+  // preenchimento automático: é a confirmação da Keila, não da extensão.
+  { pt: "E-mail", en: "Email address" },
 ];
 
 function montarRespostas(kmpVisaData) {

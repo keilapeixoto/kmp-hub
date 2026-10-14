@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { camposParaAtualizar } from "@/lib/clients/update-fields";
 
 export type CaseFormState = {
   error: string | null;
@@ -81,9 +82,18 @@ export async function updateCase(
     return { error: "Selecione o cliente e o tipo de serviço." };
   }
 
-  const updateData: Record<string, unknown> = { ...fields, equipe };
-
   const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Sua sessão expirou. Entre de novo." };
+  // consultor_id é obrigatório no banco: "Eu mesmo(a)" chega vazio.
+  const updateData: Record<string, unknown> = {
+    ...camposParaAtualizar(fields as Record<string, string | null>, {
+      usuarioId: auth.user.id,
+      consultorNoFormulario: formData.has("consultor_id"),
+    }),
+    equipe,
+  };
+
   const { error } = await supabase.from("cases").update(updateData).eq("id", id);
 
   if (error) {
@@ -115,10 +125,10 @@ export async function updateCasePrioridadeInline(id: string, prioridade: string)
 
 export async function updateCaseConsultorInline(id: string, consultorId: string) {
   const supabase = await createClient();
-  await supabase
-    .from("cases")
-    .update({ consultor_id: consultorId || null })
-    .eq("id", id);
+  const { data: auth } = await supabase.auth.getUser();
+  const consultor = consultorId || auth.user?.id;
+  if (!consultor) return;
+  await supabase.from("cases").update({ consultor_id: consultor }).eq("id", id);
   revalidatePath("/processos");
 }
 

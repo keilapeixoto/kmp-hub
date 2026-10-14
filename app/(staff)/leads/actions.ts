@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { camposParaAtualizar } from "@/lib/clients/update-fields";
 
 export type LeadFormState = {
   error: string | null;
@@ -81,7 +82,18 @@ export async function updateLead(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.from("leads").update(fields).eq("id", id);
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Sua sessão expirou. Entre de novo." };
+  // consultor_id é obrigatório no banco: "Eu mesmo(a)" chega vazio.
+  const { error } = await supabase
+    .from("leads")
+    .update(
+      camposParaAtualizar(fields, {
+        usuarioId: auth.user.id,
+        consultorNoFormulario: formData.has("consultor_id"),
+      }),
+    )
+    .eq("id", id);
 
   if (error) {
     return { error: "Não foi possível salvar as alterações." };

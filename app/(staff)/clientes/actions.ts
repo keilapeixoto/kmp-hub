@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { camposParaAtualizar } from "@/lib/clients/update-fields";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUserId, getCurrentUserRole } from "@/lib/auth";
 import { getValidAccessToken } from "@/lib/google/connections";
@@ -88,9 +89,21 @@ export async function updateClientRecord(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.from("clients").update(fields).eq("id", id);
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Sua sessão expirou. Entre de novo." };
+
+  const { error } = await supabase
+    .from("clients")
+    .update(
+      camposParaAtualizar(fields, {
+        usuarioId: auth.user.id,
+        consultorNoFormulario: formData.has("consultor_id"),
+      }),
+    )
+    .eq("id", id);
 
   if (error) {
+    console.error("[updateClientRecord] falhou:", error.code, error.message);
     return { error: "Não foi possível salvar as alterações." };
   }
 

@@ -61,10 +61,12 @@ function AgendaCard({ eventos }: { eventos: GoogleCalendarEvent[] }) {
   const dias = semana(agora, FUSO);
   const comEvento = diasComEvento(eventos, FUSO);
   const g = agruparPorDia(eventos, agora, FUSO);
-  const mes = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric", timeZone: FUSO }).format(agora);
+  const mesBruto = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric", timeZone: FUSO }).format(agora);
+  // "outubro de 2026" -> "Outubro de 2026" (só a primeira letra)
+  const mes = mesBruto.charAt(0).toUpperCase() + mesBruto.slice(1);
   return (
     <section className={cartao}>
-      <FaixaTitulo titulo="Agenda" cor="lilas" icon={CalendarDays} direita={<span className="capitalize">{mes}</span>} />
+      <FaixaTitulo titulo="Agenda" cor="lilas" icon={CalendarDays} direita={mes} />
 
       <div className="grid grid-cols-7 gap-1.5">
         {dias.map((d) => (
@@ -107,7 +109,7 @@ function EmailCard({ summary }: { summary: GoogleDaySummary }) {
         titulo="E-mail"
         cor="vermelho"
         icon={Mail}
-        direita={`${summary.totalNaoLidos}${summary.maisNaoLidos ? "+" : ""} não lidos na Principal`}
+        direita={`${summary.totalNaoLidos}${summary.maisNaoLidos ? "+" : ""} não lidos`}
       />
 
       {summary.mensagens.length === 0 ? (

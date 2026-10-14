@@ -10,6 +10,12 @@
 
 const GMAIL_BASE = "https://gmail.googleapis.com/gmail/v1/users/me";
 
+// Não lidos da caixa de entrada sem Promoções/Social/Atualizações/Fóruns.
+// "category:primary" sozinho devolve zero para quem não usa as abas do Gmail;
+// excluir as outras categorias funciona com e sem abas.
+const CAIXA_PRINCIPAL =
+  "in:inbox is:unread -category:promotions -category:social -category:updates -category:forums";
+
 export type GmailUnreadMessage = {
   id: string;
   de: string;
@@ -28,7 +34,7 @@ export async function getUnreadSummary(
   limit = 6,
 ): Promise<{ totalNaoLidos: number; maisNaoLidos: boolean; mensagens: GmailUnreadMessage[] }> {
   const listRes = await fetch(
-    `${GMAIL_BASE}/messages?q=${encodeURIComponent("in:inbox category:primary is:unread")}&maxResults=500`,
+    `${GMAIL_BASE}/messages?q=${encodeURIComponent(CAIXA_PRINCIPAL)}&maxResults=500`,
     { headers: { Authorization: `Bearer ${accessToken}` } },
   );
   if (!listRes.ok) {

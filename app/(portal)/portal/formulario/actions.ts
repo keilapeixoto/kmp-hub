@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { CaseFormField } from "@/lib/case-forms/types";
 import { getEtapasComCampos, getCaseFormResponses } from "@/lib/case-forms/data";
 import { camposPendentes } from "@/lib/case-forms/validate";
+import { notifyFormSubmitted } from "@/lib/case-forms/notify-server";
 import { linhasDeFormData, salvarRespostasEmBlocos } from "@/lib/case-forms/save";
 
 async function ensureCaseForm(caseId: string, templateId: string) {
@@ -59,6 +60,7 @@ export async function saveFormStep(
       .from("case_forms")
       .update({ status: "enviado", enviado_em: new Date().toISOString() })
       .eq("id", caseFormId);
+    await notifyFormSubmitted(caseId);
     revalidatePath("/portal");
     redirect(`/portal/formulario?processo=${caseId}&enviado=1`);
   }

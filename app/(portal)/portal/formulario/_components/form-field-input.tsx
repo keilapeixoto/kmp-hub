@@ -24,7 +24,6 @@ export function FormFieldInput({
         <textarea
           name={field.id}
           defaultValue={defaultValue}
-          required={field.obrigatorio}
           rows={4}
           className={inputClass}
         />
@@ -32,7 +31,6 @@ export function FormFieldInput({
         <select
           name={field.id}
           defaultValue={defaultValue}
-          required={field.obrigatorio}
           className={inputClass}
         >
           <option value="" disabled>
@@ -56,7 +54,6 @@ export function FormFieldInput({
                 name={field.id}
                 value={opt}
                 defaultChecked={defaultValue === opt}
-                required={field.obrigatorio}
               />
               {opt}
             </label>
@@ -67,7 +64,6 @@ export function FormFieldInput({
           type="date"
           name={field.id}
           defaultValue={defaultValue}
-          required={field.obrigatorio}
           className={inputClass}
         />
       ) : (
@@ -75,7 +71,6 @@ export function FormFieldInput({
           type="text"
           name={field.id}
           defaultValue={defaultValue}
-          required={field.obrigatorio}
           className={inputClass}
         />
       )}

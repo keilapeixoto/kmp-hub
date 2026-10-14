@@ -140,7 +140,6 @@ export function mapRecordTo600(textoDoPdf: string): Mapeamento {
   const nacPassaporte = pega(rec, "Nationality of passport holder", P);
   if (nacPassaporte) {
     poe("Nacionalidade conforme passaporte", paisParaPt(nacPassaporte));
-    poe("Nacionalidade atual", paisParaPt(nacPassaporte));
   }
   poeData("Data de emissão", pega(rec, "Date of issue", P));
   poeData("Data de validade", pega(rec, "Date of expiry", P));

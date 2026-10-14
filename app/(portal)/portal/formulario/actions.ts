@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { CaseFormField } from "@/lib/case-forms/types";
+import { getEtapasComCampos, getCaseFormResponses } from "@/lib/case-forms/data";
+import { camposPendentes } from "@/lib/case-forms/validate";
 
 async function ensureCaseForm(caseId: string, templateId: string) {
   const supabase = await createClient();
@@ -49,6 +51,16 @@ export async function saveFormStep(
   }
 
   if (direction === "enviar") {
+    // Obrigatórios só valem aqui: "Próximo" sempre avança e salva.
+    const etapas = await getEtapasComCampos(templateId);
+    const respostas = await getCaseFormResponses(caseFormId);
+    const pendentes = camposPendentes(etapas, respostas);
+    if (pendentes.length > 0) {
+      revalidatePath("/portal/formulario");
+      redirect(
+        `/portal/formulario?processo=${caseId}&etapa=${pendentes[0].etapa}&pendentes=${pendentes.length}`,
+      );
+    }
     await supabase
       .from("case_forms")
       .update({ status: "enviado", enviado_em: new Date().toISOString() })

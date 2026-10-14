@@ -146,3 +146,12 @@ export async function markCaseFormViewed(
     .select()
     .maybeSingle();
 }
+
+export async function getEtapasComCampos(
+  templateId: string,
+): Promise<(CaseFormStep & { fields: CaseFormField[] })[]> {
+  const steps = await getCaseFormSteps(templateId);
+  return Promise.all(
+    steps.map(async (s) => ({ ...s, fields: await getCaseFormFields(s.id) })),
+  );
+}

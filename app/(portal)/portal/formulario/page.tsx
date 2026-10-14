@@ -6,8 +6,10 @@ import {
   getCaseFormFields,
   getCaseForm,
   getCaseFormResponses,
+  getEtapasComCampos,
   markCaseFormViewed,
 } from "@/lib/case-forms/data";
+import { camposPendentes } from "@/lib/case-forms/validate";
 import { getPortalCase } from "@/lib/portal/data";
 import { PortalHeader } from "../_components/portal-header";
 import { FormFieldInput } from "./_components/form-field-input";
@@ -50,6 +52,8 @@ export default async function PortalFormularioPage({
     getCaseForm(caseId, template.id),
   ]);
   const responses = caseForm ? await getCaseFormResponses(caseForm.id) : {};
+  const pendentes =
+    sp.pendentes !== undefined ? camposPendentes(await getEtapasComCampos(template.id), responses) : [];
 
   const prevAction = saveFormStep.bind(
     null,
@@ -117,6 +121,26 @@ export default async function PortalFormularioPage({
         <p className="text-sm text-kmp-graphite/60">
           Etapa {currentStepNumber} de {steps.length} — {currentStep.titulo}
         </p>
+
+        {pendentes.length > 0 ? (
+          <div className="rounded-lg bg-amber-50 p-4 text-sm text-amber-900">
+            <p className="font-medium">
+              Faltam {pendentes.length} campo(s) obrigatório(s) para enviar:
+            </p>
+            <ul className="mt-2 space-y-1">
+              {pendentes.map((p) => (
+                <li key={p.fieldId}>
+                  <Link
+                    href={`/portal/formulario?processo=${caseId}&etapa=${p.etapa}`}
+                    className="underline"
+                  >
+                    Etapa {p.etapa} — {p.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
 
         <form className="space-y-6 rounded-lg bg-white p-6 shadow-sm">
           {fields.map((field) => (

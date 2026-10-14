@@ -1,0 +1,386 @@
+[
+  {
+    "etapa": "Contato e Endereço",
+    "label": "Qual é a sua situação legal no país onde mora?",
+    "tipo": "select",
+    "opcoes": [
+      "Cidadão",
+      "Residente permanente",
+      "Visitante",
+      "Estudante",
+      "Visto de trabalho",
+      "Sem situação legal",
+      "Outro"
+    ],
+    "ajuda": "Para quem mora no país de origem, em geral Cidadão.",
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Detalhes da Viagem",
+    "label": "Há datas importantes em que você precisa estar na Austrália? (evento, casamento, formatura...)",
+    "tipo": "textarea",
+    "opcoes": null,
+    "ajuda": "Se não houver, escreva: não há datas específicas.",
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Dados Pessoais",
+    "label": "Já usou ou usa outros nomes (nome de solteira, apelido legal)?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": "Se sim, escreva os nomes no campo \"Outros nomes já utilizados\".",
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Passaporte",
+    "label": "É cidadão do país do passaporte?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Passaporte",
+    "label": "Possui carteira de identidade nacional (RG)?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Histórico de Viagens",
+    "label": "Número do visto australiano anterior (se tiver)",
+    "tipo": "text",
+    "opcoes": null,
+    "ajuda": "Deixe em branco se nunca teve visto australiano.",
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Fez exame de saúde para visto australiano nos últimos 12 meses?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Família",
+    "label": "Tem familiares (cônjuge ou filhos dependentes) que não vão viajar e não são cidadãos nem residentes permanentes da Austrália?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Detalhes da Viagem",
+    "label": "Pretende fazer algum curso na Austrália?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Detalhes da Viagem",
+    "label": "Vai visitar parentes, amigos ou outros contatos na Austrália?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Histórico de Viagens",
+    "label": "Já teve algum visto da Austrália ou de outro país?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Nos últimos 5 anos, morou ou ficou mais de 3 meses seguidos fora do país do passaporte (sem contar a Austrália)?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": "Declaração ao governo australiano: responda com atenção.",
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Pretende entrar em hospital ou unidade de saúde (inclusive casas de repouso) na Austrália?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Pretende trabalhar, estudar ou fazer estágio como profissional de saúde, ou trabalhar em unidade de saúde na Austrália?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Pretende trabalhar, estudar ou fazer estágio em cuidado de idosos ou de pessoas com deficiência na Austrália?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Pretende trabalhar ou fazer estágio em creche ou pré-escola na Austrália?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Pretende ficar em sala de aula por mais de 3 meses (como aluno, professor ou observador)?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já teve ou tem tuberculose, teve contato próximo com alguém com tuberculose ativa, ou já fez raio-X do tórax com alteração?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Espera ter custos médicos ou precisar de tratamento na Austrália (por exemplo câncer, doença cardíaca, hepatite B ou C, HIV, doença renal, doença mental)?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Precisa de cuidados médicos contínuos, equipamento especial ou ajuda de outras pessoas no dia a dia?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já esteve sujeito a medida protetiva de violência doméstica ou familiar, ou outra ordem judicial de proteção a outra pessoa?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": "Declaração ao governo australiano: responda com atenção.",
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já foi alvo de mandado de prisão ou notificação da Interpol?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já foi considerado culpado de crime sexual envolvendo criança (mesmo sem condenação registrada)?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já constou em cadastro de agressores sexuais?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já foi absolvido de algum crime por insanidade ou falta de discernimento?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já foi considerado por um tribunal incapaz de responder a um processo?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já esteve envolvido ou associado a atividades que representem risco à segurança nacional da Austrália ou de outro país?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já foi acusado de genocídio, crimes de guerra, crimes contra a humanidade, tortura, escravidão ou outro crime internacional grave?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já esteve associado a pessoa, grupo ou organização envolvida em conduta criminosa?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já esteve associado a organização que pratica violência ou atos violentos (guerra, insurgência, terrorismo, protesto)?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já serviu em força militar, polícia, milícia ou serviço de inteligência?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já teve treinamento militar ou paramilitar, com armas, explosivos ou produtos químicos ou biológicos?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já esteve envolvido em tráfico ou contrabando de pessoas?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Já foi removido, deportado ou excluído de algum país (inclusive da Austrália)?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  },
+  {
+    "etapa": "Saúde e Caráter",
+    "label": "Tem dívidas pendentes com o governo australiano ou órgão público da Austrália?",
+    "tipo": "radio",
+    "opcoes": [
+      "Sim",
+      "Não"
+    ],
+    "ajuda": null,
+    "obrigatorio": false
+  }
+]

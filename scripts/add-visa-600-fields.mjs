@@ -52,6 +52,10 @@ const NOVOS = [
   },
 ];
 
+// As 35 perguntas de cobertura completa ficam num JSON só (também lido pelo
+// import-case-forms.mjs e pelo teste de consistência com a extensão).
+NOVOS.push(...JSON.parse(readFileSync("scripts/visa-600-new-fields.json", "utf8")));
+
 const { data: tpl, error: tplErr } = await s
   .from("case_form_templates")
   .select("id")

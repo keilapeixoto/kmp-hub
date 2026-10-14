@@ -483,6 +483,9 @@ const FIELD_MAP = [
     tipo: "presenca",
   },
   { pagina: 3, pt: "Número do visto australiano anterior (se tiver)", en: "Australian visa grant number (if known)" },
+  { pagina: 3, pt: "Já usou ou usa outros nomes (nome de solteira, apelido legal)?", en: "Is this applicant currently, or have they ever been known by any other names?", valueMap: SIM_NAO },
+  { pagina: 3, pt: "Possui carteira de identidade nacional (RG)?", en: "Does this applicant have a national identity card?", valueMap: SIM_NAO },
+  { pagina: 3, pt: "Fez exame de saúde para visto australiano nos últimos 12 meses?", en: "Has this applicant undertaken a health examination for an Australian visa in the last 12 months?", valueMap: SO_NAO },
   { pagina: 3, pt: "Número do passaporte", en: "Passport number" },
   { pagina: 3, pt: "País de emissão", en: "Country of passport", tipo: "pais" },
   { pagina: 3, pt: "Nacionalidade conforme passaporte", en: "Nationality of passport holder", tipo: "pais" },
@@ -619,10 +622,52 @@ const FIELD_MAP = [
   // visto) que o cliente e a Keila precisam marcar conscientemente.
   // Review e Attach documents também ficam manuais.
 
+  // Página 8/20 — família que não viaja (Yes abre detalhes; a Keila preenche).
+  { pagina: 8, pt: "Tem familiares (cônjuge ou filhos dependentes) que não vão viajar e não são cidadãos nem residentes permanentes da Austrália?", en: "Does the applicant have any members of their family unit not travelling to Australia", prefixo: true, valueMap: SIM_NAO },
+
+  // Página 9/20 — fatos da viagem (Sim e Não são marcados).
+  { pagina: 9, pt: "Pretende fazer algum curso na Austrália?", en: "Will the applicant undertake a course of study in Australia?", valueMap: SIM_NAO },
+  { pagina: 9, pt: "Vai visitar parentes, amigos ou outros contatos na Austrália?", en: "Will the applicant visit any relatives, friends or contacts while in Australia?", valueMap: SIM_NAO },
+
+  // Página 18/20 — fato de histórico, não declaração adversa.
+  { pagina: 18, pt: "Já teve algum visto da Austrália ou de outro país?", en: "Has the applicant held or does the applicant currently hold a visa to Australia or any other country?", valueMap: SIM_NAO },
+
   // Página 7/20 — Authorised recipient. Sem mapeamento de propósito: a
   // página é sobre quem recebe a correspondência do departamento (dados da
   // KMP/agente, não do cliente), nada aqui vem do formulário do Hub.
 ];
+
+// Declarações de saúde (16) e caráter (17): só "No", nunca "Yes". O texto do
+// ImmiAccount é longo e tem pontuação própria — casa pelo começo (prefixo).
+const DECLARACOES_SO_NAO = [
+  [16, "Nos últimos 5 anos, morou ou ficou mais de 3 meses seguidos fora do país do passaporte (sem contar a Austrália)?", "In the last five years, has any applicant visited, or lived, outside their country of passport"],
+  [16, "Pretende entrar em hospital ou unidade de saúde (inclusive casas de repouso) na Austrália?", "Does any applicant intend to enter a hospital or a health care facility"],
+  [16, "Pretende trabalhar, estudar ou fazer estágio como profissional de saúde, ou trabalhar em unidade de saúde na Austrália?", "Does any applicant intend to work as, or study or train to be, a health care worker"],
+  [16, "Pretende trabalhar, estudar ou fazer estágio em cuidado de idosos ou de pessoas com deficiência na Austrália?", "Does any applicant intend to work, study or train within aged care or disability care"],
+  [16, "Pretende trabalhar ou fazer estágio em creche ou pré-escola na Austrália?", "Does any applicant intend to work or be a trainee at a child care centre"],
+  [16, "Pretende ficar em sala de aula por mais de 3 meses (como aluno, professor ou observador)?", "Does any applicant intend to be in a classroom situation for more than 3 months"],
+  [16, "Já teve ou tem tuberculose, teve contato próximo com alguém com tuberculose ativa, ou já fez raio-X do tórax com alteração?", "Has any applicant: ever had, or currently have, tuberculosis"],
+  [16, "Espera ter custos médicos ou precisar de tratamento na Austrália (por exemplo câncer, doença cardíaca, hepatite B ou C, HIV, doença renal, doença mental)?", "During their proposed visit to Australia, does any applicant expect to incur medical costs"],
+  [16, "Precisa de cuidados médicos contínuos, equipamento especial ou ajuda de outras pessoas no dia a dia?", "Does any applicant require ongoing medical care or need special equipment"],
+  [17, "Já esteve sujeito a medida protetiva de violência doméstica ou familiar, ou outra ordem judicial de proteção a outra pessoa?", "Has any applicant ever been the subject of a domestic violence or family violence order"],
+  [17, "Já foi alvo de mandado de prisão ou notificação da Interpol?", "Has any applicant ever been the subject of an arrest warrant or Interpol notice"],
+  [17, "Já foi considerado culpado de crime sexual envolvendo criança (mesmo sem condenação registrada)?", "Has any applicant ever been found guilty of a sexually based offence involving a child"],
+  [17, "Já constou em cadastro de agressores sexuais?", "Has any applicant ever been named on a sex offender register"],
+  [17, "Já foi absolvido de algum crime por insanidade ou falta de discernimento?", "Has any applicant ever been acquitted of any offence on the grounds of unsoundness of mind or insanity"],
+  [17, "Já foi considerado por um tribunal incapaz de responder a um processo?", "Has any applicant ever been found by a court not fit to plead"],
+  [17, "Já esteve envolvido ou associado a atividades que representem risco à segurança nacional da Austrália ou de outro país?", "Has any applicant ever been directly or indirectly involved in, or associated with, activities which would represent a risk to national security"],
+  [17, "Já foi acusado de genocídio, crimes de guerra, crimes contra a humanidade, tortura, escravidão ou outro crime internacional grave?", "Has any applicant ever been charged with, or indicted for: genocide"],
+  [17, "Já esteve associado a pessoa, grupo ou organização envolvida em conduta criminosa?", "Has any applicant ever been associated with a person, group or organisation that has been or is involved in criminal conduct"],
+  [17, "Já esteve associado a organização que pratica violência ou atos violentos (guerra, insurgência, terrorismo, protesto)?", "Has any applicant ever been associated with an organisation engaged in violence"],
+  [17, "Já serviu em força militar, polícia, milícia ou serviço de inteligência?", "Has any applicant ever served in a military force, police force"],
+  [17, "Já teve treinamento militar ou paramilitar, com armas, explosivos ou produtos químicos ou biológicos?", "Has any applicant ever undergone any military/paramilitary training"],
+  [17, "Já esteve envolvido em tráfico ou contrabando de pessoas?", "Has any applicant ever been involved in people smuggling or people trafficking"],
+  [17, "Já foi removido, deportado ou excluído de algum país (inclusive da Austrália)?", "Has any applicant ever been removed, deported or excluded from any country"],
+  [17, "Tem dívidas pendentes com o governo australiano ou órgão público da Austrália?", "Has any applicant ever had any outstanding debts to the Australian Government"],
+];
+for (const [pagina, pt, en] of DECLARACOES_SO_NAO) {
+  FIELD_MAP.push({ pagina, pt, en, prefixo: true, valueMap: SO_NAO });
+}
 
 // Número da página atual do formulário, lido da barra de progresso
 // (<progress class="wc-progressbar" value="7" max="20">). Null se não achar.

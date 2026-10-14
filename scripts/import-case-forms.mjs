@@ -472,6 +472,17 @@ const FORM_600 = {
   ],
 };
 
+for (const f of JSON.parse(readFileSync("scripts/visa-600-new-fields.json", "utf8"))) {
+  const etapa = FORM_600.steps.find((s) => s.titulo === f.etapa);
+  etapa.fields.push({
+    label: f.label,
+    ajuda: f.ajuda ?? undefined,
+    tipo: f.tipo,
+    opcoes: f.opcoes ?? undefined,
+    obrigatorio: f.obrigatorio,
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Template 4 · Formulário US Visa B1/B2
 // ---------------------------------------------------------------------------

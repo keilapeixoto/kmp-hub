@@ -45,7 +45,21 @@ export const SUAVE: Record<CorViva, string> = {
   cinza: "bg-[#e9eaec] text-[#3f4247] dark:bg-white/10 dark:text-white/80",
 };
 
-/** Título de seção numa faixa colorida (fica no topo do cartão). */
+/** Cor do texto (forte o bastante para ler sobre fundo claro). */
+export const TEXTO: Record<CorViva, string> = {
+  azul: "text-[#1f4fa8] dark:text-[#9dbcf8]",
+  turquesa: "text-[#14606c] dark:text-[#8fd6e0]",
+  lilas: "text-[#4334b0] dark:text-[#bdb4f8]",
+  verde: "text-[#16673f] dark:text-[#93dcb6]",
+  amarelo: "text-[#7a5806] dark:text-[#f3d27a]",
+  rosa: "text-[#8c2350] dark:text-[#f2a5c3]",
+  roxo: "text-[#6f2c63] dark:text-[#dcabd1]",
+  laranja: "text-[#a8490a] dark:text-[#f8b07a]",
+  vermelho: "text-[#b0283b] dark:text-[#f4a3ae]",
+  cinza: "text-[#3f4247] dark:text-white/80",
+};
+
+/** Título de seção numa faixa de tom suave (sóbria: cor só no fundo claro e no texto). */
 export function FaixaTitulo({
   titulo,
   cor,
@@ -58,19 +72,17 @@ export function FaixaTitulo({
   direita?: React.ReactNode;
 }) {
   return (
-    <div
-      className={`flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-br ${DEGRADE[cor]} px-4 py-2.5 text-white shadow-sm`}
-    >
+    <div className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-2.5 ${SUAVE[cor]}`}>
       <h2 className="flex items-center gap-2 font-heading text-base font-semibold">
         {Icon ? <Icon className="h-4 w-4" /> : null}
         {titulo}
       </h2>
-      {direita ? <div className="text-sm font-medium text-white/90">{direita}</div> : null}
+      {direita ? <div className="text-sm font-medium opacity-80">{direita}</div> : null}
     </div>
   );
 }
 
-/** Bloco colorido com um número grande (resumo do dia, contadores). */
+/** Cartão claro com número grande; a cor fica só no ícone e no texto. */
 export function BlocoNumero({
   label,
   valor,
@@ -87,16 +99,15 @@ export function BlocoNumero({
   return (
     <Link
       href={href}
-      className={`relative flex h-28 flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br ${DEGRADE[cor]} p-4 text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg`}
+      className="flex h-28 flex-col justify-between rounded-3xl bg-kmp-surface p-4 shadow-sm transition hover:shadow-md"
     >
-      <span className="flex items-center gap-2 text-sm font-semibold">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
+      <span className={`flex items-center gap-2 text-sm font-semibold ${TEXTO[cor]}`}>
+        <span className={`flex h-8 w-8 items-center justify-center rounded-full ${SUAVE[cor]}`}>
           <Icon className="h-4 w-4" />
         </span>
         {label}
       </span>
-      <span className="font-heading text-4xl font-bold leading-none">{valor}</span>
-      <Icon aria-hidden="true" className="absolute -bottom-3 -right-3 h-20 w-20 opacity-15" />
+      <span className={`font-heading text-4xl font-bold leading-none ${TEXTO[cor]}`}>{valor}</span>
     </Link>
   );
 }

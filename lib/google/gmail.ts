@@ -19,12 +19,16 @@ export type GmailUnreadMessage = {
   recebidoEm: string | null;
 };
 
+/**
+ * Não lidos da caixa Principal (sem Promoções/Social), contados de verdade
+ * (até 500 — o resultSizeEstimate do Gmail é só uma estimativa e dava "201").
+ */
 export async function getUnreadSummary(
   accessToken: string,
-  limit = 8,
-): Promise<{ totalNaoLidos: number; mensagens: GmailUnreadMessage[] }> {
+  limit = 6,
+): Promise<{ totalNaoLidos: number; maisNaoLidos: boolean; mensagens: GmailUnreadMessage[] }> {
   const listRes = await fetch(
-    `${GMAIL_BASE}/messages?q=${encodeURIComponent("is:unread in:inbox")}&maxResults=${limit}`,
+    `${GMAIL_BASE}/messages?q=${encodeURIComponent("in:inbox category:primary is:unread")}&maxResults=500`,
     { headers: { Authorization: `Bearer ${accessToken}` } },
   );
   if (!listRes.ok) {
@@ -32,10 +36,11 @@ export async function getUnreadSummary(
   }
   const listData = await listRes.json();
   const ids: string[] = (listData.messages ?? []).map((m: { id: string }) => m.id);
-  const totalNaoLidos: number = listData.resultSizeEstimate ?? ids.length;
+  const totalNaoLidos = ids.length;
+  const maisNaoLidos = Boolean(listData.nextPageToken);
 
   const mensagens = await Promise.all(
-    ids.map(async (id) => {
+    ids.slice(0, limit).map(async (id) => {
       const res = await fetch(
         `${GMAIL_BASE}/messages/${id}?format=metadata&metadataHeaders=Subject&metadataHeaders=From&metadataHeaders=Date`,
         { headers: { Authorization: `Bearer ${accessToken}` } },
@@ -58,6 +63,7 @@ export async function getUnreadSummary(
 
   return {
     totalNaoLidos,
+    maisNaoLidos,
     mensagens: mensagens.filter((m): m is GmailUnreadMessage => m !== null),
   };
 }

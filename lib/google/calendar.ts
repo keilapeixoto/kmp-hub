@@ -13,21 +13,22 @@ export type GoogleCalendarEvent = {
   link: string | null;
 };
 
-export async function getTodayEvents(
+/**
+ * Eventos de agora até os próximos `dias` dias. Começa 24h antes para não
+ * perder o começo de "hoje" em fusos à frente de UTC (o servidor roda em UTC);
+ * quem mostra separa por dia no fuso certo (lib/google/visual.ts).
+ */
+export async function getUpcomingEvents(
   accessToken: string,
+  dias = 7,
 ): Promise<GoogleCalendarEvent[]> {
-  const now = new Date();
-  const startOfDay = new Date(now);
-  startOfDay.setHours(0, 0, 0, 0);
-  const endOfDay = new Date(now);
-  endOfDay.setHours(23, 59, 59, 999);
-
+  const agora = Date.now();
   const params = new URLSearchParams({
-    timeMin: startOfDay.toISOString(),
-    timeMax: endOfDay.toISOString(),
+    timeMin: new Date(agora - 24 * 3600 * 1000).toISOString(),
+    timeMax: new Date(agora + dias * 24 * 3600 * 1000).toISOString(),
     singleEvents: "true",
     orderBy: "startTime",
-    maxResults: "20",
+    maxResults: "50",
   });
 
   const res = await fetch(

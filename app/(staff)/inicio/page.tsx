@@ -26,7 +26,7 @@ import { formatTimesInAllZones } from "@/lib/appointments/timezones";
 import { getDashboardMetrics } from "@/lib/dashboard/data";
 import { getQueueCounts } from "@/lib/cases/data";
 import { getRecentImmigrationNews } from "@/lib/immigration-news/data";
-import { getGoogleDaySummary } from "@/lib/google/dashboard";
+import { getGoogleDaySummary, RESUMO_VAZIO } from "@/lib/google/dashboard";
 import { deleteImmigrationNews } from "./actions";
 import { NewsAddForm } from "./_components/news-add-form";
 import { GoogleDaySummaryCard } from "./_components/google-day-summary";
@@ -64,13 +64,7 @@ export default async function InicioPage() {
     getFormsOverview(),
     userId
       ? getGoogleDaySummary(userId)
-      : Promise.resolve({
-          connected: false as const,
-          eventos: [],
-          totalNaoLidos: 0,
-          mensagensUrgentes: [],
-          erro: null,
-        }),
+      : Promise.resolve(RESUMO_VAZIO),
   ]);
 
   const canManageNews = role === "admin" || role === "director";

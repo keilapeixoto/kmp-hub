@@ -161,14 +161,21 @@ function acharEscopo(scopeHeadingEn) {
   return document;
 }
 
-function acharControlePorLabel(labelEn, scopeHeadingEn) {
+// `prefixo`: o rótulo do ImmiAccount pode ter um pedaço que muda (país entre
+// parênteses, dois-pontos no fim); casa pelo começo em vez de igualdade.
+function mesmoTexto(textoDaPagina, alvo, prefixo) {
+  const t = normalize(textoDaPagina);
+  return prefixo ? t.startsWith(alvo) : t === alvo;
+}
+
+function acharControlePorLabel(labelEn, scopeHeadingEn, prefixo = false) {
   const alvo = normalize(labelEn);
   const raiz = acharEscopo(scopeHeadingEn);
   const labels = raiz.querySelectorAll(
     "label.wc-label[for], span.wc-label[data-wc-for]",
   );
   for (const lab of labels) {
-    if (normalize(lab.textContent) !== alvo) continue;
+    if (!mesmoTexto(lab.textContent, alvo, prefixo)) continue;
     const forId = lab.getAttribute("for") || lab.getAttribute("data-wc-for");
     const controle = forId && document.getElementById(forId);
     if (controle && isVisivel(controle)) return controle;
@@ -177,7 +184,7 @@ function acharControlePorLabel(labelEn, scopeHeadingEn) {
   // <legend> do grupo de opções.
   for (const grupo of document.querySelectorAll("fieldset")) {
     const legenda = grupo.querySelector(":scope > legend");
-    if (legenda && normalize(legenda.textContent) === alvo && isVisivel(grupo)) return grupo;
+    if (legenda && mesmoTexto(legenda.textContent, alvo, prefixo) && isVisivel(grupo)) return grupo;
   }
   return null;
 }
@@ -238,7 +245,8 @@ function preencherControle(controle, valorBruto, opcoes = {}) {
     const radios = controle.querySelectorAll('input[type="radio"]');
     for (const r of radios) {
       const textoOpcao = r.closest("label.wc-option")?.querySelector(".wc-labeltext")?.textContent;
-      if (normalize(textoOpcao) === alvo) {
+      const t = normalize(textoOpcao);
+      if (opcoes.prefixoOpcao ? t.startsWith(alvo) : t === alvo) {
         marcarRadio(r);
         return true;
       }
@@ -397,6 +405,25 @@ const CUSTEIO = {
 // fica sem marcar.
 const SO_NAO = { Não: "No" };
 
+const SITUACAO_LEGAL = {
+  Cidadão: "Citizen",
+  "Residente permanente": "Permanent Resident",
+  Visitante: "Visitor",
+  Estudante: "Student",
+  "Visto de trabalho": "Work Visa",
+  "Sem situação legal": "No Legal Status",
+  Outro: "Other",
+};
+
+const MOTIVO_VISITA = {
+  Turismo: "Tourism",
+  "Visitar família/amigos": "Family visit",
+  Negócios: "Business",
+  "Estudo de curta duração (até 12 semanas)": "Study",
+  "Tratamento médico": "Other",
+  Outro: "Other",
+};
+
 const DENTRO_FORA_AUSTRALIA = { Austrália: "No", "Fora da Austrália": "Yes" };
 
 const FIELD_MAP = [
@@ -407,6 +434,18 @@ const FIELD_MAP = [
     en: "Is the applicant currently outside Australia?",
     valueMap: DENTRO_FORA_AUSTRALIA,
   },
+  { pagina: 2, pt: "País", en: "Current location", tipo: "pais" },
+  { pagina: 2, pt: "Qual é a sua situação legal no país onde mora?", en: "Legal status", valueMap: SITUACAO_LEGAL },
+  { pagina: 2, fixo: "Tourist stream", en: "Select the stream the applicant is applying for", prefixo: true, prefixoOpcao: true },
+  { pagina: 2, pt: "Motivo da viagem à Austrália", en: "Select an option", valueMap: MOTIVO_VISITA },
+  {
+    pagina: 2,
+    pt: "Há datas importantes em que você precisa estar na Austrália? (evento, casamento, formatura...)",
+    en: "Give details of any significant dates on which the applicant needs to be in Australia",
+    prefixo: true,
+  },
+  // Formulário só de turista: nunca é representante de governo.
+  { pagina: 2, fixo: "No", en: "Is the applicant travelling as a representative of a foreign government", prefixo: true },
 
   // Página 3/20 — Applicant (nome, sexo, nascimento, passaporte)
   { pagina: 3, pt: "Nome", en: "Given names" },
@@ -431,6 +470,19 @@ const FIELD_MAP = [
     en: "Is this applicant a citizen of any other country?",
     valueMap: SIM_NAO,
   },
+  { pagina: 3, pt: "Já visitou a Austrália antes?", en: "Has this applicant previously travelled to Australia?", valueMap: SIM_NAO },
+  { pagina: 3, pt: "Já solicitou visto para a Austrália antes?", en: "Has this applicant previously applied for a visa to Australia?", valueMap: SIM_NAO },
+  // "já possuiu" é mais amplo que a pergunta do ImmiAccount: Sim fica manual.
+  { pagina: 3, pt: "Possui, ou já possuiu, outro passaporte?", en: "Does this applicant have any other passports or documents for travel?", valueMap: SO_NAO },
+  { pagina: 3, fixo: "No", en: "Is the applicant a Pacific-Australia Card holder?" },
+  { pagina: 3, pt: "É cidadão do país do passaporte?", en: "Is this applicant a citizen of the selected country of passport", prefixo: true, valueMap: SIM_NAO },
+  {
+    pagina: 3,
+    pt: "Número do visto australiano anterior (se tiver)",
+    en: "Does this applicant have an Australian visa grant number?",
+    tipo: "presenca",
+  },
+  { pagina: 3, pt: "Número do visto australiano anterior (se tiver)", en: "Australian visa grant number (if known)" },
   { pagina: 3, pt: "Número do passaporte", en: "Passport number" },
   { pagina: 3, pt: "País de emissão", en: "Country of passport", tipo: "pais" },
   { pagina: 3, pt: "Nacionalidade conforme passaporte", en: "Nationality of passport holder", tipo: "pais" },
@@ -643,17 +695,20 @@ async function rodar() {
   const passada = (repeticao) => {
     for (const campo of FIELD_MAP) {
       if (campo.pagina !== pagina || feitos.has(campo)) continue;
-      const valor = respostas[campo.pt];
+      // fixo: constante sem campo no Hub; presenca: "Yes" se o cliente informou algo.
+      const doHub = respostas[campo.pt];
+      const valor = campo.fixo ?? (campo.tipo === "presenca" ? (doHub ? "Yes" : null) : doHub);
       if (!valor) continue;
       const controle =
-        acharControlePorLabel(campo.en, campo.scopeHeadingEn) ||
-        (campo.escopoOpcional ? acharControlePorLabel(campo.en) : null);
+        acharControlePorLabel(campo.en, campo.scopeHeadingEn, campo.prefixo) ||
+        (campo.escopoOpcional ? acharControlePorLabel(campo.en, undefined, campo.prefixo) : null);
       if (!controle) continue;
       if (repeticao && controle.tagName !== "FIELDSET" && controle.value) continue;
       const ok = preencherControle(controle, valor, {
         valueMap: campo.valueMap,
         tipo: campo.tipo,
         en2: campo.en2,
+        prefixoOpcao: campo.prefixoOpcao,
         paisCliente: respostas["País"],
       });
       if (ok) feitos.add(campo);

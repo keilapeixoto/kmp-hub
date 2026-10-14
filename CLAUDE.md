@@ -185,10 +185,17 @@ cliente e guarda os dados em `chrome.storage.local`.
 diferente de `/lusc/*` da tela de login) preenche os campos de verdade:
 como os `id`/`name` do ImmiAccount são gerados de novo a cada sessão,
 acha cada campo pelo **texto da label em inglês** (`FIELD_MAP`), não
-pelo id. Cobertura atual: páginas 1–3 de 20 (Terms, Application context,
-Applicant — nome/sexo/nascimento/passaporte); as outras 17 páginas
-ficam pra próxima etapa, conforme a Keila for mandando o HTML de cada
-uma. Princípio de segurança mantido em toda a etapa: a extensão só
+pelo id. Cada entrada do `FIELD_MAP` vale só na sua página (`pagina`,
+lida da barra de progresso "N/20") — as mesmas labels se repetem em
+páginas diferentes com outro significado (ex.: "Email address" na 7/20 é
+o e-mail de correspondência da KMP, não o do cliente); sem identificar a
+página, a extensão não preenche nada. Cobertura atual: páginas 2–5 de 20
+(Application context, Applicant, Critical data confirmation, Travelling
+companions); 1 (Terms) e 7 (Authorised recipient) ficam manuais de
+propósito; a 6 e as de 8 em diante ficam pra próxima etapa, conforme a
+Keila for salvando o HTML de cada uma em `import/immi-pages/` (fora do
+git — **nunca colar o HTML no chat**, são ~2,4 MB por página e trava a
+conversa). Princípio de segurança mantido em toda a etapa: a extensão só
 preenche campos — nunca clica em Previous/Next/Save/Submit, então nunca
 avança nem envia a aplicação de visto sozinha.
 

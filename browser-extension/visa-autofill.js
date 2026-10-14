@@ -189,6 +189,12 @@ function preencherControle(controle, valorBruto, opcoes = {}) {
 // Travelling companions). Página 1 (Terms and Conditions) não precisa
 // de mapeamento — é só o checkbox de aceite, deixado manual de
 // propósito.
+//
+// Cada campo vale só na página indicada em `pagina`: as mesmas labels
+// ("Family name", "Given names", "Email address"...) se repetem em páginas
+// diferentes com outro significado — na 7/20 (Authorised recipient), por
+// exemplo, "Email address" é o e-mail que recebe a correspondência do
+// departamento, não o do cliente.
 // ---------------------------------------------------------------------------
 
 const SIM_NAO = { Sim: "Yes", Não: "No" };
@@ -208,46 +214,60 @@ const DENTRO_FORA_AUSTRALIA = { Austrália: "No", "Fora da Austrália": "Yes" };
 const FIELD_MAP = [
   // Página 2/20 — Application context
   {
+    pagina: 2,
     pt: "Localização atual",
     en: "Is the applicant currently outside Australia?",
     valueMap: DENTRO_FORA_AUSTRALIA,
   },
 
   // Página 3/20 — Applicant (nome, sexo, nascimento, passaporte)
-  { pt: "Nome", en: "Given names" },
-  { pt: "Sobrenome", en: "Family name" },
-  { pt: "Gênero", en: "Sex", valueMap: SEXO },
-  { pt: "Data de nascimento", en: "Date of birth" },
-  { pt: "Cidade de nascimento", en: "Town / City" },
-  { pt: "País de nascimento", en: "Country of birth", tipo: "pais" },
-  { pt: "Estado civil", en: "Relationship status", valueMap: ESTADO_CIVIL },
+  { pagina: 3, pt: "Nome", en: "Given names" },
+  { pagina: 3, pt: "Sobrenome", en: "Family name" },
+  { pagina: 3, pt: "Gênero", en: "Sex", valueMap: SEXO },
+  { pagina: 3, pt: "Data de nascimento", en: "Date of birth" },
+  { pagina: 3, pt: "Cidade de nascimento", en: "Town / City" },
+  { pagina: 3, pt: "País de nascimento", en: "Country of birth", tipo: "pais" },
+  { pagina: 3, pt: "Estado civil", en: "Relationship status", valueMap: ESTADO_CIVIL },
   {
+    pagina: 3,
     pt: "Possui, ou já possuiu, outra nacionalidade ou cidadania?",
     en: "Is this applicant a citizen of any other country?",
     valueMap: SIM_NAO,
   },
-  { pt: "Número do passaporte", en: "Passport number" },
-  { pt: "País de emissão", en: "Country of passport", tipo: "pais" },
-  { pt: "Nacionalidade conforme passaporte", en: "Nationality of passport holder", tipo: "pais" },
-  { pt: "Data de emissão", en: "Date of issue" },
-  { pt: "Data de validade", en: "Date of expiry" },
-  { pt: "Local de emissão", en: "Place of issue / issuing authority" },
+  { pagina: 3, pt: "Número do passaporte", en: "Passport number" },
+  { pagina: 3, pt: "País de emissão", en: "Country of passport", tipo: "pais" },
+  { pagina: 3, pt: "Nacionalidade conforme passaporte", en: "Nationality of passport holder", tipo: "pais" },
+  { pagina: 3, pt: "Data de emissão", en: "Date of issue" },
+  { pagina: 3, pt: "Data de validade", en: "Date of expiry" },
+  { pagina: 3, pt: "Local de emissão", en: "Place of issue / issuing authority" },
 
   // Página 4/20 — Critical data confirmation (só os dados de novo, maioria
   // somente-leitura — o único campo editável de verdade é o e-mail). A
   // pergunta "Is the above information correct?" fica de propósito sem
   // preenchimento automático: é a confirmação da Keila, não da extensão.
-  { pt: "E-mail", en: "Email address" },
+  { pagina: 4, pt: "E-mail", en: "Email address" },
 
   // Página 5/20 — Travelling companions. A pergunta sobre viajar com pai/mãe
   // ou responsável só aparece pra menores de 18 — sem campo correspondente
   // no formulário do Hub (público adulto), fica de fora por enquanto.
   {
+    pagina: 5,
     pt: "Alguém está te acompanhando nesta viagem?",
     en: "Are there any other persons travelling with the applicant to Australia?",
     valueMap: SIM_NAO,
   },
+
+  // Página 7/20 — Authorised recipient. Sem mapeamento de propósito: a
+  // página é sobre quem recebe a correspondência do departamento (dados da
+  // KMP/agente, não do cliente), nada aqui vem do formulário do Hub.
 ];
+
+// Número da página atual do formulário, lido da barra de progresso
+// (<progress class="wc-progressbar" value="7" max="20">). Null se não achar.
+function paginaAtual() {
+  const valor = Number(document.querySelector("progress.wc-progressbar")?.getAttribute("value"));
+  return Number.isInteger(valor) && valor > 0 ? valor : null;
+}
 
 function montarRespostas(kmpVisaData) {
   const respostas = {};
@@ -266,10 +286,20 @@ async function rodar() {
   const selo = criarSelo();
   atualizarSelo(selo, "preenchendo esta página...");
 
+  // Sem saber em que página está, não preenche nada — melhor deixar em
+  // branco do que colocar dado do cliente num campo de outra página.
+  const pagina = paginaAtual();
+  if (!pagina) {
+    atualizarSelo(selo, "não identifiquei a página do formulário — nada preenchido.");
+    setTimeout(() => selo.remove(), 8000);
+    return;
+  }
+
   const respostas = montarRespostas(kmpVisaData);
   let preenchidos = 0;
 
   for (const campo of FIELD_MAP) {
+    if (campo.pagina !== pagina) continue;
     const valor = respostas[campo.pt];
     if (!valor) continue;
     const controle = acharControlePorLabel(campo.en);

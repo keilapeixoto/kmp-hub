@@ -143,7 +143,10 @@ Link aberto/sem login, outros tipos de visto, pagamento, integrações novas, gu
 - Dados de passaporte são sensíveis: nada vai para log ou URL; só RLS.
 - O banco de produção do Supabase ainda não existe; o site publicado usa o de desenvolvimento.
 
-## 7. Decisões que a Keila precisa tomar
+## 7. Decisões (aprovadas pela Keila em 14/10/2026: todas conforme a recomendação)
+
+Estado: 1 sim, 2 sim, 3 sim, 4 pai e mãe opcionais, 5 sim, 6 sim. Observação: a página 17 tem 15 perguntas sem mapeamento (não 14).
+
 
 1. **Saúde (página 16) e caráter (17):** perguntar essas declarações no formulário do cliente,
    para a extensão marcar "No" quando o cliente responder "Não"? (Recomendação: **sim para

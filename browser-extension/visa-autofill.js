@@ -118,13 +118,53 @@ function isVisivel(el) {
   return true;
 }
 
+/**
+ * Já tem valor? Protege defaults que o próprio ImmiAccount já preenche
+ * (ex. "Email address" vem com vistos@kmpconsulting.com.au) — a extensão
+ * nunca sobrescreve, só preenche campo vazio.
+ */
+function jaPreenchido(controle) {
+  if (controle.tagName === "FIELDSET") {
+    return !!controle.querySelector('input[type="radio"]:checked');
+  }
+  return !!String(controle.value || "").trim();
+}
+
 // ---------------------------------------------------------------------------
 // Acha o campo pela label em inglês (normalizada) — ver comentário no topo.
+//
+// Algumas labels se repetem na mesma página (ex. "Address", "Suburb / Town",
+// "Postcode" aparecem tanto no formato de endereço australiano quanto no
+// internacional, e de novo no endereço de correspondência). Como só um dos
+// grupos fica visível por vez (o outro fica dentro de um ancestral
+// `hidden`), o filtro isVisivel() já resolve a maioria dos casos — mas
+// quando a seção toda (ex. "Residential address" vs "Postal address")
+// pode estar visível ao mesmo tempo, o parâmetro `scopeHeadingEn` restringe
+// a busca ao trecho da página sob aquele título.
 // ---------------------------------------------------------------------------
 
-function acharControlePorLabel(labelEn) {
+function acharEscopo(scopeHeadingEn) {
+  if (!scopeHeadingEn) return document;
+  const alvo = normalize(scopeHeadingEn);
+  const titulos = document.querySelectorAll(
+    "h2 .wc-labelbody, h3 .wc-labelbody, legend .wc-labelbody",
+  );
+  for (const titulo of titulos) {
+    if (normalize(titulo.textContent) !== alvo) continue;
+    const container =
+      titulo.closest('[class*="ELP-"]') ||
+      titulo.closest(".wc-panel") ||
+      titulo.closest("fieldset") ||
+      titulo.parentElement;
+    if (container) return container;
+  }
+  return document;
+}
+
+function acharControlePorLabel(labelEn, scopeHeadingEn) {
   const alvo = normalize(labelEn);
-  const labels = document.querySelectorAll(
+  const raiz = acharEscopo(scopeHeadingEn);
+  const labels = raiz.querySelectorAll(
     "label.wc-label[for], span.wc-label[data-wc-for]",
   );
   for (const lab of labels) {
@@ -138,6 +178,39 @@ function acharControlePorLabel(labelEn) {
   for (const grupo of document.querySelectorAll("fieldset")) {
     const legenda = grupo.querySelector(":scope > legend");
     if (legenda && normalize(legenda.textContent) === alvo && isVisivel(grupo)) return grupo;
+  }
+  return null;
+}
+
+/**
+ * Acha o campo "Give details" (textarea) que vem logo depois de um grupo de
+ * radio Sim/Não já preenchido — usado nas páginas em que a mesma label
+ * "Give details" se repete várias vezes (ex. página 18/20, Visa history, com
+ * três perguntas Sim/Não cada uma com seu próprio "Give details"). Como
+ * várias dessas perguntas podem ficar visíveis ao mesmo tempo se o cliente
+ * respondeu "Sim" a mais de uma, não dá pra confiar só na primeira
+ * ocorrência visível da label no documento inteiro — em vez disso, anda
+ * pelos irmãos seguintes ao próprio grupo de radio já respondido.
+ */
+function acharDetalhesApos(controlePrincipal, labelDetalhesEn) {
+  const alvo = normalize(labelDetalhesEn);
+  let container = controlePrincipal.closest(".wc-panel") || controlePrincipal.parentElement;
+  let proximo = container?.nextElementSibling;
+  let tentativas = 0;
+  while (proximo && tentativas < 6) {
+    if (isVisivel(proximo)) {
+      const labels = proximo.querySelectorAll(
+        "label.wc-label[for], span.wc-label[data-wc-for]",
+      );
+      for (const lab of labels) {
+        if (normalize(lab.textContent) !== alvo) continue;
+        const forId = lab.getAttribute("for") || lab.getAttribute("data-wc-for");
+        const el = forId && document.getElementById(forId);
+        if (el && isVisivel(el)) return el;
+      }
+    }
+    proximo = proximo.nextElementSibling;
+    tentativas++;
   }
   return null;
 }
@@ -262,17 +335,17 @@ function quebrarEmDuasLinhas(texto, max) {
 // ---------------------------------------------------------------------------
 // Dicionário de campos — rótulo do formulário do Hub (PT) -> rótulo do
 // ImmiAccount (EN) + tipo de preenchimento. Construído página a página
-// conforme a Keila manda o HTML real; cobre por enquanto as páginas
-// 2-6/20 (Application context, Applicant, Critical data confirmation,
-// Travelling companions, Contact details). Página 1 (Terms and Conditions) não precisa
-// de mapeamento — é só o checkbox de aceite, deixado manual de
-// propósito.
+// conforme a Keila manda o HTML real; cobre as páginas 2-6, 9, 11, 12, 17 e
+// 18 (ver FIELD_MAP). Página 1 (Terms and Conditions) não precisa de
+// mapeamento — é só o checkbox de aceite, deixado manual de propósito. As
+// páginas 7, 8, 16 e 20 também ficam manuais de propósito.
 //
 // Cada campo vale só na página indicada em `pagina`: as mesmas labels
 // ("Family name", "Given names", "Email address"...) se repetem em páginas
 // diferentes com outro significado — na 7/20 (Authorised recipient), por
 // exemplo, "Email address" é o e-mail que recebe a correspondência do
-// departamento, não o do cliente.
+// departamento, não o do cliente. `scopeHeadingEn` restringe a busca ao
+// bloco com aquele título (ex.: "Residential address" vs "Postal address").
 // ---------------------------------------------------------------------------
 
 const SIM_NAO = { Sim: "Yes", Não: "No" };
@@ -372,11 +445,17 @@ const FIELD_MAP = [
   // pergunta do endereço postal e o "Email address" ficam manuais — o
   // e-mail de contato da aplicação é o da KMP, não o do cliente.
   { pagina: 6, pt: "País", en: "Usual country of residence", tipo: "pais" },
-  { pagina: 6, pt: "País", en: "Country", tipo: "pais" },
-  { pagina: 6, pt: "Endereço residencial completo", en: "Address", en2: "Address 2" },
-  { pagina: 6, pt: "Cidade", en: "Suburb / Town" },
-  { pagina: 6, pt: "Estado", en: "State or Province", tipo: "estado" },
-  { pagina: 6, pt: "CEP", en: "Postal code", tipo: "cep" },
+  { pagina: 6, pt: "País", en: "Country", scopeHeadingEn: "Residential address", tipo: "pais" },
+  {
+    pagina: 6,
+    pt: "Endereço residencial completo",
+    en: "Address",
+    en2: "Address 2",
+    scopeHeadingEn: "Residential address",
+  },
+  { pagina: 6, pt: "Cidade", en: "Suburb / Town", scopeHeadingEn: "Residential address" },
+  { pagina: 6, pt: "Estado", en: "State or Province", scopeHeadingEn: "Residential address", tipo: "estado" },
+  { pagina: 6, pt: "CEP", en: "Postal code", scopeHeadingEn: "Residential address", tipo: "cep" },
   { pagina: 6, pt: "Telefone residencial", en: "Home phone", tipo: "telefone" },
   { pagina: 6, pt: "Telefone comercial", en: "Business phone", tipo: "telefone" },
   { pagina: 6, pt: "Celular", en: "Mobile / Cell phone", tipo: "telefone" },
@@ -470,6 +549,11 @@ const FIELD_MAP = [
     valueMap: SO_NAO,
   },
 
+  // Página 20/20 — Declarations: fica manual, igual à 1 (Terms). São declarações
+  // e consentimentos legais (impressões digitais, biometria, condições do
+  // visto) que o cliente e a Keila precisam marcar conscientemente.
+  // Review e Attach documents também ficam manuais.
+
   // Página 7/20 — Authorised recipient. Sem mapeamento de propósito: a
   // página é sobre quem recebe a correspondência do departamento (dados da
   // KMP/agente, não do cliente), nada aqui vem do formulário do Hub.
@@ -480,6 +564,34 @@ const FIELD_MAP = [
 function paginaAtual() {
   const valor = Number(document.querySelector("progress.wc-progressbar")?.getAttribute("value"));
   return Number.isInteger(valor) && valor > 0 ? valor : null;
+}
+
+// ---------------------------------------------------------------------------
+// Endereço de correspondência — tratado à parte do FIELD_MAP porque não é
+// um mapeamento direto de 1 label: primeiro marca "No" na pergunta "Is the
+// postal address the same as the residential address?" (só quando o Hub
+// tem texto preenchido nesse campo e a pergunta ainda não foi respondida —
+// nunca mexe numa resposta que já existe), o que revela os campos de
+// endereço de correspondência, e então cola o texto inteiro no campo
+// "Address" daquela seção. Não tenta separar rua/bairro/cidade/estado/CEP
+// do texto — o Hub coleta esse campo como texto livre, sem estrutura, então
+// a Keila confere e completa Suburb/State/Postcode manualmente antes de
+// avançar (igual já faz com todo o resto que a extensão preenche).
+// ---------------------------------------------------------------------------
+function preencherEnderecoCorrespondencia(respostas) {
+  const texto = respostas["Endereço para correspondência"];
+  if (!texto) return 0;
+
+  const pergunta = acharControlePorLabel(
+    "Is the postal address the same as the residential address?",
+  );
+  if (!pergunta || jaPreenchido(pergunta)) return 0;
+
+  if (!preencherControle(pergunta, "No")) return 0;
+
+  const campoEndereco = acharControlePorLabel("Address", "Postal address");
+  if (campoEndereco && preencherControle(campoEndereco, texto)) return 2;
+  return 1;
 }
 
 function montarRespostas(kmpVisaData) {
@@ -514,12 +626,13 @@ async function rodar() {
   // Alguns campos só aparecem depois que outro é preenchido (o dropdown de
   // estado depende do país), então tenta de novo algumas vezes. Nas
   // repetições não mexe em campo que já tem valor.
+  let extras = 0;
   const passada = (repeticao) => {
     for (const campo of FIELD_MAP) {
       if (campo.pagina !== pagina || feitos.has(campo)) continue;
       const valor = respostas[campo.pt];
       if (!valor) continue;
-      const controle = acharControlePorLabel(campo.en);
+      const controle = acharControlePorLabel(campo.en, campo.scopeHeadingEn);
       if (!controle) continue;
       if (repeticao && controle.tagName !== "FIELDSET" && controle.value) continue;
       const ok = preencherControle(controle, valor, {
@@ -530,10 +643,14 @@ async function rodar() {
       });
       if (ok) feitos.add(campo);
     }
-    if (feitos.size > 0) {
+    // Endereço de correspondência (só na página 6, uma vez, e só se o Hub
+    // tiver o texto e a pergunta ainda estiver sem resposta).
+    if (pagina === 6 && !repeticao) extras += preencherEnderecoCorrespondencia(respostas);
+    const total = feitos.size + extras;
+    if (total > 0) {
       atualizarSelo(
         selo,
-        `${feitos.size} campo(s) preenchido(s) — confira antes de avançar. Nunca envia sozinha.`,
+        `${total} campo(s) preenchido(s) — confira antes de avançar. Nunca envia sozinha.`,
       );
     } else {
       atualizarSelo(selo, "nenhum campo conhecido nesta página ainda.");

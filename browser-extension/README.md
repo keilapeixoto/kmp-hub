@@ -69,13 +69,47 @@ Os campos do ImmiAccount usam `id`/`name` gerados de novo a cada sessão
 Cobertura atual: página 2/20 (Application context — localização
 atual), página 3/20 (Applicant — nome/sexo/nascimento/passaporte),
 página 4/20 (Critical data confirmation — só o e-mail é editável, o
-resto é conferência somente-leitura dos dados da página anterior) e
-página 5/20 (Travelling companions — se tem acompanhante na viagem).
+resto é conferência somente-leitura dos dados da página anterior),
+página 5/20 (Travelling companions — se tem acompanhante na viagem),
+página 6/20 (Contact details — endereço residencial no formato
+internacional, telefones) e parte da página 18/20 (Visa history — 2
+das 3 perguntas, com o "Give details" condicional preenchido junto
+quando o cliente respondeu "Sim"). Na página 6, quando o Hub tem um
+"Endereço para correspondência" preenchido (diferente do residencial)
+e a pergunta "Is the postal address the same as the residential
+address?" ainda não foi respondida, a extensão marca "No" sozinha e
+cola o texto inteiro no campo "Address" daquela seção — mas não tenta
+separar rua/bairro/cidade/estado/CEP desse texto livre (o Hub coleta
+sem estrutura), então a Keila completa Suburb/State/Postcode
+manualmente lendo o mesmo texto antes de avançar.
+
+A terceira pergunta da página 18 ("Has the applicant held or
+does the applicant currently hold a visa to Australia or any other
+country?") não tem campo equivalente no formulário do Hub ainda — ele
+só pergunta se já *solicitou* visto pra Austrália, que não é a mesma
+coisa; fica de fora até decidirmos se vale criar um campo novo.
 Página 1 (Terms and Conditions) não precisa de mapeamento, é só o
 aceite dos termos, deixado manual de propósito — e a pergunta "Is the
 above information correct?" da página 4 também fica sempre manual de
-propósito, por ser a confirmação da própria Keila. As demais páginas
-(trabalho/finanças, histórico, saúde/caráter, declaração etc.) ainda
-não foram mapeadas — precisam do `outerHTML` de cada uma (mesmo
-processo usado pra mapear as anteriores)
-antes de a extensão preencher algo nelas.
+propósito, por ser a confirmação da própria Keila. Página 20/20
+(Declarations, última página numerada) também fica sempre manual de
+propósito: são nove declarações/consentimentos legais ("Have read and
+understood...", "Give consent to the collection of their fingerprints
+and facial image...", "Agree to leave Australia on or before the
+expiry..." etc.) sem campo correspondente no formulário de coleta de
+dados do Hub — não é dado do cliente pra copiar, é atestação que a
+própria Keila/o cliente precisa conferir e marcar conscientemente
+antes de enviar.
+
+Depois da página 20 vêm mais duas telas, sem numeração própria: uma
+**Review Page** (resumo de tudo que foi preenchido, todos os campos
+somente-leitura — não há nada pra autopreencher, é só conferência) e
+uma página de **Attach documents** (anexar arquivos — upload de
+arquivo não é um campo de texto/rádio, e escolher automaticamente
+qual documento do Hub corresponde a qual tipo exigido pelo
+ImmiAccount seria uma funcionalidade bem maior, fora de escopo deste
+preenchimento). As demais páginas do meio (trabalho/finanças,
+histórico de viagens, saúde, restante do caráter — página 7/20 a
+17/20 — e a página 19/20, que ainda não recebemos) ainda não foram
+mapeadas — precisam do `outerHTML` de cada uma (mesmo processo usado
+pra mapear as anteriores) antes de a extensão preencher algo nelas.

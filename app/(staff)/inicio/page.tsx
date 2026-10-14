@@ -1,19 +1,22 @@
 import Link from "next/link";
+import { BlocoNumero, FaixaTitulo, SUAVE } from "@/components/ui/vivid";
 import {
   AlertTriangle,
   BookOpen,
   Briefcase,
   Calendar,
+  CalendarDays,
   CheckSquare,
   Globe,
   Mail,
+  Newspaper,
   Receipt,
   TrendingUp,
   UserCircle,
   Users,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
-import { ACCENT_STYLES, type Accent } from "@/lib/ui/accent";
 import {
   getCurrentUserId,
   getCurrentUserProfile,
@@ -50,42 +53,6 @@ const ATALHOS: {
   { href: "https://mail.google.com/", label: "E-mail", icon: Mail, cor: "from-kmp-orange to-kmp-orange-deep", externo: true },
 ];
 
-function StatTile({
-  label,
-  value,
-  href,
-  icon: Icon,
-  accent,
-  warn,
-}: {
-  label: string;
-  value: string | number;
-  href: string;
-  icon: LucideIcon;
-  accent: Accent;
-  warn?: boolean;
-}) {
-  const styles = ACCENT_STYLES[warn ? "alert" : accent];
-  return (
-    <Link
-      href={href}
-      className="rounded-2xl bg-kmp-surface p-4 shadow-sm transition dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20 dark:hover:border-kmp-config/70"
-    >
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-kmp-text/60">
-        <span
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${styles.tile}`}
-        >
-          <Icon className="h-3.5 w-3.5" />
-        </span>
-        {label}
-      </div>
-      <p className="mt-3 font-heading text-2xl font-extrabold text-kmp-text">
-        {value}
-      </p>
-    </Link>
-  );
-}
-
 export default async function InicioPage() {
   const userId = await getCurrentUserId();
   const [profile, role, metrics, queue, news, formsOverview, googleSummary] = await Promise.all([
@@ -113,14 +80,17 @@ export default async function InicioPage() {
     month: "long",
   });
 
+  const diaCurto = new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "short" });
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/40">
-            {dataHoje}
-          </p>
-          <h1 className="mt-1 font-heading text-3xl text-kmp-text">
+          <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-[#f0c040] to-kmp-agenda-deep px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm">
+            <CalendarDays className="h-4 w-4" />
+            Hoje · {dataHoje}
+          </span>
+          <h1 className="mt-3 font-heading text-3xl font-semibold text-kmp-text">
             Bem-vindo(a){profile?.nome ? `, ${profile.nome}` : ""}
           </h1>
           <p className="mt-1 text-sm text-kmp-text/60">
@@ -164,89 +134,76 @@ export default async function InicioPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatTile
+        <BlocoNumero
           label="Tarefas vencidas"
-          value={metrics.tarefasVencidas}
-          warn={metrics.tarefasVencidas > 0}
+          valor={metrics.tarefasVencidas}
           href="/tarefas"
           icon={CheckSquare}
-          accent="agenda"
+          cor={metrics.tarefasVencidas > 0 ? "vermelho" : "verde"}
         />
-        <StatTile
+        <BlocoNumero
           label="Processos parados"
-          value={metrics.processosParados}
-          warn={metrics.processosParados > 0}
+          valor={metrics.processosParados}
           href="/processos"
           icon={AlertTriangle}
-          accent="processos"
+          cor="amarelo"
         />
-        <StatTile
-          label="Novos leads (30d)"
-          value={metrics.novosLeads30d}
+        <BlocoNumero
+          label="Novos leads (30 dias)"
+          valor={metrics.novosLeads30d}
           href="/leads"
           icon={TrendingUp}
-          accent="leads"
+          cor="turquesa"
         />
-        <StatTile
+        <BlocoNumero
           label="Hoje na agenda"
-          value={metrics.atendimentosHoje.length}
+          valor={metrics.atendimentosHoje.length}
           href="/agenda"
-          icon={CheckSquare}
-          accent="agenda"
+          icon={CalendarDays}
+          cor="lilas"
         />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="rounded-2xl bg-kmp-surface p-5 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20 lg:col-span-2">
-          <h2 className="font-heading text-lg text-kmp-text">Visões rápidas</h2>
-          <p className="mt-1 text-xs text-kmp-text/50">
-            Atalhos pros processos que precisam de atenção agora.
-          </p>
+          <FaixaTitulo titulo="Processos que pedem atenção" cor="laranja" icon={Zap} />
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Link
               href="/processos?view=fila&fila=todos"
-              className="rounded-xl bg-kmp-divider p-3 text-center transition hover:opacity-80"
+              className={`rounded-2xl p-3 text-center transition hover:-translate-y-0.5 ${SUAVE.azul}`}
             >
-              <p className="font-heading text-xl font-extrabold text-kmp-text">
-                {queue.ativos}
-              </p>
-              <p className="mt-1 text-xs text-kmp-text/50">Todos ativos</p>
+              <p className="font-heading text-3xl font-bold">{queue.ativos}</p>
+              <p className="mt-1 text-sm font-semibold">Todos ativos</p>
             </Link>
             <Link
               href="/processos?view=fila&fila=alta"
-              className="rounded-xl bg-kmp-divider p-3 text-center transition hover:opacity-80"
+              className={`rounded-2xl p-3 text-center transition hover:-translate-y-0.5 ${SUAVE.vermelho}`}
             >
-              <p className="font-heading text-xl font-extrabold text-red-500">
-                {queue.prioridadeAlta}
-              </p>
-              <p className="mt-1 text-xs text-kmp-text/50">Prioridade alta</p>
+              <p className="font-heading text-3xl font-bold">{queue.prioridadeAlta}</p>
+              <p className="mt-1 text-sm font-semibold">Prioridade alta</p>
             </Link>
             <Link
               href="/processos?view=fila&fila=atrasados"
-              className="rounded-xl bg-kmp-divider p-3 text-center transition hover:opacity-80"
+              className={`rounded-2xl p-3 text-center transition hover:-translate-y-0.5 ${SUAVE.laranja}`}
             >
-              <p className="font-heading text-xl font-extrabold text-orange-500">
-                {queue.atrasados}
-              </p>
-              <p className="mt-1 text-xs text-kmp-text/50">Atrasados</p>
+              <p className="font-heading text-3xl font-bold">{queue.atrasados}</p>
+              <p className="mt-1 text-sm font-semibold">Atrasados</p>
             </Link>
             <Link
               href="/processos?view=fila&fila=pausados"
-              className="rounded-xl bg-kmp-divider p-3 text-center transition hover:opacity-80"
+              className={`rounded-2xl p-3 text-center transition hover:-translate-y-0.5 ${SUAVE.amarelo}`}
             >
-              <p className="font-heading text-xl font-extrabold text-kmp-text">
-                {queue.pausados}
-              </p>
-              <p className="mt-1 text-xs text-kmp-text/50">Pausados</p>
+              <p className="font-heading text-3xl font-bold">{queue.pausados}</p>
+              <p className="mt-1 text-sm font-semibold">Pausados</p>
             </Link>
           </div>
         </div>
 
         <div className="rounded-2xl bg-kmp-surface p-5 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
-          <h2 className="font-heading text-lg text-kmp-text">Hoje</h2>
+          <FaixaTitulo titulo="Compromissos de hoje" cor="lilas" icon={CalendarDays} direita={diaCurto} />
           {metrics.atendimentosHoje.length === 0 ? (
-            <p className="mt-3 text-sm text-kmp-text/50">
-              Nenhum compromisso hoje.
+            <p className="mt-4 rounded-2xl bg-kmp-text/5 p-4 text-sm text-kmp-text/70">
+              Nenhum compromisso marcado para hoje.
             </p>
           ) : (
             <ul className="mt-3 space-y-3">
@@ -273,7 +230,8 @@ export default async function InicioPage() {
       <FormsOverviewCard {...formsOverview} />
 
       <div className="rounded-2xl bg-kmp-surface p-5 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
-        <h2 className="font-heading text-lg text-kmp-text">
+        <FaixaTitulo titulo="Novidades de imigração" cor="roxo" icon={Newspaper} />
+        <h2 className="sr-only">
           Novidades de imigração
         </h2>
         <p className="mt-1 text-xs text-kmp-text/50">

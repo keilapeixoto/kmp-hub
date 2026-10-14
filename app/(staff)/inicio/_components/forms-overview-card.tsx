@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { ClipboardList } from "lucide-react";
+import { FaixaTitulo } from "@/components/ui/vivid";
 
 export function FormsOverviewCard({ aguardando, enviados }: { aguardando: number; enviados: number }) {
   return (
-    <div className="rounded-lg bg-kmp-surface p-5 shadow-sm">
-      <h2 className="font-heading text-base text-kmp-text">Formulários dos clientes</h2>
+    <div className="rounded-3xl bg-kmp-surface p-4 shadow-sm">
+      <FaixaTitulo titulo="Formulários dos clientes" cor="verde" icon={ClipboardList} />
       <dl className="mt-3 grid grid-cols-2 gap-4 text-sm">
         <div>
           <dt className="text-xs text-kmp-text/60">Aguardando o cliente</dt>

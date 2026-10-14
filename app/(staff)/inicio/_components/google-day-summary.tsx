@@ -1,3 +1,5 @@
+import { FaixaTitulo } from "@/components/ui/vivid";
+import { CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { AlertTriangle, Calendar } from "lucide-react";
 import type { GoogleDaySummary } from "@/lib/google/dashboard";
@@ -15,9 +17,7 @@ export function GoogleDaySummaryCard({ summary }: { summary: GoogleDaySummary })
   if (!summary.connected) {
     return (
       <div className="rounded-2xl bg-kmp-surface p-5 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
-        <h2 className="font-heading text-lg text-kmp-text">
-          Agenda e e-mail do Google
-        </h2>
+        <FaixaTitulo titulo="Agenda e e-mail do Google" cor="azul" icon={CalendarDays} />
         <p className="mt-1 text-sm text-kmp-text/50">
           Conecte sua conta Google pra ver sua agenda real e e-mails não
           lidos aqui.
@@ -36,9 +36,7 @@ export function GoogleDaySummaryCard({ summary }: { summary: GoogleDaySummary })
   return (
     <div className="rounded-2xl bg-kmp-surface p-5 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
       <div className="flex items-center justify-between">
-        <h2 className="font-heading text-lg text-kmp-text">
-          Agenda e e-mail de hoje
-        </h2>
+        <FaixaTitulo titulo="Agenda e e-mail de hoje" cor="azul" icon={CalendarDays} />
         {summary.erro ? (
           <span className="text-xs text-orange-800">{summary.erro}</span>
         ) : null}

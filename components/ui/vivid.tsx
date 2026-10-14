@@ -45,6 +45,20 @@ export const SUAVE: Record<CorViva, string> = {
   cinza: "bg-[#e9eaec] text-[#3f4247] dark:bg-white/10 dark:text-white/80",
 };
 
+/** Faixa de título: fundo translúcido da cor + texto escuro da mesma cor (discreto). */
+export const FAIXA: Record<CorViva, string> = {
+  azul: "bg-[#5f92f2]/15 text-[#1f4fa8] dark:bg-[#5f92f2]/20 dark:text-[#b9cffa]",
+  turquesa: "bg-[#45b4c5]/15 text-[#14606c] dark:bg-[#45b4c5]/20 dark:text-[#a6e0e8]",
+  lilas: "bg-[#9184f2]/15 text-[#4334b0] dark:bg-[#9184f2]/20 dark:text-[#cdc6fa]",
+  verde: "bg-[#45c285]/15 text-[#16673f] dark:bg-[#45c285]/20 dark:text-[#a9e6c7]",
+  amarelo: "bg-[#f0c040]/20 text-[#7a5806] dark:bg-[#f0c040]/20 dark:text-[#f6dc8f]",
+  rosa: "bg-[#e8679a]/15 text-[#8c2350] dark:bg-[#e8679a]/20 dark:text-[#f5b9d0]",
+  roxo: "bg-[#bd72ae]/15 text-[#6f2c63] dark:bg-[#bd72ae]/20 dark:text-[#e2bdd9]",
+  laranja: "bg-[#f27b20]/15 text-[#8f3f07] dark:bg-[#f27b20]/20 dark:text-[#f9c39b]",
+  vermelho: "bg-[#ef6b7d]/15 text-[#9a2433] dark:bg-[#ef6b7d]/20 dark:text-[#f6b6bf]",
+  cinza: "bg-[#a3a6ad]/15 text-[#3f4247] dark:bg-white/10 dark:text-white/80",
+};
+
 /** Cor do texto (forte o bastante para ler sobre fundo claro). */
 export const TEXTO: Record<CorViva, string> = {
   azul: "text-[#1f4fa8] dark:text-[#9dbcf8]",
@@ -60,8 +74,8 @@ export const TEXTO: Record<CorViva, string> = {
 };
 
 /**
- * Título do quadro: faixa colorida de ponta a ponta no topo, letra branca; o
- * resto do quadro fica branco. O quadro precisa ser `rounded-3xl p-5` (a faixa
+ * Título do quadro: faixa de ponta a ponta no topo, fundo translúcido da cor e
+ * texto na cor (discreto, pedido da Keila); o resto do quadro fica branco. O quadro precisa ser `rounded-3xl p-5` (a faixa
  * encosta nas bordas com margem negativa).
  */
 export function FaixaTitulo({
@@ -77,17 +91,17 @@ export function FaixaTitulo({
 }) {
   return (
     <div
-      className={`-mx-5 -mt-5 mb-4 flex items-center justify-between gap-3 rounded-t-3xl bg-gradient-to-br ${DEGRADE[cor]} px-5 py-3 text-white`}
+      className={`-mx-5 -mt-5 mb-4 flex items-center justify-between gap-3 rounded-t-3xl px-5 py-3 ${FAIXA[cor]}`}
     >
       <h2 className="flex items-center gap-2.5 font-heading text-base font-semibold">
         {Icon ? (
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/70 dark:bg-white/10">
             <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
           </span>
         ) : null}
         {titulo}
       </h2>
-      {direita ? <div className="text-sm font-medium text-white/90">{direita}</div> : null}
+      {direita ? <div className="text-sm font-medium opacity-80">{direita}</div> : null}
     </div>
   );
 }
@@ -112,9 +126,9 @@ export function BlocoNumero({
       className="block overflow-hidden rounded-3xl bg-kmp-surface shadow-sm transition hover:shadow-md"
     >
       <span
-        className={`flex items-center gap-2.5 bg-gradient-to-br ${DEGRADE[cor]} px-4 py-2.5 text-sm font-semibold text-white`}
+        className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold ${FAIXA[cor]}`}
       >
-        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/20">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/70 dark:bg-white/10">
           <Icon className="h-4 w-4" strokeWidth={2.2} />
         </span>
         {label}

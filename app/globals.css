@@ -122,3 +122,11 @@ body {
 }
 
 /* fonte da interface: Outfit */
+
+/* Barra de abas: rola se precisar, mas sem a barra de rolagem cinza. */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

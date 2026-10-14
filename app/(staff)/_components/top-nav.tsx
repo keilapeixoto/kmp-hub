@@ -7,15 +7,14 @@ import { NAV_GROUPS, isActive, type NavItem } from "./sidebar";
 
 // Menu de abas em pílula no topo (redesign âmbar, out/2026): as abas do dia
 // a dia ficam à vista; Biblioteca e Configurações ficam em "Mais".
+// Só as do dia a dia ficam à vista (cabem mesmo com zoom no navegador);
+// Dashboard, Vencimentos, Financeiro, Biblioteca e Configurações vão para "Mais".
 const PRINCIPAIS = [
   "/inicio",
   "/processos?view=kanban",
-  "/dashboard",
   "/leads",
   "/clientes",
   "/processos",
-  "/vencimentos",
-  "/financeiro",
   "/tarefas",
   "/agenda",
 ];
@@ -41,7 +40,7 @@ export function TopNav() {
 
   return (
     <div className="flex min-w-0 items-center gap-1 rounded-full bg-kmp-surface p-1 shadow-sm">
-      <nav className="flex min-w-0 items-center gap-1 overflow-x-auto">
+      <nav className="scrollbar-none flex min-w-0 items-center gap-1 overflow-x-auto">
         {principais.map((item) => (
           <Link key={item.href} href={item.href} className={`${pilula} ${ativo(item) ? ativa : inativa}`}>
             {item.label}

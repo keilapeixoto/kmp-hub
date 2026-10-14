@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BlocoNumero, FaixaTitulo, SUAVE } from "@/components/ui/vivid";
+import { BlocoNumero, FAIXA, FaixaTitulo, SUAVE } from "@/components/ui/vivid";
 import {
   BookOpen,
   Briefcase,
@@ -81,7 +81,7 @@ export default async function InicioPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-[#f0c040] to-kmp-agenda-deep px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm">
+          <span className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-semibold ${FAIXA.amarelo}`}>
             <CalendarDays className="h-4 w-4" />
             Hoje · {dataHoje}
           </span>

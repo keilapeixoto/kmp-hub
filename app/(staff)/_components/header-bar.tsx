@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Bell, LogOut, Settings } from "lucide-react";
+import { Bell, LogOut, Search, Settings } from "lucide-react";
 import { logout } from "../actions";
 import { GlobalSearchInput } from "./global-search-input";
 import { ThemeToggle } from "./theme-toggle";
@@ -34,6 +34,15 @@ export function HeaderBar({ userEmail }: { userEmail: string }) {
           </Suspense>
         </div>
         <div className="flex shrink-0 items-center gap-2">
+          {/* Busca: botão redondo como os outros; abre um painel com o campo. */}
+          <details className="relative">
+            <summary aria-label="Buscar" className={`${redondo} cursor-pointer list-none`}>
+              <Search className="h-4 w-4" />
+            </summary>
+            <div className="absolute right-0 z-50 mt-2 w-[22rem] rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/5 dark:bg-kmp-panel dark:ring-white/10">
+              <GlobalSearchInput />
+            </div>
+          </details>
           <Link href="/configuracoes" aria-label="Configurações" className={redondo}>
             <Settings className="h-4 w-4" />
           </Link>
@@ -54,9 +63,6 @@ export function HeaderBar({ userEmail }: { userEmail: string }) {
             </button>
           </form>
         </div>
-      </div>
-      <div className="mt-4 max-w-md">
-        <GlobalSearchInput />
       </div>
     </header>
   );

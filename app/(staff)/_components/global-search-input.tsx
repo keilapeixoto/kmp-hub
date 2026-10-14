@@ -63,10 +63,10 @@ export function GlobalSearchInput() {
     <form
       action="/busca"
       method="GET"
-      className="relative max-w-md flex-1"
+      className="relative w-full"
       onSubmit={() => setOpen(false)}
     >
-      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kmp-text/40" />
+      <Search className="pointer-events-none absolute left-3.5 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-kmp-text/60" />
       <input
         type="search"
         name="q"

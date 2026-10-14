@@ -189,14 +189,17 @@ pelo id. Cada entrada do `FIELD_MAP` vale só na sua página (`pagina`,
 lida da barra de progresso "N/20") — as mesmas labels se repetem em
 páginas diferentes com outro significado (ex.: "Email address" na 7/20 é
 o e-mail de correspondência da KMP, não o do cliente); sem identificar a
-página, a extensão não preenche nada. Cobertura atual (todas as 20 páginas revisadas):
-preenche as 2–6, 9, 11, 12, 17 e 18; ficam manuais de propósito a 1 (Terms),
-7 (Authorised recipient, dados da KMP), 8 (família que não viaja), 16
-(declarações de saúde) e 20 (declarações finais e consentimentos — quem
-aceita é o cliente); a 10, 13–15 e 19 o ImmiAccount pula conforme as
-respostas — se aparecerem numa aplicação, salvar a estrutura e mapear. Nas
-declarações de caráter/histórico de vistos (17 e 18) a extensão só marca
-"No" quando o cliente respondeu "Não"; nunca marca "Yes". Estrutura real de
+página, a extensão não preenche nada. Cobertura atual (todas as 20 páginas revisadas): preenche as 2, 3, 5, 6, 8,
+9, 11, 12, 16, 17 e 18; a 4 é só conferência (a extensão deixa o "está
+correto?" para a Keila); ficam manuais de propósito a 1 (Terms), a 7
+(Authorised recipient, dados da KMP) e a 20 (declarações finais e
+consentimentos — quem aceita é o cliente). Nas declarações adversas (16
+saúde, 17 caráter, e "descumpriu/recusado" da 18) a extensão só marca "No"
+quando o cliente respondeu "Não"; nunca marca "Yes". A 10, 13–15 e 19 o
+ImmiAccount pula conforme as respostas — se aparecerem numa aplicação,
+salvar a estrutura e mapear. Cada entrada do FIELD_MAP aceita `prefixo`
+(rótulo casa pelo começo), `fixo` (valor constante, sem campo no Hub) e
+`tipo: "presenca"` (marca "Yes" se o cliente informou algo). Estrutura real de
 cada página (campos, tipo, obrigatório, visível) em
 `import/immi-pages/pagina-NN.estrutura.txt`, gerada por
 `pbpaste | python3 scripts/immi-page-skeleton.py` (fora do git, sem valor
@@ -220,6 +223,26 @@ ImmiAccount (da KMP) não vira e-mail do cliente; avisos de dados suspeitos
 (ex.: país de nascimento ≠ país do passaporte) aparecem na tela. Testar sem
 gravar: `node scripts/dry-run-import-record.mjs "/caminho/Application.pdf"`
 (valores mascarados). Dependência nova: `unpdf`.
+
+**Formulário do visto 600 completo (out/2026):** o "Formulário Visto de
+Turista (Subclass 600) — Coleta de Dados" ganhou 35 perguntas (perfil, saúde,
+caráter, viagem) lidas de `scripts/visa-600-new-fields.json` — o mesmo arquivo
+alimenta o script incremental `scripts/add-visa-600-fields.mjs`, o formulário-
+base em `scripts/import-case-forms.mjs` e um teste que garante que cada
+pergunta tem mapeamento na extensão. **Nunca rodar `import-case-forms.mjs`
+em banco com respostas** (apaga o modelo e as respostas); ajustes do modelo
+só por `add-visa-600-fields.mjs` e `adjust-visa-600-form.mjs` (ambos com
+simulação antes de `--apply`; a exclusão de "Nacionalidade atual" exige
+`--remover`). No portal, "Próximo" nunca trava: os obrigatórios só valem no
+"Enviar formulário", com a lista do que falta. No card do processo a equipe
+edita as respostas ("Editar respostas"); ao enviar, a consultora do processo
+recebe e-mail (Resend, `lib/case-forms/notify.ts`; falha do e-mail nunca
+impede o envio) e o `/inicio` mostra o card "Formulários dos clientes".
+Gravações de respostas são sempre em blocos de 8 com nova tentativa
+(`lib/case-forms/save.ts`). Testes: `npm run test:unit` (lib pura) e
+`npm run test:extension` (a extensão num jsdom, `tests/extension/`); o fluxo do
+portal em Playwright (`tests/e2e/portal/formulario.spec.ts`) precisa de sessão
+do portal e de `E2E_FORM_CASE_ID`.
 
 ## Dados de demonstração
 

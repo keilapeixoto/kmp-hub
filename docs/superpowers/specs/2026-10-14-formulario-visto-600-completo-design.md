@@ -1,6 +1,6 @@
 # Formulário do visto 600 — do cliente ao ImmiAccount (desenho)
 
-Data: 14/10/2026. Estado: **aguardando revisão da Keila**. Nada deste documento foi implementado.
+Data: 14/10/2026. Estado: **implementado** (plano em `docs/superpowers/plans/2026-10-14-formulario-visto-600-completo.md`); falta a verificação ponta a ponta com a Keila (Task 9, passos 2 e 3).
 
 ## 1. Objetivo
 

@@ -4,7 +4,7 @@ import { FaixaTitulo } from "@/components/ui/vivid";
 
 export function FormsOverviewCard({ aguardando, enviados }: { aguardando: number; enviados: number }) {
   return (
-    <div className="rounded-3xl bg-kmp-surface p-4 shadow-sm">
+    <div className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
       <FaixaTitulo titulo="Formulários dos clientes" cor="verde" icon={ClipboardList} />
       <dl className="mt-3 grid grid-cols-2 gap-4 text-sm">
         <div>

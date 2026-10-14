@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, CalendarDays, Star } from "lucide-react";
+import { ArrowUpRight, CalendarDays, Mail, Star } from "lucide-react";
 import type { GoogleDaySummary } from "@/lib/google/dashboard";
 import type { GoogleCalendarEvent } from "@/lib/google/calendar";
 import {
@@ -11,14 +11,14 @@ import {
   quandoRecebido,
   semana,
 } from "@/lib/google/visual";
-import { SUAVE, type CorViva } from "@/components/ui/vivid";
-import { GmailLogo, GoogleLogo } from "@/app/(staff)/_components/brand-icons";
+import { FaixaTitulo, SUAVE, type CorViva } from "@/components/ui/vivid";
+import { GoogleLogo } from "@/app/(staff)/_components/brand-icons";
 
 // Fuso usado para "hoje"/"amanhã" (o servidor da Vercel roda em UTC). A KMP
 // opera a partir da Austrália.
 const FUSO = "Australia/Sydney";
 
-const cartao = "rounded-3xl bg-kmp-surface p-5 shadow-sm";
+const cartao = "overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm";
 const CORES_AVATAR: CorViva[] = ["azul", "turquesa", "lilas", "verde", "amarelo", "rosa", "roxo", "laranja"];
 
 function corDoNome(nome: string): CorViva {
@@ -64,14 +64,9 @@ function AgendaCard({ eventos }: { eventos: GoogleCalendarEvent[] }) {
   const mes = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric", timeZone: FUSO }).format(agora);
   return (
     <section className={cartao}>
-      <div className="flex items-center justify-between">
-        <h2 className="flex items-center gap-2 font-heading text-lg font-semibold text-kmp-text">
-          <CalendarDays className="h-5 w-5 text-[#6c5ce7]" /> Agenda
-        </h2>
-        <span className="text-sm font-medium capitalize text-kmp-text/70">{mes}</span>
-      </div>
+      <FaixaTitulo titulo="Agenda" cor="lilas" icon={CalendarDays} direita={<span className="capitalize">{mes}</span>} />
 
-      <div className="mt-4 grid grid-cols-7 gap-1.5">
+      <div className="grid grid-cols-7 gap-1.5">
         {dias.map((d) => (
           <div
             key={d.data}
@@ -108,20 +103,17 @@ function EmailCard({ summary }: { summary: GoogleDaySummary }) {
   const agora = new Date();
   return (
     <section className={cartao}>
-      <div className="flex items-center justify-between">
-        <h2 className="flex items-center gap-2 font-heading text-lg font-semibold text-kmp-text">
-          <GmailLogo className="h-5 w-5" /> E-mail
-        </h2>
-        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${SUAVE.vermelho}`}>
-          {summary.totalNaoLidos}
-          {summary.maisNaoLidos ? "+" : ""} não lidos na Principal
-        </span>
-      </div>
+      <FaixaTitulo
+        titulo="E-mail"
+        cor="vermelho"
+        icon={Mail}
+        direita={`${summary.totalNaoLidos}${summary.maisNaoLidos ? "+" : ""} não lidos na Principal`}
+      />
 
       {summary.mensagens.length === 0 ? (
-        <p className="mt-4 rounded-2xl bg-kmp-text/5 p-4 text-sm text-kmp-text/70">Caixa Principal em dia.</p>
+        <p className="rounded-2xl bg-kmp-text/5 p-4 text-sm text-kmp-text/70">Caixa Principal em dia.</p>
       ) : (
-        <ul className="mt-3 divide-y divide-kmp-divider">
+        <ul className="divide-y divide-kmp-divider">
           {summary.mensagens.map((m) => {
             const nome = nomeRemetente(m.de);
             return (

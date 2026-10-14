@@ -1,20 +1,21 @@
 import Link from "next/link";
 import { BlocoNumero, FaixaTitulo, SUAVE } from "@/components/ui/vivid";
 import {
-  AlertTriangle,
   BookOpen,
   Briefcase,
   Calendar,
   CalendarDays,
-  CheckSquare,
   Globe,
   Mail,
   Newspaper,
   Receipt,
-  TrendingUp,
   UserCircle,
   Users,
-  Zap,
+  Flame,
+  Hourglass,
+  ListChecks,
+  UserPlus,
+  CalendarClock,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -132,35 +133,35 @@ export default async function InicioPage() {
           label="Tarefas vencidas"
           valor={metrics.tarefasVencidas}
           href="/tarefas"
-          icon={CheckSquare}
+          icon={ListChecks}
           cor={metrics.tarefasVencidas > 0 ? "vermelho" : "verde"}
         />
         <BlocoNumero
           label="Processos parados"
           valor={metrics.processosParados}
           href="/processos"
-          icon={AlertTriangle}
+          icon={Hourglass}
           cor="amarelo"
         />
         <BlocoNumero
           label="Novos leads (30 dias)"
           valor={metrics.novosLeads30d}
           href="/leads"
-          icon={TrendingUp}
+          icon={UserPlus}
           cor="turquesa"
         />
         <BlocoNumero
           label="Hoje na agenda"
           valor={metrics.atendimentosHoje.length}
           href="/agenda"
-          icon={CalendarDays}
+          icon={CalendarClock}
           cor="lilas"
         />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-2xl bg-kmp-surface p-5 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20 lg:col-span-2">
-          <FaixaTitulo titulo="Processos que pedem atenção" cor="laranja" icon={Zap} />
+        <div className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm lg:col-span-2">
+          <FaixaTitulo titulo="Processos que pedem atenção" cor="laranja" icon={Flame} />
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Link
               href="/processos?view=fila&fila=todos"
@@ -193,8 +194,8 @@ export default async function InicioPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-kmp-surface p-5 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
-          <FaixaTitulo titulo="Compromissos de hoje" cor="lilas" icon={CalendarDays} direita={diaCurto} />
+        <div className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
+          <FaixaTitulo titulo="Compromissos de hoje" cor="lilas" icon={CalendarClock} direita={diaCurto} />
           {metrics.atendimentosHoje.length === 0 ? (
             <p className="mt-4 rounded-2xl bg-kmp-text/5 p-4 text-sm text-kmp-text/70">
               Nenhum compromisso marcado para hoje.
@@ -223,7 +224,7 @@ export default async function InicioPage() {
       <GoogleDaySummaryCard summary={googleSummary} />
       <FormsOverviewCard {...formsOverview} />
 
-      <div className="rounded-2xl bg-kmp-surface p-5 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
         <FaixaTitulo titulo="Novidades de imigração" cor="roxo" icon={Newspaper} />
         <h2 className="sr-only">
           Novidades de imigração

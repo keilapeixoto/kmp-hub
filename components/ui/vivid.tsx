@@ -59,7 +59,11 @@ export const TEXTO: Record<CorViva, string> = {
   cinza: "text-[#3f4247] dark:text-white/80",
 };
 
-/** Título de seção numa faixa de tom suave (sóbria: cor só no fundo claro e no texto). */
+/**
+ * Título do quadro: faixa colorida de ponta a ponta no topo, letra branca; o
+ * resto do quadro fica branco. O quadro precisa ser `rounded-3xl p-5` (a faixa
+ * encosta nas bordas com margem negativa).
+ */
 export function FaixaTitulo({
   titulo,
   cor,
@@ -72,17 +76,23 @@ export function FaixaTitulo({
   direita?: React.ReactNode;
 }) {
   return (
-    <div className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-2.5 ${SUAVE[cor]}`}>
-      <h2 className="flex items-center gap-2 font-heading text-base font-semibold">
-        {Icon ? <Icon className="h-4 w-4" /> : null}
+    <div
+      className={`-mx-5 -mt-5 mb-4 flex items-center justify-between gap-3 rounded-t-3xl bg-gradient-to-br ${DEGRADE[cor]} px-5 py-3 text-white`}
+    >
+      <h2 className="flex items-center gap-2.5 font-heading text-base font-semibold">
+        {Icon ? (
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20">
+            <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
+          </span>
+        ) : null}
         {titulo}
       </h2>
-      {direita ? <div className="text-sm font-medium opacity-80">{direita}</div> : null}
+      {direita ? <div className="text-sm font-medium text-white/90">{direita}</div> : null}
     </div>
   );
 }
 
-/** Cartão claro com número grande; a cor fica só no ícone e no texto. */
+/** Quadro de número: faixa colorida com o nome em cima, número no branco. */
 export function BlocoNumero({
   label,
   valor,
@@ -99,15 +109,17 @@ export function BlocoNumero({
   return (
     <Link
       href={href}
-      className="flex h-28 flex-col justify-between rounded-3xl bg-kmp-surface p-4 shadow-sm transition hover:shadow-md"
+      className="block overflow-hidden rounded-3xl bg-kmp-surface shadow-sm transition hover:shadow-md"
     >
-      <span className={`flex items-center gap-2 text-sm font-semibold ${TEXTO[cor]}`}>
-        <span className={`flex h-8 w-8 items-center justify-center rounded-full ${SUAVE[cor]}`}>
-          <Icon className="h-4 w-4" />
+      <span
+        className={`flex items-center gap-2.5 bg-gradient-to-br ${DEGRADE[cor]} px-4 py-2.5 text-sm font-semibold text-white`}
+      >
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/20">
+          <Icon className="h-4 w-4" strokeWidth={2.2} />
         </span>
         {label}
       </span>
-      <span className={`font-heading text-4xl font-bold leading-none ${TEXTO[cor]}`}>{valor}</span>
+      <span className="block px-4 py-3 font-heading text-4xl font-bold leading-none text-kmp-text">{valor}</span>
     </Link>
   );
 }

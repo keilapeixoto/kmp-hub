@@ -79,6 +79,16 @@ const ESTADO_CIVIL: Record<string, string> = {
   Engaged: "Noivo(a)",
 };
 
+const SITUACAO_LEGAL: Record<string, string> = {
+  Citizen: "Cidadão",
+  "Permanent Resident": "Residente permanente",
+  Visitor: "Visitante",
+  Student: "Estudante",
+  "Work Visa": "Visto de trabalho",
+  "No Legal Status": "Sem situação legal",
+  Other: "Outro",
+};
+
 const SITUACAO: Record<string, string> = {
   Employed: "Empregado(a)",
   "Self employed": "Autônomo(a)",
@@ -228,6 +238,13 @@ export function mapRecordTo600(textoDoPdf: string): Mapeamento {
   if (custeio === "Self funded") campos["Quem custeará sua viagem?"] = "Eu mesmo(a)";
   const fundos = /have available to support their stay in Australia\?\s*(.+?)\s*(?:Health declarations|$)/.exec(rec.corrido);
   if (fundos) poe("Valor estimado em fundos disponíveis para a viagem", fundos[1]);
+
+  // ---- Perfil que vale para a nova aplicação (a viagem em si NÃO é trazida)
+  poeLista("Qual é a sua situação legal no país onde mora?", pega(rec, "Legal status", { secao: "Application context" }), SITUACAO_LEGAL);
+  poe("Já usou ou usa outros nomes (nome de solteira, apelido legal)?", sim(simNao(rec, "Is this applicant currently, or have they ever been known by any other names")) ?? undefined);
+  poe("É cidadão do país do passaporte?", sim(simNao(rec, "Is this applicant a citizen of the selected country of passport")) ?? undefined);
+  poe("Possui carteira de identidade nacional (RG)?", sim(simNao(rec, "Does this applicant have a national identity card")) ?? undefined);
+  poe("Número do visto australiano anterior (se tiver)", pega(rec, "Australian visa grant number (if known)"));
 
   return { campos, avisos };
 }

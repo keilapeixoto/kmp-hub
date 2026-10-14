@@ -157,6 +157,7 @@ export function simNao(rec: ParsedRecord, trechoDaPergunta: string): "Yes" | "No
   const i = rec.corrido.indexOf(trechoDaPergunta);
   if (i < 0) return null;
   const depois = rec.corrido.slice(i + trechoDaPergunta.length, i + trechoDaPergunta.length + 80);
-  const m = /^\??\s*(Yes|No)\b/.exec(depois);
+  // até o "?" da própria pergunta (ex.: "...passaporte (BRAZIL)?"), sem pular para a próxima
+  const m = /^[^?]{0,40}\?\s*(Yes|No)\b/.exec(depois);
   return m ? (m[1] as "Yes" | "No") : null;
 }

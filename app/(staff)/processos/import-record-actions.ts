@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { extractText, getDocumentProxy } from "unpdf";
 import { createClient } from "@/lib/supabase/server";
 import { mapRecordTo600 } from "@/lib/record-of-responses/map-600";
+import { salvarRespostasEmBlocos } from "@/lib/case-forms/save";
 import {
   getCaseFormTemplateForCase,
   getCaseFormSteps,
@@ -112,40 +113,25 @@ export async function importPreviousApplication(caseId: string, formData: FormDa
     linhas.push({ case_form_id: caseFormId, field_id: fieldId, valor });
   }
 
-  // Grava em blocos pequenos: cada linha também gera um registro de
-  // auditoria, e um upsert único de dezenas de linhas já estourou o limite de
-  // tempo do banco (57014). Cada bloco tem uma nova tentativa.
-  const TAMANHO_BLOCO = 8;
-  let gravados = 0;
-  for (let i = 0; i < linhas.length; i += TAMANHO_BLOCO) {
-    const bloco = linhas.slice(i, i + TAMANHO_BLOCO);
-    let erro: { code?: string; message: string } | null = null;
-    for (let tentativa = 0; tentativa < 2; tentativa++) {
-      const { error } = await supabase
-        .from("case_form_responses")
-        .upsert(bloco, { onConflict: "case_form_id,field_id" });
-      erro = error;
-      if (!error) break;
-    }
-    if (erro) {
-      // só código e mensagem — "details" pode trazer valores digitados
-      console.error("[importPreviousApplication] upsert falhou:", erro.code, erro.message);
-      const tempo = erro.code === "57014";
-      const rede = /fetch failed|ECONN|ENOTFOUND/i.test(erro.message);
-      revalidatePath(`/processos/${caseId}`);
-      voltar(caseId, {
-        importados: String(gravados),
-        mantidos: String(mantidos),
-        importErro: `${
-          tempo
-            ? "O banco demorou demais para responder"
-            : rede
-              ? "A conexão com o banco falhou"
-              : "Não consegui gravar as respostas"
-        }. ${gravados} de ${linhas.length} campos foram gravados — clique em Importar de novo para completar (o que já está gravado é mantido).`,
-      });
-    }
-    gravados += bloco.length;
+  const r = await salvarRespostasEmBlocos(supabase, linhas);
+  const gravados = r.gravados;
+  if (r.erro) {
+    // só código e mensagem — "details" pode trazer valores digitados
+    console.error("[importPreviousApplication] upsert falhou:", r.erro.code, r.erro.message);
+    const tempo = r.erro.code === "57014";
+    const rede = /fetch failed|ECONN|ENOTFOUND/i.test(r.erro.message);
+    revalidatePath(`/processos/${caseId}`);
+    voltar(caseId, {
+      importados: String(gravados),
+      mantidos: String(mantidos),
+      importErro: `${
+        tempo
+          ? "O banco demorou demais para responder"
+          : rede
+            ? "A conexão com o banco falhou"
+            : "Não consegui gravar as respostas"
+      }. ${gravados} de ${linhas.length} campos foram gravados — clique em Importar de novo para completar (o que já está gravado é mantido).`,
+    });
   }
 
   revalidatePath(`/processos/${caseId}`);

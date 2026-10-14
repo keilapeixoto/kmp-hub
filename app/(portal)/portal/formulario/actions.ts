@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { CaseFormField } from "@/lib/case-forms/types";
 import { getEtapasComCampos, getCaseFormResponses } from "@/lib/case-forms/data";
 import { camposPendentes } from "@/lib/case-forms/validate";
+import { linhasDeFormData, salvarRespostasEmBlocos } from "@/lib/case-forms/save";
 
 async function ensureCaseForm(caseId: string, templateId: string) {
   const supabase = await createClient();
@@ -40,14 +41,7 @@ export async function saveFormStep(
   if (!caseFormId) return;
 
   if (fields.length > 0) {
-    const rows = fields.map((field) => {
-      const raw = formData.get(field.id);
-      const valor = typeof raw === "string" && raw.trim() ? raw.trim() : null;
-      return { case_form_id: caseFormId, field_id: field.id, valor };
-    });
-    await supabase
-      .from("case_form_responses")
-      .upsert(rows, { onConflict: "case_form_id,field_id" });
+    await salvarRespostasEmBlocos(supabase, linhasDeFormData(caseFormId, fields, formData));
   }
 
   if (direction === "enviar") {

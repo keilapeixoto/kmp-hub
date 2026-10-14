@@ -223,6 +223,14 @@ export default async function ProcessoDetailPage({
             clientEmail={client?.email ?? null}
             clientTelefone={client?.telefone ?? null}
             importResult={importResult}
+            templateId={dataFormTemplate.id}
+            editAviso={
+              um(sp.editErro)
+                ? { ok: false, texto: um(sp.editErro)! }
+                : um(sp.formSalvo)
+                  ? { ok: true, texto: "Respostas salvas." }
+                  : null
+            }
           />
         </div>
       ) : null}

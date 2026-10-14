@@ -716,9 +716,14 @@ function montarRespostas(kmpVisaData) {
 
 async function rodar() {
   const { kmpVisaData } = await chrome.storage.local.get(["kmpVisaData"]);
-  if (!kmpVisaData) return;
-
   const selo = criarSelo();
+  // Sem cliente carregado, avisa em vez de ficar calada (parecia "quebrada").
+  if (!kmpVisaData) {
+    atualizarSelo(selo, "nenhum cliente carregado. Abra a extensão, busque o cliente e clique no processo.");
+    setTimeout(() => selo.remove(), 10000);
+    return;
+  }
+
   atualizarSelo(selo, "preenchendo esta página...");
 
   // Sem saber em que página está, não preenche nada — melhor deixar em

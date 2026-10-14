@@ -21,6 +21,8 @@ import { getGoogleDaySummary } from "@/lib/google/dashboard";
 import { deleteImmigrationNews } from "./actions";
 import { NewsAddForm } from "./_components/news-add-form";
 import { GoogleDaySummaryCard } from "./_components/google-day-summary";
+import { FormsOverviewCard } from "./_components/forms-overview-card";
+import { getFormsOverview } from "@/lib/case-forms/overview-server";
 
 const MODULE_LINKS: {
   href: string;
@@ -74,12 +76,13 @@ function StatTile({
 
 export default async function InicioPage() {
   const userId = await getCurrentUserId();
-  const [profile, role, metrics, queue, news, googleSummary] = await Promise.all([
+  const [profile, role, metrics, queue, news, formsOverview, googleSummary] = await Promise.all([
     getCurrentUserProfile(),
     getCurrentUserRole(),
     getDashboardMetrics(),
     getQueueCounts(),
     getRecentImmigrationNews(),
+    getFormsOverview(),
     userId
       ? getGoogleDaySummary(userId)
       : Promise.resolve({
@@ -227,6 +230,7 @@ export default async function InicioPage() {
       </div>
 
       <GoogleDaySummaryCard summary={googleSummary} />
+      <FormsOverviewCard {...formsOverview} />
 
       <div>
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-kmp-text/40">

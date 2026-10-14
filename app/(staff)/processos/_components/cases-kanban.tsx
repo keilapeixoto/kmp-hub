@@ -8,6 +8,18 @@ import type { ConsultantOption } from "@/lib/leads/types";
 import type { Client } from "@/lib/clients/types";
 import { updateCaseEtapa } from "../actions";
 
+// Etapas: uma cor viva por posição, na ordem dos atalhos do Início.
+const ETAPA_CORES = [
+  "from-[#5f92f2] to-kmp-config-deep",
+  "from-[#45b4c5] to-kmp-leads-deep",
+  "from-[#9184f2] to-kmp-clientes-deep",
+  "from-[#f0c040] to-kmp-agenda-deep",
+  "from-[#e8679a] to-kmp-finance-deep",
+  "from-[#bd72ae] to-kmp-documentos-deep",
+  "from-[#45c285] to-kmp-processos-deep",
+  "from-kmp-orange to-kmp-orange-deep",
+];
+
 export function CasesKanban({
   cases: initialCases,
   stages,
@@ -42,7 +54,7 @@ export function CasesKanban({
 
   return (
     <div className="flex gap-4 overflow-x-auto pb-4">
-      {stages.map((stage) => {
+      {stages.map((stage, i) => {
         const stageCases = cases.filter((c) => c.etapa_id === stage.id);
         return (
           <div
@@ -53,11 +65,15 @@ export function CasesKanban({
               const caseId = e.dataTransfer.getData("text/case-id");
               if (caseId) handleDrop(stage.id, caseId);
             }}
-            className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3 dark:border dark:border-white/10 dark:bg-white/5"
+            className="flex w-64 shrink-0 flex-col rounded-3xl bg-kmp-surface p-2.5 shadow-sm"
           >
-            <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-text">
+            <h3
+              className={`mb-3 flex items-center justify-between rounded-2xl bg-gradient-to-br px-3.5 py-3 font-heading text-sm font-semibold text-white shadow-md ${
+                ETAPA_CORES[i % ETAPA_CORES.length]
+              }`}
+            >
               {stage.nome}
-              <span className="rounded-full bg-kmp-surface px-2 py-0.5 text-xs text-kmp-text/60 dark:bg-white/10">
+              <span className="rounded-full bg-white/25 px-2.5 py-0.5 text-xs font-semibold">
                 {stageCases.length}
               </span>
             </h3>
@@ -70,7 +86,7 @@ export function CasesKanban({
                   onDragStart={(e) =>
                     e.dataTransfer.setData("text/case-id", c.id)
                   }
-                  className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md dark:border dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
+                  className="block rounded-2xl bg-white p-3 text-sm shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-white/10 dark:ring-white/10 dark:hover:bg-white/15"
                 >
                   <p className="font-medium text-kmp-text">
                     {clientName(c.client_id)}
@@ -91,7 +107,7 @@ export function CasesKanban({
       })}
 
       {semEtapa.length > 0 ? (
-        <div className="flex w-64 shrink-0 flex-col rounded-lg bg-kmp-divider p-3 dark:border dark:border-white/10 dark:bg-white/5">
+        <div className="flex w-64 shrink-0 flex-col rounded-3xl bg-kmp-surface p-2.5 shadow-sm">
           <h3 className="mb-3 font-heading text-sm text-kmp-text">
             Sem etapa
           </h3>

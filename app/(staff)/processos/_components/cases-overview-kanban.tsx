@@ -9,20 +9,14 @@ import type { ConsultantOption } from "@/lib/leads/types";
 import type { Client } from "@/lib/clients/types";
 import { updateCaseStatusDrag } from "../actions";
 
-const STATUS_COLUMN_STYLE: Record<string, string> = {
-  ativo: "bg-blue-100 dark:border dark:border-blue-400/20 dark:bg-blue-400/10",
-  pausado: "bg-amber-100 dark:border dark:border-amber-400/20 dark:bg-amber-400/10",
-  concluido: "bg-green-100 dark:border dark:border-green-400/20 dark:bg-green-400/10",
-  cancelado: "bg-red-100 dark:border dark:border-red-400/20 dark:bg-red-400/10",
-  arquivado: "bg-gray-100 dark:border dark:border-white/10 dark:bg-white/5",
-};
-
-const STATUS_COUNT_STYLE: Record<string, string> = {
-  ativo: "text-blue-700 dark:text-blue-300",
-  pausado: "text-amber-700 dark:text-amber-300",
-  concluido: "text-green-700 dark:text-green-300",
-  cancelado: "text-red-700 dark:text-red-300",
-  arquivado: "text-kmp-text/60",
+// Cabeçalho de cada coluna em bloco colorido vivo, no mesmo degradê dos
+// atalhos do Início (redesign âmbar, out/2026).
+const STATUS_HEADER_STYLE: Record<string, string> = {
+  ativo: "from-[#5f92f2] to-kmp-config-deep",
+  pausado: "from-[#f0c040] to-kmp-agenda-deep",
+  concluido: "from-[#45c285] to-kmp-processos-deep",
+  cancelado: "from-[#ef6b7d] to-kmp-alert-deep",
+  arquivado: "from-[#a3a6ad] to-[#5f6268]",
 };
 
 /**
@@ -78,15 +72,15 @@ export function CasesOverviewKanban({
               const caseId = e.dataTransfer.getData("text/case-id");
               if (caseId) handleDrop(statusOpt.slug, caseId);
             }}
-            className={`flex w-72 shrink-0 flex-col rounded-lg p-3 ${STATUS_COLUMN_STYLE[statusOpt.slug] ?? "bg-kmp-divider dark:border dark:border-white/10 dark:bg-white/5"}`}
+            className="flex w-72 shrink-0 flex-col rounded-3xl bg-kmp-surface p-2.5 shadow-sm"
           >
-            <h3 className="mb-3 flex items-center justify-between font-heading text-sm text-kmp-text">
+            <h3
+              className={`mb-3 flex items-center justify-between rounded-2xl bg-gradient-to-br px-3.5 py-3 font-heading text-sm font-semibold text-white shadow-md ${
+                STATUS_HEADER_STYLE[statusOpt.slug] ?? "from-[#a3a6ad] to-[#5f6268]"
+              }`}
+            >
               {statusLabels[statusOpt.slug] ?? statusOpt.label}
-              <span
-                className={`rounded-full bg-kmp-surface px-2 py-0.5 text-xs font-semibold dark:bg-white/10 ${
-                  STATUS_COUNT_STYLE[statusOpt.slug] ?? "text-kmp-text/60"
-                }`}
-              >
+              <span className="rounded-full bg-white/25 px-2.5 py-0.5 text-xs font-semibold">
                 {statusCases.length}
               </span>
             </h3>
@@ -97,7 +91,7 @@ export function CasesOverviewKanban({
                   href={`/processos/${c.id}`}
                   draggable
                   onDragStart={(e) => e.dataTransfer.setData("text/case-id", c.id)}
-                  className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md dark:border dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
+                  className="block rounded-2xl bg-white p-3 text-sm shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-white/10 dark:ring-white/10 dark:hover:bg-white/15"
                 >
                   <p className="font-medium text-kmp-text">
                     {clientName(c.client_id)}

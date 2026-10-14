@@ -17,7 +17,7 @@ export function ConvertLeadButton({ leadId }: { leadId: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+        className="rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
       >
         {pending ? "Convertendo…" : "Converter em cliente"}
       </button>

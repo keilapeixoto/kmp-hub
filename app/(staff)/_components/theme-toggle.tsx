@@ -30,11 +30,10 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-kmp-text/60 transition hover:bg-kmp-divider hover:text-kmp-text"
+      className="flex h-10 w-10 items-center justify-center rounded-full bg-kmp-surface text-kmp-text/80 shadow-sm transition hover:text-kmp-text"
       aria-label={isDark ? "Mudar para tema claro" : "Mudar para tema escuro"}
     >
-      {isDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-      {isDark ? "Tema claro" : "Tema escuro"}
+      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
     </button>
   );
 }

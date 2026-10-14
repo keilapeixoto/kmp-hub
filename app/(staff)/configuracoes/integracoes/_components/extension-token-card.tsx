@@ -69,7 +69,7 @@ export function ExtensionTokenCard({
             <button
               type="button"
               onClick={handleCopy}
-              className="shrink-0 rounded-md bg-kmp-orange px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90"
+              className="shrink-0 rounded-full bg-kmp-primary px-3 py-1.5 text-xs font-medium text-kmp-on-primary transition hover:opacity-90"
             >
               {copied ? "Copiado" : "Copiar"}
             </button>
@@ -95,7 +95,7 @@ export function ExtensionTokenCard({
           type="button"
           disabled={isPending}
           onClick={handleGenerate}
-          className="mt-4 rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+          className="mt-4 rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-50"
         >
           {isPending ? "Gerando..." : "Gerar token"}
         </button>

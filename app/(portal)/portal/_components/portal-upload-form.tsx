@@ -64,7 +64,7 @@ export function PortalUploadForm({
         <button
           type="submit"
           disabled={isPending}
-          className="shrink-0 rounded-md bg-kmp-orange px-4 py-1.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+          className="shrink-0 rounded-full bg-kmp-primary px-4 py-1.5 text-sm font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
         >
           {isPending ? "Enviando…" : "Enviar"}
         </button>

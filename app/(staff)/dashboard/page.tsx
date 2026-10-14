@@ -136,7 +136,7 @@ export default async function DashboardPage() {
                   <span className="w-44 truncate text-kmp-text/80">{e.etapa}</span>
                   <div className="h-2 flex-1 rounded-full bg-kmp-divider">
                     <div
-                      className="h-2 rounded-full bg-kmp-orange"
+                      className="h-2 rounded-full bg-kmp-text"
                       style={{ width: `${(e.total / maxEtapa) * 100}%` }}
                     />
                   </div>
@@ -198,7 +198,7 @@ export default async function DashboardPage() {
                     </span>
                     <div className="h-2 flex-1 rounded-full bg-kmp-divider">
                       <div
-                        className="h-2 rounded-full bg-kmp-orange"
+                        className="h-2 rounded-full bg-kmp-text"
                         style={{ width: `${(count / maxLoad) * 100}%` }}
                       />
                     </div>

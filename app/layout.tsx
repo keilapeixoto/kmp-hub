@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Montserrat, Outfit } from "next/font/google";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+// Outfit desde out/2026 (redesign âmbar; a mesma dos PDFs da KMP). Antes:
+// Plus Jakarta Sans.
+const outfit = Outfit({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-jakarta",
+  variable: "--font-outfit",
+});
+
+// Só para a marca "HUB CRM" ao lado do logo no cabeçalho.
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["600", "800"],
+  variable: "--font-montserrat",
 });
 
 export const metadata: Metadata = {
@@ -19,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={plusJakartaSans.variable} suppressHydrationWarning>
+    <html lang="pt-BR" className={`${outfit.variable} ${montserrat.variable}`} suppressHydrationWarning>
       <head>
         {/* Aplica o tema salvo antes da primeira pintura, pra não piscar
             claro->escuro ao carregar a página (FOUC). Padrão é sempre claro

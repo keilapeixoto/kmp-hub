@@ -121,7 +121,7 @@ function SubtaskRow({
         </select>
         <button
           type="submit"
-          className="rounded-md bg-kmp-graphite/10 px-2 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
+          className="rounded-full bg-kmp-graphite/10 px-2 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-graphite/20"
         >
           Salvar
         </button>
@@ -221,7 +221,7 @@ function ChecklistItemRow({
           </select>
           <button
             type="submit"
-            className="rounded-md bg-kmp-graphite/10 px-2 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
+            className="rounded-full bg-kmp-graphite/10 px-2 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-graphite/20"
           >
             Salvar
           </button>
@@ -295,7 +295,7 @@ export async function ChecklistPanel({
         <form action={createWithIds} className="mt-4">
           <button
             type="submit"
-            className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+            className="rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
           >
             Criar checklist a partir do template
           </button>

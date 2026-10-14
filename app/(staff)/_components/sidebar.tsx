@@ -28,7 +28,7 @@ import type { ComponentType } from "react";
 import { ACCENT_STYLES, type Accent } from "@/lib/ui/accent";
 import { ThemeToggle } from "./theme-toggle";
 
-type NavItem = {
+export type NavItem = {
   href: string;
   label: string;
   icon: ComponentType<{ className?: string }>;
@@ -44,7 +44,7 @@ type NavGroup = {
 // Uma cor por módulo — o laranja (brand) fica só para as views
 // "principais" (Pipeline/Dashboard); Configurações usa "config" (azul),
 // compartilhado pelos 8 itens do grupo.
-const NAV_GROUPS: NavGroup[] = [
+export const NAV_GROUPS: NavGroup[] = [
   {
     label: null,
     items: [
@@ -196,7 +196,7 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-function isActive(
+export function isActive(
   pathname: string,
   currentView: string | null,
   href: string,
@@ -216,9 +216,9 @@ export function Sidebar() {
   const currentView = useSearchParams().get("view");
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col border-r border-kmp-divider bg-kmp-surface">
+    <aside className="flex w-64 shrink-0 flex-col">
       <div className="px-6 py-5">
-        <div className="flex w-fit items-center gap-2 rounded-lg bg-kmp-orange px-3 py-1.5">
+        <div className="flex w-fit items-center gap-2 rounded-full bg-kmp-orange px-4 py-1.5">
           {/* eslint-disable-next-line @next/next/no-img-element -- logo
               fixo, mesmo arquivo usado no cabeçalho da invoice; não
               precisa da otimização do next/image. */}
@@ -251,14 +251,16 @@ export function Sidebar() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-3 rounded-xl px-2.5 py-2 text-sm font-medium transition ${
+                    className={`flex items-center gap-3 rounded-full px-2 py-1.5 text-sm font-medium transition ${
                       active
                         ? styles.activeRow
-                        : "text-kmp-text/70 hover:bg-kmp-divider hover:text-kmp-text"
+                        : "text-kmp-text/70 hover:bg-kmp-surface hover:text-kmp-text"
                     }`}
                   >
                     <span
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${styles.tile}`}
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                        active ? "bg-white/15 text-current" : styles.tile
+                      }`}
                     >
                       <Icon className="h-4 w-4 shrink-0" />
                     </span>
@@ -271,7 +273,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-kmp-divider px-3 py-3">
+      <div className="px-3 py-3">
         <ThemeToggle />
         <p className="mt-1 px-2 text-xs text-kmp-text/40">KMP Hub · v1.0</p>
       </div>

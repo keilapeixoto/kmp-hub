@@ -86,7 +86,7 @@ export default async function IntegracoesPage({
           ) : (
             <a
               href="/api/google/connect"
-              className="flex shrink-0 items-center gap-2 rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+              className="flex shrink-0 items-center gap-2 rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
             >
               <GoogleLogo className="h-4 w-4" />
               Conectar

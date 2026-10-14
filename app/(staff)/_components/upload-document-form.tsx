@@ -66,7 +66,7 @@ export function UploadDocumentForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white disabled:opacity-60"
+          className="rounded-full bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-graphite/20 disabled:opacity-60"
         >
           {pending ? "Enviando…" : "Enviar"}
         </button>

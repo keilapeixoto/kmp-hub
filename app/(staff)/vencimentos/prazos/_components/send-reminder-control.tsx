@@ -35,7 +35,7 @@ export function SendReminderControl({ deadlineId }: { deadlineId: string }) {
             setResult(r);
           })
         }
-        className="rounded-md bg-kmp-orange px-2.5 py-1 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+        className="rounded-full bg-kmp-primary px-2.5 py-1 text-xs font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
         title="Envia esse lembrete agora, mesmo fora do marco automático"
       >
         {pending ? "Enviando…" : "Enviar"}

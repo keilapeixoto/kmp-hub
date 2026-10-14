@@ -48,7 +48,7 @@ export default async function TarefasPage({
         <h1 className="font-heading text-2xl text-kmp-text">Tarefas</h1>
         <Link
           href="/tarefas/nova"
-          className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+          className="rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
         >
           Nova tarefa
         </Link>
@@ -130,7 +130,7 @@ export default async function TarefasPage({
         <div className="flex items-end gap-2">
           <button
             type="submit"
-            className="rounded-md bg-kmp-orange px-4 py-1.5 text-sm font-medium text-white transition hover:opacity-90"
+            className="rounded-full bg-kmp-primary px-4 py-1.5 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
           >
             Filtrar
           </button>

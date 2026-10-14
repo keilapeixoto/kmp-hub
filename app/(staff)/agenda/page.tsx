@@ -41,7 +41,7 @@ export default async function AgendaPage() {
         <h1 className="font-heading text-2xl text-kmp-text">Agenda</h1>
         <Link
           href="/agenda/novo"
-          className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+          className="rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
         >
           Novo compromisso
         </Link>

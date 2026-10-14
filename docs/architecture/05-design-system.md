@@ -1,5 +1,11 @@
 # 5. Design System
 
+> **Out/2026 — redesign "âmbar":** fonte Outfit, botão principal grafite em
+> pílula, abas no topo, fundo cinza com âmbar e mancha por aba, cartões
+> translúcidos, modo escuro esmeralda. O resumo vigente está na seção
+> "Identidade visual KMP" do `CLAUDE.md`; as seções abaixo descrevem o
+> sistema anterior onde ainda não foram revistas.
+
 ## Estado atual vs. estado alvo (leia isto primeiro)
 
 O projeto hoje usa **Tailwind CSS v4 puro**, sem nenhuma biblioteca de

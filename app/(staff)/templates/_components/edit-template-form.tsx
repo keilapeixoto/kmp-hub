@@ -33,7 +33,7 @@ export function EditTemplateForm({ template }: { template: MessageTemplate }) {
           <button
             type="button"
             onClick={() => setEditing(true)}
-            className="shrink-0 rounded-md bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
+            className="shrink-0 rounded-full bg-kmp-graphite/10 px-3 py-1 text-xs font-medium text-kmp-text transition hover:bg-kmp-graphite/20"
           >
             Editar
           </button>
@@ -112,7 +112,7 @@ export function EditTemplateForm({ template }: { template: MessageTemplate }) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-kmp-orange px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+          className="rounded-full bg-kmp-primary px-3 py-1.5 text-xs font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
         >
           {pending ? "Salvando…" : "Salvar"}
         </button>

@@ -50,16 +50,30 @@ Implementação: função `get_user_role()` no Postgres + políticas RLS por tab
 
 ## Identidade visual KMP
 
-- Título/headings e corpo de texto **na interface do produto**: **Plus
-  Jakarta Sans** (fonte única, desde set/2026 — substituiu Cormorant
-  Garamond + Outfit nas telas do Hub). Títulos usam peso 700/800 pra manter
-  a distinção visual que a serifada tinha.
+**Redesign "âmbar" (out/2026, pedido da Keila — o visual anterior cansava a vista):**
+
+- Fonte da interface: **Outfit** (a mesma dos PDFs), carregada em
+  `app/layout.tsx`. A marca "HUB CRM" do cabeçalho usa **Montserrat**
+  (`font-wordmark`). Antes: Plus Jakarta Sans (set/2026) e, antes dela,
+  Cormorant Garamond + Outfit.
 - **PDFs e documentos** (briefings, guias, relatórios) continuam com
-  Cormorant Garamond + Outfit — identidade própria dos documentos oficiais,
-  não muda com o redesign da interface.
-- Cor primária (laranja): `#F27B20`.
-- Cor neutra escura (grafite): `#2C2C2C`.
-- Fundo: `#F8F7F5`.
+  Cormorant Garamond + Outfit.
+- Logo no cabeçalho: símbolo KMP em degradê laranja→vermelho-escuro com
+  "kmp" branco (`public/kmp-logo-mark.svg`), separador fino e "HUB" (grosso)
+  com "CRM" laranja embaixo — sem "consulting".
+- Cor primária de marca (laranja): `#F27B20` — destaques, estado ativo de
+  etiquetas, "CRM". **Botão principal e aba ativa: grafite em pílula**
+  (`bg-kmp-primary`, que vira verde-menta no modo escuro).
+- Fundo claro: degradê predominantemente cinza (`#D6D7DB` → `#E8E7E2`) com
+  âmbar só no canto superior direito e uma mancha suave da cor de cada aba
+  (`components/page-wash.tsx`); cartões brancos translúcidos (72%) com
+  desfoque. Texto quase preto (`#161814`); os cinzas secundários
+  (`text-kmp-text/40…/75`) são escurecidos globalmente em `app/globals.css`.
+- Modo escuro "esmeralda": fundo verde quase preto, manchas esmeralda e
+  violeta, cartões verde-escuros translúcidos.
+- Navegação: abas em pílula no topo (`app/(staff)/_components/top-nav.tsx`),
+  sem menu lateral; Biblioteca e Configurações em "Mais". Atalhos do Início
+  são blocos coloridos inteiros, na cor de cada módulo.
 - **Sem emoji na interface**, em nenhuma tela ou mensagem de sistema.
 
 ## Estrutura de rotas

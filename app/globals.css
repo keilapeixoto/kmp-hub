@@ -6,13 +6,19 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-heading: var(--font-jakarta), sans-serif;
-  --font-body: var(--font-jakarta), sans-serif;
+  --font-heading: var(--font-outfit), sans-serif;
+  --font-body: var(--font-outfit), sans-serif;
+  --font-wordmark: var(--font-montserrat), sans-serif;
 
   --color-kmp-orange: #f27b20;
   --color-kmp-orange-deep: #c85a0e;
   --color-kmp-graphite: #2c2c2c;
-  --color-kmp-bg: #f8f7f5;
+  /* Versão clara "âmbar" (out/2026, pedido da Keila): fundo creme com uma
+     mancha de cor suave por aba (components/page-wash), cartões brancos
+     translúcidos. O quase-branco anterior cansava a vista. */
+  --color-kmp-bg: #e2e3e5;
+  --color-kmp-amber: #f6c35c;
+  --color-kmp-amber-soft: #fbe7b8;
 
   /* Tokens semânticos — mesma cor nas duas telas, trocam de valor sob
      `.dark` (ver bloco abaixo). Usados no lugar de `bg-white` /
@@ -20,16 +26,33 @@
      precise se adaptar ao tema. Cor de marca/estado (laranja, badges
      pastel, bg-kmp-graphite sólido) não entra aqui — só muda o que é
      "chrome" (fundo de cartão, texto padrão, linha divisória). */
-  --color-kmp-text: #2c2c2c;
-  --color-kmp-surface: #ffffff;
-  --color-kmp-divider: rgb(0 0 0 / 0.08);
+  /* Texto quase preto: os cinzas secundários (text-kmp-text/60 etc.) derivam
+     daqui, então ficam mais legíveis sobre o creme. */
+  --color-kmp-text: #161814;
+  /* Translúcido para o cinza e o amarelo do fundo aparecerem (referência). */
+  --color-kmp-surface: rgb(255 255 255 / 0.72);
+  --color-kmp-divider: rgb(22 24 20 / 0.1);
+
+  /* Botão principal: grafite em pílula (o laranja fica para destaque e
+     estado ativo). Token próprio para inverter no modo escuro. */
+  --color-kmp-primary: #2b2d29;
+  --color-kmp-on-primary: #fafaf6;
+
+  /* Cantos mais arredondados e sombra bem leve em toda a interface. */
+  --radius-md: 0.625rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 1.75rem;
+  --shadow-sm: 0 1px 2px rgb(43 45 41 / 0.04), 0 6px 20px rgb(43 45 41 / 0.05);
 
   /* Painel escuro (Dashboard) — pedido da Keila inspirado numa referência
      visual externa ("central de comando"), usando o azul que já existia
      (kmp-config) em vez de inventar cor nova. Só o fundo/borda do painel;
      os ícones de cada StatCard continuam na cor do próprio módulo. */
-  --color-kmp-panel: #1a1c20;
-  --color-kmp-panel-deep: #121316;
+  /* Escuro "esmeralda" (out/2026, referência da Keila): verde quase preto. */
+  --color-kmp-panel: #16221d;
+  --color-kmp-panel-deep: #0c130f;
+  --color-kmp-mint: #3fb68b;
 
   /* Uma cor por módulo (navegação/ícones) — o laranja continua a cor de
      maior peso (Dashboard, cartão em destaque, maior fatia de gráfico);
@@ -55,14 +78,47 @@
 body {
   font-family: var(--font-body);
   background-color: var(--color-kmp-bg);
-  color: var(--color-kmp-graphite);
+  color: var(--color-kmp-text);
+  /* Peso 500 dá o "texto mais escuro" das referências. */
+  font-weight: 500;
 }
 
 /* Valores dos tokens semânticos no modo escuro — reusa as cores do painel
    que já existia (kmp-panel/kmp-panel-deep), não inventa paleta nova. */
 .dark {
   --color-kmp-bg: var(--color-kmp-panel-deep);
-  --color-kmp-text: #f3f3f3;
-  --color-kmp-surface: var(--color-kmp-panel);
-  --color-kmp-divider: rgb(255 255 255 / 0.1);
+  --color-kmp-text: #f1f5f2;
+  --color-kmp-surface: rgb(28 44 37 / 0.72);
+  --color-kmp-divider: rgb(255 255 255 / 0.08);
+  /* Aba ativa e botão principal em verde-menta, como na referência. */
+  --color-kmp-primary: var(--color-kmp-mint);
+  --color-kmp-on-primary: #ffffff;
 }
+
+/* Cartões translúcidos deixam a mancha de cor do fundo aparecer; o desfoque
+   mantém o texto legível ("vidro" das referências). */
+.bg-kmp-surface {
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+/* Textos secundários: os tons muito transparentes (40-70%) sumiam sobre os
+   cartões translúcidos no amarelo. Fora de @layer, estas regras vencem as
+   utilitárias do Tailwind sem precisar mexer em cada tela. */
+.text-kmp-text\/40,
+.text-kmp-text\/50,
+.text-kmp-graphite\/40,
+.text-kmp-graphite\/50 {
+  color: color-mix(in oklab, var(--color-kmp-text) 66%, transparent);
+}
+.text-kmp-text\/60,
+.text-kmp-graphite\/60 {
+  color: color-mix(in oklab, var(--color-kmp-text) 74%, transparent);
+}
+.text-kmp-text\/70,
+.text-kmp-text\/75,
+.text-kmp-graphite\/70 {
+  color: color-mix(in oklab, var(--color-kmp-text) 82%, transparent);
+}
+
+/* fonte da interface: Outfit */

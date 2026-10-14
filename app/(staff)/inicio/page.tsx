@@ -1,10 +1,16 @@
 import Link from "next/link";
 import {
   AlertTriangle,
+  BookOpen,
+  Briefcase,
+  Calendar,
   CheckSquare,
-  ExternalLink,
+  Globe,
   Mail,
+  Receipt,
   TrendingUp,
+  UserCircle,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import { ACCENT_STYLES, type Accent } from "@/lib/ui/accent";
@@ -24,18 +30,24 @@ import { GoogleDaySummaryCard } from "./_components/google-day-summary";
 import { FormsOverviewCard } from "./_components/forms-overview-card";
 import { getFormsOverview } from "@/lib/case-forms/overview-server";
 
-const MODULE_LINKS: {
+// Atalhos do Início como blocos coloridos inteiros (redesign âmbar, out/2026,
+// pedido da Keila): degradê da cor do módulo, ícone grande, nome em branco.
+const ATALHOS: {
   href: string;
   label: string;
-  letter: string;
-  accent: Accent;
+  icon: LucideIcon;
+  cor: string;
+  externo?: boolean;
 }[] = [
-  { href: "/leads", label: "Leads", letter: "L", accent: "leads" },
-  { href: "/clientes", label: "Clientes", letter: "C", accent: "clientes" },
-  { href: "/processos", label: "Processos", letter: "P", accent: "processos" },
-  { href: "/agenda", label: "Agenda", letter: "A", accent: "agenda" },
-  { href: "/financeiro", label: "Financeiro", letter: "$", accent: "finance" },
-  { href: "/guias", label: "Guias", letter: "G", accent: "documentos" },
+  { href: "/leads", label: "Leads", icon: Users, cor: "from-[#45b4c5] to-kmp-leads-deep" },
+  { href: "/clientes", label: "Clientes", icon: UserCircle, cor: "from-[#9184f2] to-kmp-clientes-deep" },
+  { href: "/processos", label: "Processos", icon: Briefcase, cor: "from-[#45c285] to-kmp-processos-deep" },
+  { href: "/agenda", label: "Agenda", icon: Calendar, cor: "from-[#f0c040] to-kmp-agenda-deep" },
+  { href: "/financeiro", label: "Financeiro", icon: Receipt, cor: "from-[#e8679a] to-kmp-finance-deep" },
+  { href: "/guias", label: "Guias", icon: BookOpen, cor: "from-[#bd72ae] to-kmp-documentos-deep" },
+  { href: "https://online.immi.gov.au/lusc/login", label: "ImmiAccount", icon: Globe, cor: "from-[#5f92f2] to-kmp-config-deep", externo: true },
+  // Gmail no navegador: mailto: não abre nada sem app de e-mail instalado.
+  { href: "https://mail.google.com/", label: "E-mail", icon: Mail, cor: "from-kmp-orange to-kmp-orange-deep", externo: true },
 ];
 
 function StatTile({
@@ -117,10 +129,38 @@ export default async function InicioPage() {
         </div>
         <Link
           href="/dashboard"
-          className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+          className="rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
         >
           Ir para o Dashboard completo →
         </Link>
+      </div>
+
+      <div>
+        <h2 className="mb-3 text-sm font-semibold text-kmp-text/70">Ir direto para</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+          {ATALHOS.map((a) => {
+            const Icon = a.icon;
+            const conteudo = (
+              <>
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/20">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <span className="text-sm font-semibold">{a.label}</span>
+                <Icon aria-hidden="true" className="absolute -bottom-3 -right-3 h-20 w-20 opacity-15" />
+              </>
+            );
+            const classe = `relative flex h-28 flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br ${a.cor} p-4 text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg`;
+            return a.externo ? (
+              <a key={a.href} href={a.href} target="_blank" rel="noreferrer" className={classe}>
+                {conteudo}
+              </a>
+            ) : (
+              <Link key={a.href} href={a.href} className={classe}>
+                {conteudo}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -231,53 +271,6 @@ export default async function InicioPage() {
 
       <GoogleDaySummaryCard summary={googleSummary} />
       <FormsOverviewCard {...formsOverview} />
-
-      <div>
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-kmp-text/40">
-          Ir direto para
-        </h2>
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-          {MODULE_LINKS.map((m) => {
-            const styles = ACCENT_STYLES[m.accent];
-            return (
-              <Link
-                key={m.href}
-                href={m.href}
-                className="flex flex-col items-center gap-2 rounded-xl bg-kmp-surface p-4 text-center shadow-sm dark:border dark:border-white/10 dark:bg-white/5"
-              >
-                <span
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold ${styles.tile}`}
-                >
-                  {m.letter}
-                </span>
-                <span className="text-xs font-medium text-kmp-text">
-                  {m.label}
-                </span>
-              </Link>
-            );
-          })}
-          <a
-            href="https://online.immi.gov.au/lusc/login"
-            target="_blank"
-            rel="noreferrer"
-            className="flex flex-col items-center gap-2 rounded-xl bg-kmp-surface p-4 text-center shadow-sm dark:border dark:border-white/10 dark:bg-white/5"
-          >
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-kmp-config to-kmp-config-deep text-white">
-              <ExternalLink className="h-4 w-4" />
-            </span>
-            <span className="text-xs font-medium text-kmp-text">ImmiAccount</span>
-          </a>
-          <a
-            href="mailto:"
-            className="flex flex-col items-center gap-2 rounded-xl bg-kmp-surface p-4 text-center shadow-sm dark:border dark:border-white/10 dark:bg-white/5"
-          >
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-kmp-documentos to-kmp-documentos-deep text-white">
-              <Mail className="h-4 w-4" />
-            </span>
-            <span className="text-xs font-medium text-kmp-text">E-mail</span>
-          </a>
-        </div>
-      </div>
 
       <div className="rounded-2xl bg-kmp-surface p-5 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
         <h2 className="font-heading text-lg text-kmp-text">

@@ -133,7 +133,7 @@ export function LeadsFilters({
       <div className="col-span-2 flex items-end gap-2 sm:col-span-3 lg:col-span-7">
         <button
           type="submit"
-          className="rounded-md bg-kmp-orange px-4 py-1.5 text-sm font-medium text-white transition hover:opacity-90"
+          className="rounded-full bg-kmp-primary px-4 py-1.5 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
         >
           Filtrar
         </button>

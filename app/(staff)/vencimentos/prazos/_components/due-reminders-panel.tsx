@@ -32,7 +32,7 @@ function DueReminderRow({ item, canSend }: { item: DueReminder; canSend: boolean
                 setResult(r);
               })
             }
-            className="shrink-0 rounded-md bg-kmp-orange px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+            className="shrink-0 rounded-full bg-kmp-primary px-3 py-1.5 text-xs font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
           >
             {pending ? "Enviando…" : result?.ok ? "Enviado" : "Enviar"}
           </button>

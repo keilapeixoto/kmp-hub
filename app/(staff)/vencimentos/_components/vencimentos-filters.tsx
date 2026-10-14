@@ -23,7 +23,7 @@ export function VencimentosFilters({ busca }: { busca: string }) {
       <div className="flex gap-2">
         <button
           type="submit"
-          className="rounded-md bg-kmp-orange px-4 py-1.5 text-sm font-medium text-white transition hover:opacity-90"
+          className="rounded-full bg-kmp-primary px-4 py-1.5 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
         >
           Filtrar
         </button>

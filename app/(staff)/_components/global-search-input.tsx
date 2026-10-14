@@ -77,11 +77,11 @@ export function GlobalSearchInput() {
         placeholder="Buscar leads, clientes, tarefas, guias…"
         aria-label="Busca global"
         autoComplete="off"
-        className="w-full rounded-md border border-kmp-divider bg-kmp-surface py-2 pl-9 pr-3 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+        className="w-full rounded-full border-0 bg-kmp-surface py-2.5 pl-9 pr-4 text-sm text-kmp-text shadow-sm placeholder:text-kmp-text/50 focus:outline-none focus:ring-2 focus:ring-kmp-primary/30"
       />
 
       {showDropdown ? (
-        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-80 overflow-y-auto rounded-md border border-kmp-divider bg-kmp-surface shadow-lg">
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-y-auto rounded-2xl bg-white p-1 shadow-xl ring-1 ring-black/5 dark:bg-kmp-panel dark:ring-white/10">
           {results.length === 0 ? (
             <p className="p-3 text-sm text-kmp-text/50">
               Nada encontrado para &quot;{query}&quot;.

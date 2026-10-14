@@ -36,7 +36,7 @@ export function ImportRecordForm({
         />
         <button
           type="submit"
-          className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
+          className="rounded-full bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-graphite/20"
         >
           Importar respostas
         </button>

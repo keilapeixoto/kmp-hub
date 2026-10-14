@@ -41,7 +41,7 @@ Qualquer dúvida, estou à disposição.`;
           setCopiado(true);
           setTimeout(() => setCopiado(false), 2000);
         }}
-        className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
+        className="rounded-full bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-graphite/20"
       >
         {copiado ? "Copiado!" : "Copiar link"}
       </button>
@@ -49,7 +49,7 @@ Qualquer dúvida, estou à disposição.`;
         href={whatsappHref}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
+        className="rounded-full bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-graphite/20"
       >
         WhatsApp
       </a>
@@ -60,7 +60,7 @@ Qualquer dúvida, estou à disposição.`;
           setMensagemCopiada(true);
           setTimeout(() => setMensagemCopiada(false), 2000);
         }}
-        className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
+        className="rounded-full bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-graphite/20"
       >
         {mensagemCopiada ? "Copiado!" : "Copiar mensagem"}
       </button>

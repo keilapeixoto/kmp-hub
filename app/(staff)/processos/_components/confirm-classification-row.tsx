@@ -100,7 +100,7 @@ export function ConfirmClassificationRow({
               setState(result.ok ? "confirmado" : "erro");
             });
           }}
-          className="rounded-md bg-kmp-orange px-3 py-1 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+          className="rounded-full bg-kmp-primary px-3 py-1 text-xs font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
         >
           {pending ? "Confirmando…" : "Confirmar"}
         </button>

@@ -1,3 +1,5 @@
+// Redesign âmbar (out/2026): ícone em círculo de tom suave da cor do módulo e
+// aba ativa em pílula grafite (antes: quadrado com gradiente saturado).
 // Uma cor por módulo — o laranja (brand) é a cor de maior peso (views
 // principais, destaque de "atenção necessária"); as demais só existem
 // pra diferenciar módulo de módulo de relance. Ver
@@ -18,39 +20,39 @@ export const ACCENT_STYLES: Record<
   { tile: string; activeRow: string }
 > = {
   brand: {
-    tile: "bg-gradient-to-br from-kmp-orange to-kmp-orange-deep text-white shadow-sm shadow-kmp-orange/40",
-    activeRow: "bg-kmp-orange/10 text-kmp-orange-deep",
+    tile: "bg-kmp-orange/15 text-kmp-orange-deep",
+    activeRow: "bg-kmp-primary text-kmp-on-primary shadow-sm",
   },
   leads: {
-    tile: "bg-gradient-to-br from-kmp-leads to-kmp-leads-deep text-white shadow-sm shadow-kmp-leads/40",
-    activeRow: "bg-kmp-leads/10 text-kmp-leads-deep",
+    tile: "bg-kmp-leads/15 text-kmp-leads-deep",
+    activeRow: "bg-kmp-primary text-kmp-on-primary shadow-sm",
   },
   clientes: {
-    tile: "bg-gradient-to-br from-kmp-clientes to-kmp-clientes-deep text-white shadow-sm shadow-kmp-clientes/40",
-    activeRow: "bg-kmp-clientes/10 text-kmp-clientes-deep",
+    tile: "bg-kmp-clientes/15 text-kmp-clientes-deep",
+    activeRow: "bg-kmp-primary text-kmp-on-primary shadow-sm",
   },
   processos: {
-    tile: "bg-gradient-to-br from-kmp-processos to-kmp-processos-deep text-white shadow-sm shadow-kmp-processos/40",
-    activeRow: "bg-kmp-processos/10 text-kmp-processos-deep",
+    tile: "bg-kmp-processos/15 text-kmp-processos-deep",
+    activeRow: "bg-kmp-primary text-kmp-on-primary shadow-sm",
   },
   agenda: {
-    tile: "bg-gradient-to-br from-kmp-agenda to-kmp-agenda-deep text-white shadow-sm shadow-kmp-agenda/40",
-    activeRow: "bg-kmp-agenda/10 text-kmp-agenda-deep",
+    tile: "bg-kmp-agenda/15 text-kmp-agenda-deep",
+    activeRow: "bg-kmp-primary text-kmp-on-primary shadow-sm",
   },
   documentos: {
-    tile: "bg-gradient-to-br from-kmp-documentos to-kmp-documentos-deep text-white shadow-sm shadow-kmp-documentos/40",
-    activeRow: "bg-kmp-documentos/10 text-kmp-documentos-deep",
+    tile: "bg-kmp-documentos/15 text-kmp-documentos-deep",
+    activeRow: "bg-kmp-primary text-kmp-on-primary shadow-sm",
   },
   config: {
-    tile: "bg-gradient-to-br from-kmp-config to-kmp-config-deep text-white shadow-sm shadow-kmp-config/40",
-    activeRow: "bg-kmp-config/10 text-kmp-config-deep",
+    tile: "bg-kmp-config/15 text-kmp-config-deep",
+    activeRow: "bg-kmp-primary text-kmp-on-primary shadow-sm",
   },
   finance: {
-    tile: "bg-gradient-to-br from-kmp-finance to-kmp-finance-deep text-white shadow-sm shadow-kmp-finance/40",
-    activeRow: "bg-kmp-finance/10 text-kmp-finance-deep",
+    tile: "bg-kmp-finance/15 text-kmp-finance-deep",
+    activeRow: "bg-kmp-primary text-kmp-on-primary shadow-sm",
   },
   alert: {
-    tile: "bg-gradient-to-br from-kmp-alert to-kmp-alert-deep text-white shadow-sm shadow-kmp-alert/40",
-    activeRow: "bg-kmp-alert/10 text-kmp-alert-deep",
+    tile: "bg-kmp-alert/15 text-kmp-alert-deep",
+    activeRow: "bg-kmp-primary text-kmp-on-primary shadow-sm",
   },
 };

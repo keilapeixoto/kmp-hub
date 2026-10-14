@@ -75,7 +75,7 @@ export function DocumentUploadClassifier({
         <p className="text-sm text-kmp-text/70">
           Arraste documentos aqui — o sistema identifica o tipo e vincula ao checklist sozinho
         </p>
-        <label className="mt-3 inline-block cursor-pointer rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90">
+        <label className="mt-3 inline-block cursor-pointer rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90">
           Escolher arquivos
           <input
             type="file"

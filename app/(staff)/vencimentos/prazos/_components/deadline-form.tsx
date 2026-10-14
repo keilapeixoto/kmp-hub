@@ -92,7 +92,7 @@ export function DeadlineForm({ cases }: { cases: ActiveCaseOption[] }) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-kmp-orange px-4 py-1.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+          className="rounded-full bg-kmp-primary px-4 py-1.5 text-sm font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
         >
           {pending ? "Criando…" : "Novo prazo de 28 dias"}
         </button>

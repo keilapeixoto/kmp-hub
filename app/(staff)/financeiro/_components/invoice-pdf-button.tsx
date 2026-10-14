@@ -122,7 +122,7 @@ export function InvoicePdfButton({
         type="button"
         onClick={exportPdf}
         disabled={pending}
-        className="rounded-md bg-kmp-orange px-5 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+        className="rounded-full bg-kmp-primary px-5 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
       >
         {pending ? "Gerando…" : "Baixar PDF"}
       </button>

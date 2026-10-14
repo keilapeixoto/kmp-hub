@@ -30,7 +30,7 @@ export default async function ServiceTypesPage({
         {isAdmin ? (
           <Link
             href="/configuracoes/servicos/novo"
-            className="rounded-md bg-kmp-orange px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+            className="rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
           >
             Novo tipo de serviço
           </Link>

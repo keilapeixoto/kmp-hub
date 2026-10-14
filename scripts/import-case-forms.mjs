@@ -351,6 +351,7 @@ const FORM_600 = {
         rad("Gênero", ["Masculino", "Feminino", "Outro"]),
         dt("Data de nascimento"),
         t("Cidade de nascimento"),
+        tOpt("Estado de nascimento", "Estado ou província onde nasceu (o ImmiAccount exige)"),
         t("País de nascimento"),
         sel("Estado civil", estadoCivil),
         t("Nacionalidade atual"),

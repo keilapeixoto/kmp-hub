@@ -215,10 +215,14 @@ function acharDetalhesApos(controlePrincipal, labelDetalhesEn) {
   return null;
 }
 
-function dataIsoParaBr(valorIso) {
+// O ImmiAccount só aceita o mês em letras, em inglês ("13 Jul 1970");
+// "13/07/1970" dá "'Date of birth' is invalid".
+const MESES_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function dataIsoParaImmi(valorIso) {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(valorIso || ""));
-  if (!m) return valorIso;
-  return `${m[3]}/${m[2]}/${m[1]}`;
+  if (!m || Number(m[2]) < 1 || Number(m[2]) > 12) return valorIso;
+  return `${m[3]} ${MESES_EN[Number(m[2]) - 1]} ${m[1]}`;
 }
 
 /**
@@ -257,7 +261,7 @@ function preencherControle(controle, valorBruto, opcoes = {}) {
   }
 
   if (opcoes.tipo === "data" || controle.closest(".wc-datefield")) {
-    preencherTexto(controle, dataIsoParaBr(valorBruto));
+    preencherTexto(controle, dataIsoParaImmi(valorBruto));
     return true;
   }
 
@@ -410,6 +414,15 @@ const FIELD_MAP = [
   { pagina: 3, pt: "Gênero", en: "Sex", valueMap: SEXO },
   { pagina: 3, pt: "Data de nascimento", en: "Date of birth" },
   { pagina: 3, pt: "Cidade de nascimento", en: "Town / City" },
+  {
+    pagina: 3,
+    pt: "Estado de nascimento",
+    en: "State / Province",
+    scopeHeadingEn: "Place of birth",
+    // "State / Province" só aparece uma vez na página 3: se o bloco "Place of
+    // birth" não for achado pelo título, procura na página inteira.
+    escopoOpcional: true,
+  },
   { pagina: 3, pt: "País de nascimento", en: "Country of birth", tipo: "pais" },
   { pagina: 3, pt: "Estado civil", en: "Relationship status", valueMap: ESTADO_CIVIL },
   {
@@ -632,7 +645,9 @@ async function rodar() {
       if (campo.pagina !== pagina || feitos.has(campo)) continue;
       const valor = respostas[campo.pt];
       if (!valor) continue;
-      const controle = acharControlePorLabel(campo.en, campo.scopeHeadingEn);
+      const controle =
+        acharControlePorLabel(campo.en, campo.scopeHeadingEn) ||
+        (campo.escopoOpcional ? acharControlePorLabel(campo.en) : null);
       if (!controle) continue;
       if (repeticao && controle.tagName !== "FIELDSET" && controle.value) continue;
       const ok = preencherControle(controle, valor, {

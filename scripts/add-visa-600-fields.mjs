@@ -27,6 +27,14 @@ const TEMPLATE = "Formulário Visto de Turista (Subclass 600) — Coleta de Dado
 // (browser-extension/visa-autofill.js) — é por eles que a extensão acha a resposta.
 const NOVOS = [
   {
+    etapa: "Dados Pessoais",
+    label: "Estado de nascimento",
+    ajuda: "Estado ou província onde nasceu (o ImmiAccount exige).",
+    tipo: "text",
+    opcoes: null,
+    obrigatorio: false,
+  },
+  {
     etapa: "Detalhes da Viagem",
     label: "Pretende entrar na Austrália mais de uma vez durante a estadia?",
     ajuda: "Marque Sim se pretende sair e voltar à Austrália durante o período do visto.",

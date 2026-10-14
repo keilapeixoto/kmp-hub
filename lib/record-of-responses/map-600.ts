@@ -138,6 +138,7 @@ export function mapRecordTo600(textoDoPdf: string): Mapeamento {
 
   const B = { secao: "Place of birth" };
   poe("Cidade de nascimento", pega(rec, "Town / City", B));
+  poe("Estado de nascimento", pega(rec, "State / Province", B));
   const paisNasc = pega(rec, "Country of birth", B);
   if (paisNasc) poe("País de nascimento", paisParaPt(paisNasc));
   if (paisNasc && paisPassaporte && paisParaPt(paisNasc) !== paisParaPt(paisPassaporte)) {
@@ -207,7 +208,22 @@ export function mapRecordTo600(textoDoPdf: string): Mapeamento {
   if (endAu.length > 0) poe("Endereço na Austrália onde pretende ficar", endAu.join(", "));
 
   // ---- Trabalho e finanças
-  poeLista("Situação profissional atual", pega(rec, "Employment status"), SITUACAO);
+  const situacao = pega(rec, "Employment status");
+  if (situacao === "Other") {
+    // "Other" não tem equivalente no Hub; se a explicação escrita fala em
+    // aposentadoria/pensão, entra como Aposentado(a) — com aviso pra conferir.
+    const detalhe = pega(rec, "Give details", { secao: "Current employment details" }) ?? "";
+    if (/pension|pensioner|retire|aposent/i.test(detalhe)) {
+      campos["Situação profissional atual"] = "Aposentado(a)";
+      avisos.push(
+        'Situação profissional: o ImmiAccount tinha "Other" com explicação de aposentadoria/pensão; entrou como Aposentado(a). Confira.',
+      );
+    } else {
+      avisos.push('Situação profissional: o ImmiAccount tinha "Other", sem equivalente no Hub; escolha à mão.');
+    }
+  } else {
+    poeLista("Situação profissional atual", situacao, SITUACAO);
+  }
   const custeio = pega(rec, "Give details of how the applicant's stay in Australia will be funded");
   if (custeio === "Self funded") campos["Quem custeará sua viagem?"] = "Eu mesmo(a)";
   const fundos = /have available to support their stay in Australia\?\s*(.+?)\s*(?:Health declarations|$)/.exec(rec.corrido);

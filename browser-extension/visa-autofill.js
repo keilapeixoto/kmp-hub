@@ -381,9 +381,9 @@ const FIELD_MAP = [
   { pagina: 6, pt: "Telefone comercial", en: "Business phone", tipo: "telefone" },
   { pagina: 6, pt: "Celular", en: "Mobile / Cell phone", tipo: "telefone" },
 
-  // Página 9/20 — Entry to Australia. Só os dois campos com resposta direta
-  // no formulário do Hub; "mais de uma entrada", data de saída, estudo e
-  // visita a parentes/amigos ficam manuais (declarações ao governo).
+  // Página 9/20 — Entry to Australia. Só campos com resposta direta no
+  // formulário do Hub (estadia, chegada, saída, mais de uma entrada); estudo
+  // e visita a parentes/amigos ficam manuais (declarações ao governo).
   {
     pagina: 9,
     pt: "Tempo de permanência pretendido",
@@ -391,6 +391,13 @@ const FIELD_MAP = [
     valueMap: PERMANENCIA,
   },
   { pagina: 9, pt: "Data prevista de chegada na Austrália", en: "Planned arrival date", tipo: "data" },
+  {
+    pagina: 9,
+    pt: "Pretende entrar na Austrália mais de uma vez durante a estadia?",
+    en: "Does the applicant intend to enter Australia on more than one occasion?",
+    valueMap: SIM_NAO,
+  },
+  { pagina: 9, pt: "Data prevista de saída da Austrália", en: "Planned final departure date", tipo: "data" },
 
   // Página 11/20 — Current overseas employment. As seções mudam conforme o
   // status (Employed mostra cargo/empresa, Student mostra curso/instituição),

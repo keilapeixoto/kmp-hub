@@ -415,6 +415,8 @@ const FORM_600 = {
         tOpt("Cidades ou regiões que pretende visitar"),
         rad("Alguém está te acompanhando nesta viagem?"),
         tOpt("Nome(s) e relação do(s) acompanhante(s)"),
+        radOpt("Pretende entrar na Austrália mais de uma vez durante a estadia?", SN, "Marque Sim se pretende sair e voltar à Austrália durante o período do visto."),
+        dtOpt("Data prevista de saída da Austrália", "Data em que pretende deixar a Austrália definitivamente."),
       ],
     },
     {

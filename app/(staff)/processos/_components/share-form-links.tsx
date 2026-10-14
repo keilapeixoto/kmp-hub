@@ -9,7 +9,6 @@ function onlyDigits(value: string): string {
 export function ShareFormLinks({
   link,
   clientNome,
-  clientEmail,
   clientTelefone,
 }: {
   link: string;
@@ -18,10 +17,20 @@ export function ShareFormLinks({
   clientTelefone: string | null;
 }) {
   const [copiado, setCopiado] = useState(false);
+  const [mensagemCopiada, setMensagemCopiada] = useState(false);
 
   const mensagem = `Olá ${clientNome}, segue o link do formulário para preenchimento: ${link}`;
   const whatsappHref = `https://wa.me/${clientTelefone ? onlyDigits(clientTelefone) : ""}?text=${encodeURIComponent(mensagem)}`;
-  const emailHref = `mailto:${clientEmail ?? ""}?subject=${encodeURIComponent("Formulário KMP Consulting")}&body=${encodeURIComponent(mensagem)}`;
+  // Texto pronto pra colar no e-mail (a assinatura entra no próprio e-mail da
+  // Keila). Antes era um mailto:, que só abre com app de e-mail configurado.
+  const mensagemEmail = `Olá ${clientNome},
+
+Segue o link para preencher o formulário de dados do seu processo:
+${link}
+
+Ao abrir o link, informe seu e-mail para receber o acesso ao portal.
+
+Qualquer dúvida, estou à disposição.`;
 
   return (
     <div className="flex flex-wrap items-center gap-3 text-xs">
@@ -44,12 +53,17 @@ export function ShareFormLinks({
       >
         WhatsApp
       </a>
-      <a
-        href={emailHref}
+      <button
+        type="button"
+        onClick={() => {
+          navigator.clipboard.writeText(mensagemEmail);
+          setMensagemCopiada(true);
+          setTimeout(() => setMensagemCopiada(false), 2000);
+        }}
         className="rounded-md bg-kmp-graphite/10 px-2.5 py-1 font-medium text-kmp-text transition hover:bg-kmp-orange hover:text-white"
       >
-        E-mail
-      </a>
+        {mensagemCopiada ? "Copiado!" : "Copiar mensagem"}
+      </button>
     </div>
   );
 }

@@ -189,13 +189,21 @@ pelo id. Cada entrada do `FIELD_MAP` vale só na sua página (`pagina`,
 lida da barra de progresso "N/20") — as mesmas labels se repetem em
 páginas diferentes com outro significado (ex.: "Email address" na 7/20 é
 o e-mail de correspondência da KMP, não o do cliente); sem identificar a
-página, a extensão não preenche nada. Cobertura atual: páginas 2–5 de 20
-(Application context, Applicant, Critical data confirmation, Travelling
-companions); 1 (Terms) e 7 (Authorised recipient) ficam manuais de
-propósito; a 6 e as de 8 em diante ficam pra próxima etapa, conforme a
-Keila for salvando o HTML de cada uma em `import/immi-pages/` (fora do
-git — **nunca colar o HTML no chat**, são ~2,4 MB por página e trava a
-conversa). Princípio de segurança mantido em toda a etapa: a extensão só
+página, a extensão não preenche nada. Cobertura atual (todas as 20 páginas revisadas):
+preenche as 2–6, 9, 11, 12, 17 e 18; ficam manuais de propósito a 1 (Terms),
+7 (Authorised recipient, dados da KMP), 8 (família que não viaja), 16
+(declarações de saúde) e 20 (declarações finais e consentimentos — quem
+aceita é o cliente); a 10, 13–15 e 19 o ImmiAccount pula conforme as
+respostas — se aparecerem numa aplicação, salvar a estrutura e mapear. Nas
+declarações de caráter/histórico de vistos (17 e 18) a extensão só marca
+"No" quando o cliente respondeu "Não"; nunca marca "Yes". Estrutura real de
+cada página (campos, tipo, obrigatório, visível) em
+`import/immi-pages/pagina-NN.estrutura.txt`, gerada por
+`pbpaste | python3 scripts/immi-page-skeleton.py` (fora do git, sem valor
+digitado, TRN nem dado de cliente). As páginas 6 e 9–18 foram verificadas só
+em simulação, ainda sem teste numa aplicação de verdade. **Nunca colar o HTML no chat** (~2,4
+MB por página, trava a conversa) **nem salvar o HTML bruto** (traz dados
+do cliente). Princípio de segurança mantido em toda a etapa: a extensão só
 preenche campos — nunca clica em Previous/Next/Save/Submit, então nunca
 avança nem envia a aplicação de visto sozinha.
 

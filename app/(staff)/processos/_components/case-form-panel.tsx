@@ -1,6 +1,7 @@
 import type { CaseForm, CaseFormStep, CaseFormField, CaseFormView } from "@/lib/case-forms/types";
 import { CASE_FORM_STATUS_LABELS } from "@/lib/case-forms/types";
 import { ShareFormLinks } from "./share-form-links";
+import { ImportRecordForm, type ImportResult } from "./import-record-form";
 
 export type StepWithFields = CaseFormStep & { fields: CaseFormField[] };
 
@@ -18,6 +19,7 @@ export function CaseFormPanel({
   clientNome,
   clientEmail,
   clientTelefone,
+  importResult,
 }: {
   templateNome: string;
   steps: StepWithFields[];
@@ -28,6 +30,7 @@ export function CaseFormPanel({
   clientNome: string;
   clientEmail: string | null;
   clientTelefone: string | null;
+  importResult: ImportResult | null;
 }) {
   const answeredCount = Object.keys(responses).length;
   const totalFields = steps.reduce((n, s) => n + s.fields.length, 0);
@@ -77,6 +80,8 @@ export function CaseFormPanel({
           clientTelefone={clientTelefone}
         />
       </div>
+
+      <ImportRecordForm caseId={caseId} resultado={importResult} />
 
       {!caseForm ? (
         <p className="mt-4 text-sm text-kmp-text/60">

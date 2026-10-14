@@ -54,10 +54,23 @@ function groupDocumentsByItem(documents: Document[]): Record<string, Document[]>
 
 export default async function ProcessoDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
+  const sp = await searchParams;
+  const um = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+  const importResult =
+    um(sp.importados) !== undefined || um(sp.importErro) !== undefined
+      ? {
+          importados: Number(um(sp.importados) ?? 0),
+          mantidos: Number(um(sp.mantidos) ?? 0),
+          avisos: (um(sp.avisos) ?? "").split(" | ").filter(Boolean),
+          erro: um(sp.importErro) ?? null,
+        }
+      : null;
 
   const caseItem = await getCase(id);
   if (!caseItem) notFound();
@@ -209,6 +222,7 @@ export default async function ProcessoDetailPage({
             clientNome={client?.nome ?? ""}
             clientEmail={client?.email ?? null}
             clientTelefone={client?.telefone ?? null}
+            importResult={importResult}
           />
         </div>
       ) : null}

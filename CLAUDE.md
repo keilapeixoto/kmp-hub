@@ -207,6 +207,20 @@ do cliente). Princípio de segurança mantido em toda a etapa: a extensão só
 preenche campos — nunca clica em Previous/Next/Save/Submit, então nunca
 avança nem envia a aplicação de visto sozinha.
 
+**Importar aplicação anterior (out/2026, exceção de fase — mesmo pedido da
+extensão):** no card "Formulário de Dados" do processo, a equipe envia o PDF
+"Record of Responses" que o ImmiAccount gera depois que uma aplicação é
+enviada, e o Hub preenche o formulário de coleta como rascunho
+(`app/(staff)/processos/import-record-actions.ts`, leitura em
+`lib/record-of-responses/`, só visto 600 por enquanto). É o caminho inverso
+da extensão. Regras: o PDF é lido no servidor e **não é guardado** (só as
+respostas); só preenche campo ainda vazio, nunca sobrescreve resposta do
+cliente; declarações de saúde e caráter não são trazidas; o e-mail do
+ImmiAccount (da KMP) não vira e-mail do cliente; avisos de dados suspeitos
+(ex.: país de nascimento ≠ país do passaporte) aparecem na tela. Testar sem
+gravar: `node scripts/dry-run-import-record.mjs "/caminho/Application.pdf"`
+(valores mascarados). Dependência nova: `unpdf`.
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

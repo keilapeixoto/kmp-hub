@@ -16,7 +16,8 @@ for (const line of readFileSync(".env.local", "utf8").split("\n")) {
 const s = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SECRET_KEY, { auth: { persistSession: false } });
 
 const TEMPLATE = "Formulário Visto de Turista (Subclass 600) — Coleta de Dados";
-const OPCIONAIS = ["RG / Documento de identidade", "CPF", "Nome da mãe", "Nome do pai"];
+// "Nacionalidade atual" fica opcional até a Keila autorizar a exclusão (--remover).
+const OPCIONAIS = ["RG / Documento de identidade", "CPF", "Nome da mãe", "Nome do pai", "Nacionalidade atual"];
 const REMOVER = ["Nacionalidade atual"];
 const AJUDA = {
   Nome: "Escreva exatamente como está no passaporte.",

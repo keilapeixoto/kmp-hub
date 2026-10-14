@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import type { ServiceType } from "@/lib/cases/types";
+import { MenuSuspenso } from "@/components/ui/menu-suspenso";
 
 // Uma pipeline por tipo de visto (pedido da Keila): pílulas no topo; cada
 // tipo abre o quadro com as etapas dele. Sóbrio: sem bolinhas coloridas; à
@@ -40,10 +41,15 @@ export function PipelineTipos({
       </Link>
       {comProcesso.map(item)}
       {outros.length > 0 ? (
-        <details className="relative">
-          <summary className={`${pilula} ${inativa} cursor-pointer list-none`}>
-            Outros tipos ({outros.length}) <ChevronDown className="h-3.5 w-3.5" />
-          </summary>
+        <MenuSuspenso
+          className="relative"
+          summaryClassName={`${pilula} ${inativa}`}
+          summary={
+            <>
+              Outros tipos ({outros.length}) <ChevronDown className="h-3.5 w-3.5" />
+            </>
+          }
+        >
           <div className="absolute left-0 z-30 mt-2 flex w-80 flex-col gap-1 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-black/5 dark:bg-kmp-panel dark:ring-white/10">
             {outros.map((st) => (
               <Link
@@ -55,7 +61,7 @@ export function PipelineTipos({
               </Link>
             ))}
           </div>
-        </details>
+        </MenuSuspenso>
       ) : null}
     </div>
   );

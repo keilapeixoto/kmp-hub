@@ -5,6 +5,7 @@ import { logout } from "../actions";
 import { GlobalSearchInput } from "./global-search-input";
 import { ThemeToggle } from "./theme-toggle";
 import { TopNav } from "./top-nav";
+import { MenuSuspenso } from "@/components/ui/menu-suspenso";
 
 const redondo =
   "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-kmp-surface text-kmp-text/80 shadow-sm transition hover:text-kmp-text";
@@ -35,14 +36,11 @@ export function HeaderBar({ userEmail }: { userEmail: string }) {
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {/* Busca: botão redondo como os outros; abre um painel com o campo. */}
-          <details className="relative">
-            <summary aria-label="Buscar" className={`${redondo} cursor-pointer list-none`}>
-              <Search className="h-4 w-4" />
-            </summary>
+          <MenuSuspenso className="relative" ariaLabel="Buscar" summaryClassName={redondo} summary={<Search className="h-4 w-4" />}>
             <div className="absolute right-0 z-50 mt-2 w-[22rem] rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/5 dark:bg-kmp-panel dark:ring-white/10">
               <GlobalSearchInput />
             </div>
-          </details>
+          </MenuSuspenso>
           <Link href="/configuracoes" aria-label="Configurações" className={redondo}>
             <Settings className="h-4 w-4" />
           </Link>

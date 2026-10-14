@@ -162,3 +162,18 @@ export async function getCaseStatusHistory(
     .order("created_at", { ascending: false });
   return (data ?? []) as CaseStatusHistoryEntry[];
 }
+
+/** Processos ativos/pausados por tipo de serviço (contador das pílulas da pipeline). */
+export async function getCaseCountsByServiceType(): Promise<Record<string, number>> {
+  const supabase = await createSupabaseClient();
+  const { data } = await supabase
+    .from("cases")
+    .select("service_type_id")
+    .in("status", ["ativo", "pausado"]);
+  const contagem: Record<string, number> = {};
+  for (const r of data ?? []) {
+    const id = (r as { service_type_id: string }).service_type_id;
+    contagem[id] = (contagem[id] ?? 0) + 1;
+  }
+  return contagem;
+}

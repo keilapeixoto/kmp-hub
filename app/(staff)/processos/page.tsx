@@ -6,6 +6,7 @@ import {
   getCases,
   getCaseStatusLabels,
   getServiceTypes,
+  getCaseCountsByServiceType,
 } from "@/lib/cases/data";
 import type { CaseFilters } from "@/lib/cases/types";
 import { CasesFila } from "./_components/cases-fila";
@@ -13,6 +14,9 @@ import { CasesFilters } from "./_components/cases-filters";
 import { CasesKanban } from "./_components/cases-kanban";
 import { CasesOverviewKanban } from "./_components/cases-overview-kanban";
 import { CasesTable } from "./_components/cases-table";
+import { PipelineTipos } from "./_components/pipeline-tipos";
+import { StagesEditor } from "./_components/stages-editor";
+import { getCurrentUserRole } from "@/lib/auth";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -129,20 +133,39 @@ export default async function ProcessosPage({
           baseHref={`/processos?view=fila${suffix}`}
         />
       ) : view === "kanban" ? (
-        filters.servicoTipo ? (
-          <CasesKanban
-            cases={cases}
-            stages={kanbanStages}
-            clients={clients}
-            consultants={consultants}
-          />
+        <>
+        <PipelineTipos
+          serviceTypes={serviceTypes}
+          atual={filters.servicoTipo}
+          contagem={await getCaseCountsByServiceType()}
+        />
+        {filters.servicoTipo ? (
+          <>
+            {(await getCurrentUserRole()) === "admin" ? (
+              <StagesEditor
+                serviceTypeId={filters.servicoTipo}
+                stages={kanbanStages}
+                contagem={cases.reduce<Record<string, number>>((acc, c) => {
+                  if (c.etapa_id) acc[c.etapa_id] = (acc[c.etapa_id] ?? 0) + 1;
+                  return acc;
+                }, {})}
+                erro={firstValue(params.etapaErro) ?? null}
+                aberto={firstValue(params.editar) === "1"}
+              />
+            ) : null}
+            <CasesKanban
+              cases={cases}
+              stages={kanbanStages}
+              clients={clients}
+              consultants={consultants}
+            />
+          </>
         ) : (
           <>
-            <p className="text-sm text-kmp-text/60">
-              Visão geral por status, com todos os tipos de serviço juntos —
-              arraste os cards entre as colunas. Para acompanhar etapa a
-              etapa de um tipo específico (485, Turista, etc.), escolha-o no
-              filtro &quot;Tipo de serviço&quot; acima.
+            <p className="text-sm text-kmp-text/70">
+              Visão geral por status, com todos os tipos de visto juntos —
+              arraste os cards entre as colunas. Para ver as etapas de um
+              visto específico, escolha-o nas pílulas acima.
             </p>
             <CasesOverviewKanban
               cases={cases}
@@ -152,7 +175,8 @@ export default async function ProcessosPage({
               statusLabels={statusLabels}
             />
           </>
-        )
+        )}
+        </>
       ) : (
         <CasesTable
           cases={cases}

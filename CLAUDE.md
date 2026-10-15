@@ -25,6 +25,10 @@ Repositório e schema novos (não evolução do CRM atual) — motivo: RLS por f
 - **Banco/Auth/Storage**: Supabase — PostgreSQL com Row Level Security em todas as tabelas, Auth (e-mail + senha, MFA TOTP para equipe, magic link para cliente), Storage com bucket privado por cliente (`cliente_id/processo_id/`), acesso somente por URLs assinadas de curta duração.
 - **Automação no banco**: Edge Functions e pg_cron (lembretes, alertas de vencimento, processos parados).
 - **Hosting**: Vercel, com ambientes separados (Supabase dev/prod) e branch preview.
+  Funções na região **`syd1`** (`vercel.json`), ao lado do banco (Supabase em
+  `ap-southeast-2`, Sydney). Até out/2026 rodavam no padrão `iad1`
+  (Washington): cada consulta cruzava o Pacífico (~200 ms) e as telas levavam
+  1–6 s. Não tirar a região do `vercel.json`.
 - **i18n**: next-intl, dicionários pt e en. Idioma da equipe é independente do idioma do portal (campo `idioma_preferencial` no perfil do cliente).
 - **Integrações futuras** (Fases 2–4, não construir antes da hora): Resend, Google Calendar API, Web3Forms, Stripe, Xero, WhatsApp Business API, Anthropic API (sempre com validação humana, conteúdo marcado como gerado por IA).
 

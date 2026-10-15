@@ -192,6 +192,47 @@ ordem, antes de testar `/tarefas` e `/agenda`.
   DEFINER).
 - `tests/database/007_guides_templates_audit_rls.test.sql` — testes pgTAP.
 
+## Desempenho do RLS (out/2026)
+
+- `migrations/20261015120000_rls_initplan_performance.sql` — **aplicada em
+  2026-10-16** (a primeira tentativa, em 15/10, não tinha rodado de fato: o
+  diagnóstico mostrou 167 políticas fora do padrão). Sozinha **não resolveu**:
+  a medição depois dela deu 57014 ×4 e 6287 ms. — reescreve, a
+  partir do catálogo (`pg_policy`), toda política de `public` e `storage`
+  trocando `get_user_role()`/`auth.uid()` por `(select …)`, para o Postgres
+  calcular cada uma uma vez por comando em vez de uma vez por linha. Só
+  `alter policy` com o mesmo texto: nome, comando, funções e lógica iguais.
+  Adiciona índices compostos em `client_access` (`client_user_id, client_id`
+  e `partner_id, client_id`); os índices simples das colunas de junção já
+  existiam. Pode rodar de novo sem efeito. O resultado no SQL Editor é uma
+  linha por schema com `fora_do_padrao = 0` (vazio = não rodou).
+  Conferido antes num Postgres local (PGlite) com todas as migrações: 164
+  de 165 políticas reescritas, texto idêntico tirando o sub-select, e as
+  mesmas contagens visíveis em 384 combinações função × tabela.
+- Medição: `node scripts/measure-form-rls.mjs` (só dado demo, usuário
+  temporário apagado no final). Antes da migração (2026-10-15), 8 linhas com
+  a sessão do cliente: 57014, 57014, 6455 ms; com a secret key: ~190 ms.
+- `tests/database/022_rls_initplan.test.sql` — falha se alguma política
+  nova chamar as funções sem o sub-select. Os testes 001–021 continuam
+  valendo sem mudança.
+- Diagnóstico (`diagnostics/explain-form-upsert.sql`, colar no SQL Editor,
+  roda em rollback): com a sessão do cliente, **~2 s só de planejamento** e
+  3,1 s de execução; sem RLS, 1 ms e 16 ms. `statement_timeout` do
+  `authenticated` é 8 s. Causa: o RLS de case_forms/cases/client_access
+  expandido dentro de cada EXISTS das políticas de case_form_responses.
+- `migrations/20261016120000_rls_case_form_helpers.sql` — **aplicada em
+  2026-10-16** (12 políticas com função auxiliar). Medição depois dela, 8
+  linhas com a sessão do cliente: 306, 322, 190, 319, 396 ms, sem nenhum
+  57014 (secret key: 118–169 ms). O portal voltou a gravar com a sessão do
+  cliente. As políticas não-staff de `case_forms` e
+  `case_form_responses` (12) passam a checar a posse por
+  `private.acesso_processo(case_id, via)` / `private.acesso_formulario(id,
+  via)`, SECURITY DEFINER, no schema `private` (fora da API). Mesma junção e
+  mesmo filtro da política original; o RLS aninhado que sai só repetia a
+  condição. No PGlite: as mesmas contagens em 384 combinações função ×
+  tabela, planejamento 170 ms → 0,3 ms, upsert de 8 linhas 559 ms → 24 ms.
+  Teste: `tests/database/023_rls_case_form_helpers.test.sql`.
+
 ## Validação de testes pgTAP (registro manual)
 
 Os testes de `tests/database/` são aplicados manualmente no SQL Editor do

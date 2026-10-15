@@ -279,11 +279,15 @@ cliente vê: processos, etapa, formulário, checklist de documentos (com
 envio por item e "Outros documentos") e a lista dos arquivos que **ele mesmo**
 enviou; não vê notas internas, riscos, invoices nem documentos da equipe.
 Envio pelo portal muda o item do checklist para "Enviado"/"Reenviado".
-**Gravação do formulário do portal vai pelo cliente admin** depois de checar
-o processo com a sessão do cliente: com a sessão do cliente, as políticas de
-`case_form_responses` levavam ~5 s por linha e estouravam o tempo do banco
-(57014), travando o "Próximo". Causa de fundo (políticas chamando
-`get_user_role()` por linha, sem `(select ...)`) ainda não corrigida.
+**Gravação do formulário do portal é com a sessão do cliente** (RLS). Entre
+15 e 16/out ela foi pelo cliente admin porque as políticas de
+`case_form_responses` estouravam o tempo do banco (57014, ~2 s só de
+planejamento por causa do RLS de case_forms/cases/client_access expandido
+dentro dos EXISTS). Corrigido com `20261015120000_rls_initplan_performance.sql`
+(sub-select em todas as políticas; sozinha não bastou) e
+`20261016120000_rls_case_form_helpers.sql` (posse checada por funções
+SECURITY DEFINER em `private`), ambas aplicadas: ~200–400 ms por bloco de 8
+(`node scripts/measure-form-rls.mjs`).
 
 ## Dados de demonstração
 

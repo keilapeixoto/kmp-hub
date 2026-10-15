@@ -79,6 +79,21 @@ com o token daquele usuário, falha na RLS.
    permissão.
 5. Rodar o teste manualmente e confirmar passagem **antes** de aplicar a
    migração em qualquer ambiente compartilhado.
+6. Chamar as funções sempre dentro de um sub-select:
+   `(select public.get_user_role())` e `(select auth.uid())`, nunca direto.
+   Sem isso o Postgres reavalia a função a cada linha — e, com os `exists`
+   em `cases`/`client_access` (que também têm RLS), a conta se multiplica.
+   Foi o que fazia o portal estourar o tempo do banco (57014) ao gravar o
+   formulário (out/2026, corrigido em
+   `20261015120000_rls_initplan_performance.sql`); o teste
+   `022_rls_initplan.test.sql` acusa qualquer política nova fora do padrão.
+7. Se a política precisa de `exists` em tabela que também tem RLS (cadeia
+   de posse via `cases`/`client_access`), faça o `exists` numa função
+   `security definer` no schema `private` (fora da API), que responde só
+   sobre `auth.uid()` — padrão de `private.acesso_processo` /
+   `private.acesso_formulario` (`20261016120000_rls_case_form_helpers.sql`).
+   Sem isso o Postgres expande o RLS de cada tabela dentro do `exists` e o
+   planejamento de um upsert simples passou de 2 s.
 
 ### Vazamento sutil que já aconteceu neste projeto (não repita)
 

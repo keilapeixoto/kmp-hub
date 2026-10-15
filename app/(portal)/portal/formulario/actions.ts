@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import type { CaseFormField } from "@/lib/case-forms/types";
 import { getEtapasComCampos } from "@/lib/case-forms/data";
 import { camposPendentes } from "@/lib/case-forms/validate";
@@ -17,13 +16,12 @@ const EDITAVEL = ["em_preenchimento", "enviado"];
 /**
  * Gravação das respostas do portal.
  *
- * O acesso é provado com a sessão do cliente: o processo só aparece na
- * leitura se o RLS de `cases` liberar para ele. A gravação em si vai pelo
- * cliente admin — com a sessão do cliente, as políticas de
- * case_form_responses levavam ~5 s por linha e estouravam o tempo do banco
- * (57014), e o "Próximo" ficava parado (out/2026). O trigger
- * validate_case_form_response_field continua garantindo que cada campo é do
- * formulário deste processo.
+ * Tudo com a sessão do cliente: o RLS de case_forms/case_form_responses
+ * decide o que ele pode gravar, e o trigger validate_case_form_response_field
+ * garante que cada campo é do formulário deste processo. Entre 15 e 16/out/2026
+ * a gravação ia pelo cliente admin porque as políticas estouravam o tempo do
+ * banco (57014); corrigido em 20261016120000_rls_case_form_helpers.sql
+ * (medição: scripts/measure-form-rls.mjs, ~200–400 ms por bloco de 8).
  */
 export async function saveFormStep(
   caseId: string,
@@ -39,15 +37,14 @@ export async function saveFormStep(
   const { data: caso } = await supabase.from("cases").select("id").eq("id", caseId).maybeSingle();
   if (!caso) redirect("/portal");
 
-  const admin = createAdminClient();
-  let { data: caseForm } = await admin
+  let { data: caseForm } = await supabase
     .from("case_forms")
     .select("id, status")
     .eq("case_id", caseId)
     .eq("template_id", templateId)
     .maybeSingle();
   if (!caseForm) {
-    const { data, error } = await admin
+    const { data, error } = await supabase
       .from("case_forms")
       .insert({ case_id: caseId, template_id: templateId, status: "em_preenchimento" })
       .select("id, status")
@@ -58,7 +55,7 @@ export async function saveFormStep(
   if (!caseForm) redirect(`${base}&etapa=${currentStep}&erro=1`);
 
   if (fields.length > 0 && EDITAVEL.includes(caseForm.status as string)) {
-    const { erro } = await salvarRespostasEmBlocos(admin, linhasDeFormData(caseForm.id, fields, formData));
+    const { erro } = await salvarRespostasEmBlocos(supabase, linhasDeFormData(caseForm.id, fields, formData));
     if (erro) {
       console.error("[saveFormStep] gravar respostas falhou:", erro.code, erro.message);
       redirect(`${base}&etapa=${currentStep}&erro=1`);
@@ -68,7 +65,7 @@ export async function saveFormStep(
   if (direction === "enviar") {
     // Obrigatórios só valem aqui: "Próximo" sempre avança e salva.
     const etapas = await getEtapasComCampos(templateId);
-    const { data: linhas } = await admin
+    const { data: linhas } = await supabase
       .from("case_form_responses")
       .select("field_id, valor")
       .eq("case_form_id", caseForm.id);
@@ -79,7 +76,7 @@ export async function saveFormStep(
       redirect(`${base}&etapa=${pendentes[0].etapa}&pendentes=${pendentes.length}`);
     }
     if (caseForm.status === "em_preenchimento") {
-      await admin
+      await supabase
         .from("case_forms")
         .update({ status: "enviado", enviado_em: new Date().toISOString() })
         .eq("id", caseForm.id);

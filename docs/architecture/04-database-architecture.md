@@ -29,7 +29,9 @@
   de quem está codando naquele dia.
 - **Toda policy de RLS consulta `public.get_user_role()`**, nunca lê o JWT
   diretamente nem duplica lógica de função em cada tabela. Essa é a única
-  fonte de verdade sobre "qual é a função deste usuário".
+  fonte de verdade sobre "qual é a função deste usuário". Sempre como
+  `(select public.get_user_role())` / `(select auth.uid())` — ver item 6 do
+  checklist em [08](./08-security-guide.md).
 - **Cálculo derivado que precisa estar sempre certo vive em trigger
   `security definer`**, não em Server Action (percentual de checklist, cópia
   do histórico de status, criação da versão inicial de documento).

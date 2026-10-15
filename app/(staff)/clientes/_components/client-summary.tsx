@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { AlertTriangle, IdCard } from "lucide-react";
+import { FaixaTitulo } from "@/components/ui/vivid";
 import type {
   Client,
   ClientRelationWithRelated,
@@ -19,68 +21,62 @@ export function ClientSummary({
     (d) => !d.arquivado && isDocumentExpiringSoon(d.validade),
   );
 
+  const linhas: { label: string; valor: React.ReactNode }[] = [
+    { label: "E-mail", valor: client.email ?? "—" },
+    { label: "Telefone", valor: client.telefone ?? "—" },
+    { label: "País", valor: client.pais ?? "—" },
+    { label: "Situação", valor: client.situacao ?? "—" },
+    {
+      label: "Idioma do portal",
+      valor: client.idioma_preferencial === "en" ? "English" : "Português",
+    },
+    {
+      label: "Dependentes",
+      valor: `${relations.length} cadastrado${relations.length === 1 ? "" : "s"}`,
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
-        <h2 className="font-heading text-lg text-kmp-text">
-          Dados gerais
-        </h2>
-        <dl className="mt-4 space-y-2 text-sm text-kmp-text/70">
-          <div>
-            <dt className="inline font-medium">País: </dt>
-            <dd className="inline">{client.pais ?? "—"}</dd>
-          </div>
-          <div>
-            <dt className="inline font-medium">Situação: </dt>
-            <dd className="inline">{client.situacao ?? "—"}</dd>
-          </div>
-          <div>
-            <dt className="inline font-medium">Idioma do portal: </dt>
-            <dd className="inline">
-              {client.idioma_preferencial === "en" ? "English" : "Português"}
-            </dd>
-          </div>
+    <div className="space-y-6">
+      <section className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
+        <FaixaTitulo titulo="Dados gerais" cor="lilas" icon={IdCard} />
+        <dl className="space-y-2 text-sm">
+          {linhas.map((l) => (
+            <div key={l.label} className="flex justify-between gap-3">
+              <dt className="text-kmp-text/60">{l.label}</dt>
+              <dd className="truncate text-right font-medium text-kmp-text">{l.valor}</dd>
+            </div>
+          ))}
           {client.lead_id ? (
-            <div>
-              <dt className="inline font-medium">Origem: </dt>
-              <dd className="inline">
-                <Link
-                  href={`/leads/${client.lead_id}`}
-                  className="text-kmp-orange hover:underline"
-                >
+            <div className="flex justify-between gap-3">
+              <dt className="text-kmp-text/60">Origem</dt>
+              <dd>
+                <Link href={`/leads/${client.lead_id}`} className="font-medium text-kmp-orange hover:underline">
                   ver lead de origem
                 </Link>
               </dd>
             </div>
           ) : null}
         </dl>
-      </div>
+      </section>
 
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
-        <h2 className="font-heading text-lg text-kmp-text">
-          Pendências
-        </h2>
+      <section className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
+        <FaixaTitulo titulo="Documentos de identidade" cor="laranja" icon={AlertTriangle} />
         {expiring.length === 0 ? (
-          <p className="mt-4 text-sm text-kmp-text/50">
-            Nenhum documento vencendo em breve.
-          </p>
+          <p className="text-sm text-kmp-text/60">Nenhum documento vencendo em breve.</p>
         ) : (
-          <ul className="mt-4 space-y-2 text-sm">
+          <ul className="space-y-2 text-sm">
             {expiring.map((doc) => {
               const days = daysUntil(doc.validade!);
               return (
-                <li key={doc.id} className="text-kmp-orange">
-                  ⚠ {doc.tipo} {days < 0 ? "vencido" : `vence em ${days} dias`}
+                <li key={doc.id} className="font-medium text-[#a8490a] dark:text-[#f8b07a]">
+                  {doc.tipo} {days < 0 ? "vencido" : `vence em ${days} dias`}
                 </li>
               );
             })}
           </ul>
         )}
-        <p className="mt-4 text-sm text-kmp-text/50">
-          {relations.length} dependente{relations.length === 1 ? "" : "s"}{" "}
-          cadastrado{relations.length === 1 ? "" : "s"}.
-        </p>
-      </div>
+      </section>
     </div>
   );
 }

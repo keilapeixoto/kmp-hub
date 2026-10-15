@@ -22,6 +22,7 @@ export function TaskForm({
   cases,
   otherTasks,
   clientNameById,
+  defaultClientId,
 }: {
   action: (prevState: TaskFormState, formData: FormData) => Promise<TaskFormState>;
   task?: Task;
@@ -30,6 +31,8 @@ export function TaskForm({
   cases: Case[];
   otherTasks: Task[];
   clientNameById: Record<string, string>;
+  /** Cliente já escolhido ao abrir a partir do perfil do cliente (?cliente=). */
+  defaultClientId?: string;
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
 
@@ -171,7 +174,7 @@ export function TaskForm({
           <select
             id="client_id"
             name="client_id"
-            defaultValue={task?.client_id ?? ""}
+            defaultValue={task?.client_id ?? defaultClientId ?? ""}
             className={inputClass}
           >
             <option value="">Nenhum</option>

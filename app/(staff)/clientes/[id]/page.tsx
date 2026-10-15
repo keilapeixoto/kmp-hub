@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
 import { getConsultants } from "@/lib/leads/data";
@@ -9,7 +8,16 @@ import {
   getDistinctClientValues,
   getIdentityDocuments,
 } from "@/lib/clients/data";
-import { getAllCaseStages, getCasesByClient, getServiceTypes } from "@/lib/cases/data";
+import {
+  getAllCaseStages,
+  getCasesByClient,
+  getCaseStatusLabels,
+  getServiceTypes,
+  getTeamMembersStaff,
+} from "@/lib/cases/data";
+import { getPerfilDoCliente } from "@/lib/clients/perfil";
+import { indicadoresDoCliente } from "@/lib/clients/perfil-calc";
+import { dayKeySydney } from "@/lib/appointments/timezones";
 import { getDocumentsByClient } from "@/lib/documents/data";
 import { getClientTimeline } from "@/lib/timeline/data";
 import { updateClientRecord } from "../actions";
@@ -24,7 +32,8 @@ async function regrasDeEnvio() {
 }
 import { ClientForm } from "../_components/client-form";
 import { ClientSummary } from "../_components/client-summary";
-import { ClientTabs } from "../_components/client-tabs";
+import { ClientHero } from "../_components/client-hero";
+import { ClientProcessCards, ClientTasks } from "../_components/client-overview";
 import { DependentsPanel } from "../_components/dependents-panel";
 import { PortalAccessCard } from "../_components/portal-access-card";
 import { DocumentsPanel } from "../_components/documents-panel";
@@ -71,6 +80,8 @@ export default async function ClientDetailPage({
     allStages,
     clientFiles,
     hasPortalAccess,
+    statusLabels,
+    staff,
   ] = await Promise.all([
     getCurrentUserProfile(),
     getCurrentUserRole(),
@@ -84,37 +95,63 @@ export default async function ClientDetailPage({
     getAllCaseStages(),
     getDocumentsByClient(id),
     getClientHasPortalAccess(id),
+    getCaseStatusLabels(),
+    getTeamMembersStaff(),
   ]);
 
   const stagesById = Object.fromEntries(allStages.map((s) => [s.id, s]));
+  const serviceNameById = Object.fromEntries(serviceTypes.map((st) => [st.id, st.nome]));
+  const staffNameById = Object.fromEntries(staff.map((m) => [m.user_id, m.nome]));
+  const perfil = await getPerfilDoCliente(id, cases);
+  const indicadores = indicadoresDoCliente(
+    cases.map((c) => ({
+      status: c.status,
+      checklistPct: perfil.processos[c.id]?.checklistPct ?? null,
+      formularioPct: perfil.processos[c.id]?.formularioPct ?? null,
+      pendentesCliente: perfil.processos[c.id]?.pendentesCliente ?? 0,
+      prazo: c.prazo,
+    })),
+  );
+  const hoje = dayKeySydney(new Date().toISOString());
   const updateWithId = updateClientRecord.bind(null, id);
 
   return (
     <div className="space-y-6">
-      <div>
-        <Link
-          href="/clientes"
-          className="text-sm text-kmp-text/60 hover:text-kmp-orange"
-        >
-          ← Clientes
-        </Link>
-        <h1 className="mt-1 font-heading text-2xl text-kmp-text">
-          {client.nome}
-        </h1>
-      </div>
-
-      <ClientTabs clientId={id} active={tab} />
+      <ClientHero
+        client={client}
+        consultoraNome={
+          consultants.find((c) => c.user_id === client.consultor_id)?.nome ??
+          staffNameById[client.consultor_id] ??
+          null
+        }
+        indicadores={indicadores}
+        abaAtiva={tab}
+        hoje={hoje}
+      />
 
       {tab === "resumo" ? (
-        <div className="space-y-6">
-          <ClientSummary client={client} relations={relations} documents={documents} />
-          <PortalAccessCard
-            clientId={id}
-            hasEmail={Boolean(client.email)}
-            hasAccess={hasPortalAccess}
-            canInvite={role === "admin" || role === "director"}
-          />
-          {client.email ? <SendEmailPanel clientEmail={client.email} /> : null}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-2">
+            <ClientProcessCards
+              cases={cases}
+              processos={perfil.processos}
+              serviceNameById={serviceNameById}
+              stagesById={stagesById}
+              statusLabels={statusLabels}
+              hoje={hoje}
+            />
+            <ClientTasks clientId={id} tarefas={perfil.tarefas} staffNameById={staffNameById} hoje={hoje} />
+          </div>
+          <div className="space-y-6">
+            <ClientSummary client={client} relations={relations} documents={documents} />
+            <PortalAccessCard
+              clientId={id}
+              hasEmail={Boolean(client.email)}
+              hasAccess={hasPortalAccess}
+              canInvite={role === "admin" || role === "director"}
+            />
+            {client.email ? <SendEmailPanel clientEmail={client.email} /> : null}
+          </div>
         </div>
       ) : null}
 

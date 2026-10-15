@@ -5,7 +5,13 @@ import { getTasks } from "@/lib/tasks/data";
 import { createTask } from "../actions";
 import { TaskForm } from "../_components/task-form";
 
-export default async function NovaTarefaPage() {
+export default async function NovaTarefaPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const sp = await searchParams;
+  const clienteParam = Array.isArray(sp.cliente) ? sp.cliente[0] : sp.cliente;
   const [staff, clients, cases, otherTasks] = await Promise.all([
     getTeamMembersStaff(),
     getClients({}),
@@ -37,6 +43,7 @@ export default async function NovaTarefaPage() {
           cases={cases}
           otherTasks={otherTasks}
           clientNameById={clientNameById}
+          defaultClientId={clients.some((c) => c.id === clienteParam) ? clienteParam : undefined}
         />
       </div>
     </div>

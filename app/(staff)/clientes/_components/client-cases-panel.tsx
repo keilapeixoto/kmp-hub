@@ -1,17 +1,20 @@
 import Link from "next/link";
 import { getCaseStatusLabels } from "@/lib/cases/data";
 import type { Case, CaseStage, ServiceType } from "@/lib/cases/types";
+import { FaseNoPortal } from "./fase-no-portal";
 
 export async function ClientCasesPanel({
   clientId,
   cases,
   serviceTypes,
   stagesById,
+  allStages,
 }: {
   clientId: string;
   cases: Case[];
   serviceTypes: ServiceType[];
   stagesById: Record<string, CaseStage>;
+  allStages: CaseStage[];
 }) {
   const statusLabels = await getCaseStatusLabels();
   const serviceTypeName = (id: string) =>
@@ -36,7 +39,8 @@ export async function ClientCasesPanel({
         ) : (
           <ul className="divide-y divide-kmp-divider">
             {cases.map((c) => (
-              <li key={c.id} className="flex items-center justify-between p-4 text-sm">
+              <li key={c.id} className="p-4 text-sm">
+                <div className="flex items-center justify-between gap-3">
                 <div>
                   <Link
                     href={`/processos/${c.id}`}
@@ -51,6 +55,15 @@ export async function ClientCasesPanel({
                 <span className="rounded-full bg-kmp-divider px-2.5 py-0.5 text-xs font-medium text-kmp-text/80">
                   {statusLabels[c.status] ?? c.status}
                 </span>
+                </div>
+                <FaseNoPortal
+                  caseId={c.id}
+                  etapaAtual={c.etapa_id}
+                  etapas={allStages
+                    .filter((s) => s.service_type_id === c.service_type_id)
+                    .sort((a, b) => a.ordem - b.ordem)
+                    .map((s) => ({ id: s.id, nome: s.nome }))}
+                />
               </li>
             ))}
           </ul>

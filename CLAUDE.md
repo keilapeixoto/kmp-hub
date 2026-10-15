@@ -280,9 +280,13 @@ envio por item e "Outros documentos") e a lista dos arquivos que **ele mesmo**
 enviou; não vê notas internas, riscos, invoices nem documentos da equipe.
 Envio pelo portal muda o item do checklist para "Enviado"/"Reenviado" e
 manda e-mail à consultora (`notifyDocumentUploaded`, Resend; falha do e-mail
-nunca impede o envio). "Linha do tempo" no início do portal
-(`lib/portal/linha-do-tempo.ts`): só início, etapas, status, formulário
-enviado e arquivos do próprio cliente.
+nunca impede o envio). Página "Linha do tempo" do portal
+(`/portal/linha-do-tempo`, no lugar de Ocupações, que saiu do menu do
+portal): fases do processo (concluídas/atual/próximas) e histórico
+(`lib/portal/linha-do-tempo.ts` — só início, etapas, status, formulário
+enviado e arquivos do próprio cliente). A equipe muda a fase no perfil do
+cliente, aba Processos ("Fase que o cliente vê no portal",
+`fase-no-portal.tsx`), que é a mesma etapa do Pipeline.
 **Gravação do formulário do portal vai pelo cliente admin** depois de checar
 o processo com a sessão do cliente: com a sessão do cliente, as políticas de
 `case_form_responses` levavam ~5 s por linha e estouravam o tempo do banco

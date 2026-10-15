@@ -109,6 +109,8 @@ export async function updateCaseEtapa(id: string, etapaId: string) {
   const supabase = await createClient();
   await supabase.from("cases").update({ etapa_id: etapaId }).eq("id", id);
   revalidatePath("/processos");
+  revalidatePath("/clientes/[id]", "page");
+  revalidatePath("/portal", "layout"); // o cliente vê a fase nova no portal
 }
 
 export async function updateCaseStatusDrag(id: string, status: string) {

@@ -152,6 +152,7 @@ export default async function ClientDetailPage({
           cases={cases}
           serviceTypes={serviceTypes}
           stagesById={stagesById}
+          allStages={allStages}
         />
       ) : null}
 

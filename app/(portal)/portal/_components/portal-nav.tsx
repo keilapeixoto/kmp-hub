@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const ABAS = [
   { href: "/portal", label: "Meu processo" },
   { href: "/portal/documentos", label: "Documentos" },
-  { href: "/portal/ocupacoes", label: "Ocupações" },
+  { href: "/portal/linha-do-tempo", label: "Linha do tempo" },
 ];
 
 export function PortalNav() {

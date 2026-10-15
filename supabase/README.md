@@ -249,8 +249,10 @@ ordem, antes de testar `/tarefas` e `/agenda`.
   listas 1,2–2 s, Dashboard 2,4 s, Início 2,9 s, aba Documentos do cliente
   5 s, detalhe do processo 6,1 s — com o banco respondendo em milissegundos.
   As funções da Vercel rodavam em `iad1` (Washington) e o banco fica em
-  `ap-southeast-2` (Sydney). `vercel.json` passou a fixar `syd1`; medir de
-  novo depois do deploy.
+  `ap-southeast-2` (Sydney). `vercel.json` passou a fixar `syd1`.
+  Depois do deploy (2026-10-16, mesma medição): listas 0,3–0,5 s, Dashboard
+  0,5 s, Início 0,6 s, detalhe do processo 0,7 s, aba Documentos 0,9 s —
+  de 4 a 9 vezes mais rápido.
 
 ## Validação de testes pgTAP (registro manual)
 

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "KMP Hub — ImmiAccount Autofill",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Preenche automaticamente o código de verificação do ImmiAccount e os dados do formulário de visto, usando o Gmail e o Hub conectados.",
   "icons": {
     "16": "icons/icon16.png",
@@ -19,6 +19,7 @@
   "permissions": ["storage"],
   "host_permissions": [
     "https://online.immi.gov.au/*",
+    "https://crmportal.kmpconsulting.com.au/*",
     "https://kmp-hub.vercel.app/*"
   ],
   "content_scripts": [

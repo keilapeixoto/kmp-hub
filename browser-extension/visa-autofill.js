@@ -10,7 +10,7 @@
 // Nunca clica em Previous/Next/Save/Submit — toda navegação e envio da
 // aplicação continua manual, pra Keila revisar cada tela antes de avançar.
 
-const KMP_API_BASE = "https://kmp-hub.vercel.app";
+const KMP_API_BASE = "https://crmportal.kmpconsulting.com.au";
 
 // ---------------------------------------------------------------------------
 // Tradução PT -> EN pros países mais comuns da base de clientes (maioria

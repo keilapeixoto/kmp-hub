@@ -1,4 +1,4 @@
-const API_BASE = "https://kmp-hub.vercel.app";
+const API_BASE = "https://crmportal.kmpconsulting.com.au";
 
 const tokenInput = document.getElementById("tokenInput");
 const saveBtn = document.getElementById("saveBtn");

@@ -1,6 +1,7 @@
 "use server";
 
 import { portalUrl } from "@/lib/dominios";
+import { mensagemErroLink } from "@/lib/portal/erro-link";
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -28,10 +29,9 @@ export async function requestPortalMagicLink(
   });
 
   if (error) {
-    return {
-      error: "Não foi possível enviar o link. Confira o e-mail e tente de novo.",
-      sent: false,
-    };
+    // código e mensagem do Supabase (sem o e-mail digitado)
+    console.error("[requestPortalMagicLink] falhou:", error.status, error.code, error.message);
+    return { error: mensagemErroLink(error), sent: false };
   }
 
   return { error: null, sent: true };

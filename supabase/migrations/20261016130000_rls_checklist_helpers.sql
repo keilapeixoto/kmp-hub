@@ -13,7 +13,7 @@
 -- junção com o mesmo filtro e responde só sobre o usuário logado. Nome,
 -- comando e função de cada política continuam iguais (só ALTER POLICY).
 -- Políticas de admin/diretor não mudam. Testes: 005_checklists_documents_rls
--- (permissões, sem mudança) e 024_rls_checklist_helpers.
+-- (permissões, sem mudança) e 025_rls_checklist_helpers.
 
 -- Mesmo que private.acesso_formulario, partindo do checklist (checklists.id).
 create or replace function private.acesso_checklist(p_checklist_id uuid, p_via text)

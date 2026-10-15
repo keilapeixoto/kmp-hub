@@ -1,7 +1,7 @@
 // Mede quanto tempo leva gravar respostas do formulário com a sessão de um
 // cliente (RLS ativo) comparado com a secret key (sem RLS). Usado para
 // decidir se o portal pode voltar a gravar com a sessão do cliente depois da
-// migração 20261015120000_rls_initplan_performance.sql.
+// migração 20261015130000_rls_initplan_performance.sql.
 //
 // Só mexe em dado de demonstração (is_demo = true) e desfaz tudo no final:
 // cria um usuário cliente temporário (@kmp.test), dá acesso a um cliente

@@ -85,8 +85,8 @@ com o token daquele usuário, falha na RLS.
    em `cases`/`client_access` (que também têm RLS), a conta se multiplica.
    Foi o que fazia o portal estourar o tempo do banco (57014) ao gravar o
    formulário (out/2026, corrigido em
-   `20261015120000_rls_initplan_performance.sql`); o teste
-   `022_rls_initplan.test.sql` acusa qualquer política nova fora do padrão.
+   `20261015130000_rls_initplan_performance.sql`); o teste
+   `023_rls_initplan.test.sql` acusa qualquer política nova fora do padrão.
 7. Se a política precisa de `exists` em tabela que também tem RLS (cadeia
    de posse via `cases`/`client_access`), faça o `exists` numa função
    `security definer` no schema `private` (fora da API), que responde só

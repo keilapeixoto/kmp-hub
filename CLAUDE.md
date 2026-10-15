@@ -38,7 +38,7 @@ Repositório e schema novos (não evolução do CRM atual) — motivo: RLS por f
 - **Toda regra de permissão vive no banco via RLS.** A interface só esconde o que o usuário não deve ver; o banco garante que ele não acessa mesmo tentando via API direta.
 - **Nunca expor a secret key (`SUPABASE_SECRET_KEY`) no cliente.** Só em código de servidor (Server Actions, Route Handlers, Edge Functions).
 - **Notas internas e riscos** ficam em colunas/tabelas separadas, com política RLS que exclui a função `client` incondicionalmente — nunca aparecem no portal.
-- **Documentos**: soft delete apenas (arquivamento), nunca exclusão permanente; só admin acessa arquivados.
+- **Documentos**: excluir = arquivar (soft delete); só admin acessa arquivados. **Exceção (out/2026, pedido da Keila):** admin pode excluir definitivamente, só a partir de "Arquivados" e com confirmação (`deleteClientFilePermanently` — apaga Storage, versões e a linha; a auditoria registra).
 - **Fusos horários**: tudo em UTC no banco, conversão só na interface (BR, Sydney, Brisbane, fuso do cliente).
 - **Fases rígidas**: nada da Fase 2 (portal, formulários públicos, propostas, invoices, integrações externas, IA) entra antes da Fase 1 estar validada em uso real. **Exceção aberta (set/2026):** emissão de invoices adiantada a pedido da Keila, antes da Fase 1 fechar (Sprint 8/checklist da seção 32 e projeto Supabase de produção ainda pendentes). Escopo inicial: registro/emissão interna (sem Stripe/Xero — essas integrações continuam fora de escopo até serem pedidas). **Exceção aberta (out/2026):** integração com Google Calendar/Gmail (agenda real + e-mail não lido/urgente no Início, envio de e-mail pelo Gmail), também adiantada a pedido da Keila — ver "Integração Google" em Estado atual. **Exceção aberta (out/2026):** extensão de navegador pra preenchimento automático do ImmiAccount (fora do app Next.js, ver "Extensão ImmiAccount Autofill" em Estado atual).
 - **Maior risco do projeto é RLS mal configurado.** Toda tabela nova precisa de teste automatizado de permissão por função, antes de qualquer deploy.
@@ -282,12 +282,25 @@ cliente não tem SELECT em `case_stages`/`profiles` de propósito. O que o
 cliente vê: processos, etapa, formulário, checklist de documentos (com
 envio por item e "Outros documentos") e a lista dos arquivos que **ele mesmo**
 enviou; não vê notas internas, riscos, invoices nem documentos da equipe.
-Envio pelo portal muda o item do checklist para "Enviado"/"Reenviado".
+Envio pelo portal muda o item do checklist para "Enviado"/"Reenviado" e
+manda e-mail à consultora (`notifyDocumentUploaded`, Resend; falha do e-mail
+nunca impede o envio). Página "Linha do tempo" do portal
+(`/portal/linha-do-tempo`, no lugar de Ocupações, que saiu do menu do
+portal): fases do processo (concluídas/atual/próximas) e histórico
+(`lib/portal/linha-do-tempo.ts` — só início, etapas, status, formulário
+enviado e arquivos do próprio cliente). A equipe muda a fase no perfil do
+cliente, aba Processos ("Fase que o cliente vê no portal",
+`fase-no-portal.tsx`), que é a mesma etapa do Pipeline. No mesmo lugar, "Recado
+para o cliente": texto curto que aparece em destaque no portal e entra na
+linha do tempo (tabela `case_client_updates`, append-only, migração
+`20261015120000_case_client_updates.sql`, RLS em
+`022_case_client_updates_rls.test.sql`; equipe do processo escreve, cliente
+só lê os dele).
 **Gravação do formulário do portal é com a sessão do cliente** (RLS). Entre
 15 e 16/out ela foi pelo cliente admin porque as políticas de
 `case_form_responses` estouravam o tempo do banco (57014, ~2 s só de
 planejamento por causa do RLS de case_forms/cases/client_access expandido
-dentro dos EXISTS). Corrigido com `20261015120000_rls_initplan_performance.sql`
+dentro dos EXISTS). Corrigido com `20261015130000_rls_initplan_performance.sql`
 (sub-select em todas as políticas; sozinha não bastou) e
 `20261016120000_rls_case_form_helpers.sql` (posse checada por funções
 SECURITY DEFINER em `private`), ambas aplicadas: ~200–400 ms por bloco de 8

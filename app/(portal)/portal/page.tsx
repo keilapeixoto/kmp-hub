@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Check, ClipboardList, FileUp, Mail, MessageCircle, UserRound } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 import { getPortalCases } from "@/lib/portal/data";
 import { getResumosDoPortal, type ResumoProcesso } from "@/lib/portal/resumo";
 import { linkWhatsapp } from "@/lib/portal/progresso";
@@ -154,7 +155,11 @@ function FaleComConsultora({ r }: { r: ResumoProcesso }) {
 
 export default async function PortalHomePage() {
   const cases = await getPortalCases();
-  const resumos = await getResumosDoPortal(cases);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const resumos = await getResumosDoPortal(cases, user?.id ?? null);
   const nome = primeiroNome(cases[0]?.client_nome ?? "");
 
   return (
@@ -191,12 +196,28 @@ export default async function PortalHomePage() {
                     <Etiqueta cor={c.status === "ativo" ? "verde" : "cinza"}>{STATUS_LABELS[c.status] ?? c.status}</Etiqueta>
                   </div>
                   <Etapas etapas={r.etapas} atual={r.etapaAtual} />
+                  {r.recado ? (
+                    <p className="mt-5 rounded-2xl bg-[#f27b20]/12 p-4 text-sm text-kmp-text">
+                      <span className="block text-xs font-semibold uppercase tracking-wide text-kmp-text/60">
+                        Recado da equipe
+                      </span>
+                      {r.recado.mensagem}
+                    </p>
+                  ) : null}
                 </section>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
                   <OQueFalta r={r} />
                   <FaleComConsultora r={r} />
                 </div>
+                {r.linhaDoTempo.length > 0 ? (
+                  <Link
+                    href="/portal/linha-do-tempo"
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-kmp-text/75 hover:text-kmp-text"
+                  >
+                    Ver a linha do tempo completa <ArrowRight className="h-4 w-4" />
+                  </Link>
+                ) : null}
               </div>
             );
           })

@@ -194,7 +194,7 @@ ordem, antes de testar `/tarefas` e `/agenda`.
 
 ## Desempenho do RLS (out/2026)
 
-- `migrations/20261015120000_rls_initplan_performance.sql` — **aplicada em
+- `migrations/20261015130000_rls_initplan_performance.sql` — **aplicada em
   2026-10-16** (a primeira tentativa, em 15/10, não tinha rodado de fato: o
   diagnóstico mostrou 167 políticas fora do padrão). Sozinha **não resolveu**:
   a medição depois dela deu 57014 ×4 e 6287 ms. — reescreve, a
@@ -212,7 +212,7 @@ ordem, antes de testar `/tarefas` e `/agenda`.
 - Medição: `node scripts/measure-form-rls.mjs` (só dado demo, usuário
   temporário apagado no final). Antes da migração (2026-10-15), 8 linhas com
   a sessão do cliente: 57014, 57014, 6455 ms; com a secret key: ~190 ms.
-- `tests/database/022_rls_initplan.test.sql` — falha se alguma política
+- `tests/database/023_rls_initplan.test.sql` — falha se alguma política
   nova chamar as funções sem o sub-select. Os testes 001–021 continuam
   valendo sem mudança.
 - Diagnóstico (`diagnostics/explain-form-upsert.sql`, colar no SQL Editor,
@@ -231,7 +231,7 @@ ordem, antes de testar `/tarefas` e `/agenda`.
   mesmo filtro da política original; o RLS aninhado que sai só repetia a
   condição. No PGlite: as mesmas contagens em 384 combinações função ×
   tabela, planejamento 170 ms → 0,3 ms, upsert de 8 linhas 559 ms → 24 ms.
-  Teste: `tests/database/023_rls_case_form_helpers.test.sql`.
+  Teste: `tests/database/024_rls_case_form_helpers.test.sql`.
 - Diagnóstico do Dashboard/Início (`diagnostics/explain-dashboard.sql`,
   2026-10-16, como admin): só a contagem de documentos pendentes
   (`checklist_items`) é lenta — 247 ms de planejamento + 50 ms; todas as
@@ -242,7 +242,7 @@ ordem, antes de testar `/tarefas` e `/agenda`.
   2026-10-16** (8 políticas com função auxiliar). Mesmo padrão para `checklists`/`checklist_items` (8
   políticas, função `private.acesso_checklist`). No PGlite: as mesmas
   contagens e edições em 64 combinações, planejamento 28 ms → 0,09 ms.
-  Teste: `tests/database/024_rls_checklist_helpers.test.sql`.
+  Teste: `tests/database/025_rls_checklist_helpers.test.sql`.
 - **Causa principal da lentidão geral não era RLS, era região.** Medição no
   site de produção (`node scripts/measure-staff-pages.mjs
   https://crmportal.kmpconsulting.com.au`, admin temporário, 2026-10-16):

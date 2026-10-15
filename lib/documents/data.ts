@@ -1,7 +1,8 @@
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 import type { Document, DocumentCategory } from "./types";
 
-export const DOCUMENTS_BUCKET = "documents";
+export { DOCUMENTS_BUCKET } from "./bucket";
+import { DOCUMENTS_BUCKET } from "./bucket";
 
 /** Curta duração (seção 1 do plano: "acesso somente por URLs assinadas de curta duração"). */
 const SIGNED_URL_EXPIRY_SECONDS = 300;

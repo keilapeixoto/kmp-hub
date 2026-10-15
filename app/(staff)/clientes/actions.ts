@@ -9,6 +9,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUserId, getCurrentUserRole } from "@/lib/auth";
 import { getValidAccessToken } from "@/lib/google/connections";
 import { sendGmail } from "@/lib/google/gmail";
+import { conferirArquivosEnviados } from "@/lib/documents/conferir-envio";
+import type { ArquivoEnviado, RegistroState } from "@/lib/portal/arquivos";
 
 export type ClientFormState = {
   error: string | null;
@@ -370,4 +372,80 @@ export async function sendClientEmail(
   }
 
   return { error: null, sent: true };
+}
+
+/**
+ * Registra arquivos que o navegador já subiu direto para a pasta do cliente
+ * no Storage (vários de uma vez, sem o limite do Server Action). A gravação
+ * em `documents` usa a sessão de quem está logado — o RLS decide se pode.
+ */
+export async function registrarArquivosDoCliente(
+  clientId: string,
+  caseId: string | null,
+  arquivos: ArquivoEnviado[],
+  categoriaId: string | null,
+  descricao: string | null = null,
+): Promise<RegistroState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sua sessão expirou. Entre de novo.", enviados: 0 };
+
+  const conferencia = await conferirArquivosEnviados(clientId, caseId ?? "geral", arquivos, descricao);
+  if (!conferencia.ok) return { error: conferencia.error, enviados: 0 };
+
+  const { error } = await supabase.from("documents").insert(
+    conferencia.arquivos.map((a) => ({
+      ...a,
+      client_id: clientId,
+      case_id: caseId,
+      enviado_por: user.id,
+      categoria_id: categoriaId || null,
+    })),
+  );
+  if (error) {
+    console.error("[registrarArquivosDoCliente] falhou:", error.code, error.message);
+    return { error: "Os arquivos subiram, mas não conseguimos registrá-los. Tente de novo.", enviados: 0 };
+  }
+  revalidatePath(`/clientes/${clientId}`);
+  return { error: null, enviados: conferencia.arquivos.length };
+}
+
+/** Tira o documento de "Arquivados" (só admin enxerga arquivados — RLS). */
+export async function restoreClientFile(clientId: string, documentId: string) {
+  const supabase = await createClient();
+  await supabase.from("documents").update({ arquivado: false }).eq("id", documentId);
+  revalidatePath(`/clientes/${clientId}`);
+}
+
+/**
+ * Exclusão definitiva (pedido da Keila, out/2026): só admin e só de um
+ * documento que já está em Arquivados. Apaga o arquivo do Storage e a linha
+ * de `documents` (o trigger de auditoria guarda o registro da exclusão).
+ */
+export async function deleteClientFilePermanently(clientId: string, documentId: string) {
+  const role = await getCurrentUserRole();
+  if (role !== "admin") return;
+
+  const supabase = await createClient();
+  const { data: doc } = await supabase
+    .from("documents")
+    .select("id, storage_path, arquivado")
+    .eq("id", documentId)
+    .maybeSingle();
+  if (!doc || !doc.arquivado) return;
+
+  const admin = createAdminClient();
+  // versões antigas também têm arquivo próprio no Storage
+  const { data: versoes } = await admin.from("document_versions").select("storage_path").eq("document_id", documentId);
+  const caminhos = [...new Set([doc.storage_path, ...(versoes ?? []).map((v) => v.storage_path as string)])];
+  const { error: storageError } = await admin.storage.from("documents").remove(caminhos);
+  if (storageError) {
+    console.error("[deleteClientFilePermanently] storage falhou:", storageError.message);
+    return;
+  }
+  const { error } = await supabase.from("documents").delete().eq("id", documentId);
+  if (error) console.error("[deleteClientFilePermanently] registro falhou:", error.code, error.message);
+  revalidatePath(`/clientes/${clientId}`);
 }

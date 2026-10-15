@@ -109,6 +109,8 @@ export async function updateCaseEtapa(id: string, etapaId: string) {
   const supabase = await createClient();
   await supabase.from("cases").update({ etapa_id: etapaId }).eq("id", id);
   revalidatePath("/processos");
+  revalidatePath("/clientes/[id]", "page");
+  revalidatePath("/portal", "layout"); // o cliente vê a fase nova no portal
 }
 
 export async function updateCaseStatusDrag(id: string, status: string) {
@@ -153,4 +155,39 @@ export async function archiveCase(id: string) {
   await supabase.from("cases").update({ status: "arquivado" }).eq("id", id);
   revalidatePath(`/processos/${id}`);
   revalidatePath("/processos");
+}
+
+/** Recado da equipe para o cliente, mostrado na linha do tempo do portal. */
+export async function addClientUpdate(
+  caseId: string,
+  mensagem: string,
+): Promise<{ error: string | null }> {
+  const texto = mensagem.trim();
+  if (!texto) return { error: "Escreva o recado." };
+  if (texto.length > 500) return { error: "Recado muito longo (máximo 500 caracteres)." };
+
+  const supabase = await createClient();
+  const { data: caso } = await supabase
+    .from("cases")
+    .select("etapa_id, case_stages!cases_etapa_id_fkey(nome)")
+    .eq("id", caseId)
+    .maybeSingle();
+  const etapaNome =
+    (caso as unknown as { case_stages?: { nome: string } | null } | null)?.case_stages?.nome ?? null;
+
+  const { error } = await supabase
+    .from("case_client_updates")
+    .insert({ case_id: caseId, mensagem: texto, etapa_nome: etapaNome });
+  if (error) {
+    console.error("[addClientUpdate] falhou:", error.code, error.message);
+    return {
+      error:
+        error.code === "42P01" || error.code === "PGRST205"
+          ? "A tabela de recados ainda não foi criada no banco (migração 20261015120000)."
+          : "Não foi possível salvar o recado.",
+    };
+  }
+  revalidatePath("/clientes/[id]", "page");
+  revalidatePath("/portal", "layout");
+  return { error: null };
 }

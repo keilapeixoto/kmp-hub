@@ -38,3 +38,37 @@ export async function avisarEnvio(deps: DepsAviso, caseId: string): Promise<void
     console.error("[avisarEnvio] falhou:", e instanceof Error ? e.message : "erro desconhecido");
   }
 }
+
+export function buildDocumentEmail({
+  clienteNome,
+  documento,
+  link,
+}: {
+  clienteNome: string;
+  documento: string;
+  link: string;
+}) {
+  const nomeLinha = clienteNome.replace(/[\r\n]+/g, " ").trim();
+  const docLinha = documento.replace(/[\r\n]+/g, " ").trim();
+  return {
+    subject: `Documento enviado pelo portal: ${nomeLinha}`,
+    html: `<p>O cliente <strong>${escapeHtml(nomeLinha)}</strong> enviou um documento pelo portal: <strong>${escapeHtml(docLinha)}</strong>.</p><p><a href="${escapeHtml(link)}">Abrir o processo no Hub</a></p>`,
+  };
+}
+
+/** Aviso de documento enviado pelo portal. Nunca lança: o envio do arquivo não depende do e-mail. */
+export async function avisarDocumento(deps: DepsAviso, caseId: string, documento: string): Promise<void> {
+  try {
+    const destino = await deps.buscarDestino(caseId);
+    if (!destino?.email) return;
+    const { subject, html } = buildDocumentEmail({
+      clienteNome: destino.clienteNome,
+      documento,
+      link: `${deps.siteUrl}/processos/${caseId}`,
+    });
+    const r = await deps.enviar([destino.email], subject, html);
+    if (!r.ok) console.error("[avisarDocumento] e-mail não enviado:", r.error);
+  } catch (e) {
+    console.error("[avisarDocumento] falhou:", e instanceof Error ? e.message : "erro desconhecido");
+  }
+}

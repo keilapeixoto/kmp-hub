@@ -24,7 +24,7 @@
 -- insert/...), funções (roles) e o tipo permissivo continuam iguais.
 -- Políticas criadas nesta migração em diante devem já nascer com o padrão
 -- (ver docs/architecture/08-security-guide.md); o teste
--- 022_rls_initplan.test.sql acusa qualquer uma que escapar.
+-- 023_rls_initplan.test.sql acusa qualquer uma que escapar.
 --
 -- Pode rodar mais de uma vez: o que já está envolvido não é envolvido de
 -- novo (a troca ignora chamadas que já vêm depois de "SELECT ").

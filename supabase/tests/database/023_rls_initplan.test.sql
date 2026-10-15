@@ -1,5 +1,5 @@
 -- KMP Hub · Guarda de desempenho das políticas de RLS. Cobre:
--- 20261015120000_rls_initplan_performance.sql.
+-- 20261015130000_rls_initplan_performance.sql.
 --
 -- Não testa permissão (isso continua nos testes 001–021, que devem passar
 -- sem nenhuma mudança — a migração não altera quem vê o quê). Testa que

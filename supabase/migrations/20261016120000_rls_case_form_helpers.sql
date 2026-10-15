@@ -1,7 +1,7 @@
 -- KMP Hub · Formulários: posse do processo checada por função auxiliar, sem
 -- RLS aninhado (out/2026).
 --
--- A migração 20261015120000 (sub-select em get_user_role()/auth.uid()) não
+-- A migração 20261015130000 (sub-select em get_user_role()/auth.uid()) não
 -- bastou: gravar 8 respostas com a sessão do cliente continuou em 57014 /
 -- ~6 s. O diagnóstico no SQL Editor mostrou ~2 s só de PLANEJAMENTO (sem RLS:
 -- 1 ms). Causa: cada política de case_form_responses tem um EXISTS em
@@ -22,7 +22,7 @@
 -- como RPC. Nome, comando e função de cada política continuam iguais (só
 -- ALTER POLICY). Políticas de admin/diretor não mudam (não têm EXISTS).
 -- Testes: 009_case_forms_rls (permissões, sem mudança) e
--- 023_rls_case_form_helpers (as funções em si).
+-- 024_rls_case_form_helpers (as funções em si).
 
 create schema if not exists private;
 revoke all on schema private from public;

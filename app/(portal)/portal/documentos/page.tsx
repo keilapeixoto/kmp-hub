@@ -16,6 +16,7 @@ import type { ChecklistItem } from "@/lib/checklists/types";
 import { Etiqueta, FaixaTitulo, type CorViva } from "@/components/ui/vivid";
 import { PortalHeader } from "../_components/portal-header";
 import { PortalUploadForm } from "../_components/portal-upload-form";
+import { PreviaDocumento } from "@/components/documentos/previa-documento";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -42,6 +43,7 @@ function Arquivos({ docs }: { docs: PortalDocumento[] }) {
           <FileText className="h-4 w-4 shrink-0" />
           <span className="min-w-0 truncate">{d.nome}</span>
           <span className="shrink-0 text-xs text-kmp-text/60">{data(d.created_at)}</span>
+          <PreviaDocumento id={d.id} nome={d.nome} formato={d.formato} />
         </li>
       ))}
     </ul>
@@ -164,7 +166,8 @@ export default async function PortalDocumentosPage({
         <section className={cartao}>
           <FaixaTitulo titulo="Outros documentos" cor="roxo" icon={FolderUp} />
           <p className="text-sm text-kmp-text/70">
-            Algo que não está na lista, mas que a sua consultora pediu ou que você acha importante.
+            Algo que não está na lista, mas que a sua consultora pediu ou que você acha importante. Escreva qual
+            documento é antes de enviar.
           </p>
           <Arquivos docs={documentsByItem[""] ?? []} />
           {upload(null)}

@@ -29,3 +29,10 @@ test("caminho fica na pasta do processo e o servidor confere isso", () => {
 test("texto de formatos para o cliente", () => {
   assert.equal(textoDeFormatos(regras), "PDF, JPG, PNG · até 25 MB por arquivo · vários arquivos de uma vez");
 });
+
+test("nome do documento com o que o cliente escreveu", async () => {
+  const { nomeComDescricao } = await import("../../lib/portal/arquivos.ts");
+  assert.equal(nomeComDescricao("foto.jpg", "  Escritura da casa \n"), "Escritura da casa (foto.jpg)");
+  assert.equal(nomeComDescricao("foto.jpg", null), "foto.jpg");
+  assert.equal(nomeComDescricao("foto.jpg", "   "), "foto.jpg");
+});

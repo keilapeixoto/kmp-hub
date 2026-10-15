@@ -8,7 +8,7 @@ import { DOCUMENTS_BUCKET } from "@/lib/documents/data";
  * o usuário pode ver este documento — sem sessão ou sem permissão, 404.
  */
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
@@ -16,7 +16,7 @@ export async function GET(
 
   const { data: doc } = await supabase
     .from("documents")
-    .select("storage_path")
+    .select("storage_path, nome")
     .eq("id", id)
     .maybeSingle();
 
@@ -26,7 +26,13 @@ export async function GET(
 
   const { data: signed } = await supabase.storage
     .from(DOCUMENTS_BUCKET)
-    .createSignedUrl(doc.storage_path, 300);
+    // ?baixar=1 força o download com o nome do documento; sem isso o
+    // navegador abre na própria aba (pré-visualização).
+    .createSignedUrl(
+      doc.storage_path,
+      300,
+      new URL(request.url).searchParams.get("baixar") ? { download: doc.nome ?? true } : undefined,
+    );
 
   if (!signed?.signedUrl) {
     return NextResponse.json(

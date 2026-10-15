@@ -1,4 +1,4 @@
-// Regras do envio de arquivos pelo portal (sem dependências: roda no
+// Regras do envio de arquivos (portal e Hub) (sem dependências: roda no
 // navegador, no servidor e nos testes).
 
 /** Mesma lista fixa de lib/storage-admin/validation.ts (executáveis/scripts). */
@@ -45,4 +45,13 @@ export function textoDeFormatos(regras: { extensoes: string[]; maxBytes: number 
   const principais = ["pdf", "jpg", "jpeg", "png", "heic", "doc", "docx"].filter((e) => regras.extensoes.includes(e));
   const lista = (principais.length ? principais : regras.extensoes.slice(0, 5)).filter((e) => e !== "jpeg");
   return `${lista.map((e) => e.toUpperCase()).join(", ")} · até ${Math.round(regras.maxBytes / 1024 / 1024)} MB por arquivo · vários arquivos de uma vez`;
+}
+
+export type ArquivoEnviado = { caminho: string; nome: string; hash: string | null };
+export type RegistroState = { error: string | null; enviados: number };
+
+/** "Escritura da casa (foto123.jpg)" — o que o cliente escreveu + o arquivo original. */
+export function nomeComDescricao(nome: string, descricao: string | null): string {
+  const d = (descricao ?? "").replace(/[\r\n]+/g, " ").trim().slice(0, 120);
+  return d ? `${d} (${nome})` : nome;
 }

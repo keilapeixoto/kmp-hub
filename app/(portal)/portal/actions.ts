@@ -7,9 +7,8 @@ import { createClient as createSupabaseJs } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { DOCUMENTS_BUCKET } from "@/lib/documents/data";
-import { getStorageSettings } from "@/lib/storage-admin/validation";
-import { caminhoDoProcesso, extensao, problemaDoArquivo } from "@/lib/portal/arquivos";
+import type { ArquivoEnviado, RegistroState } from "@/lib/portal/arquivos";
+import { conferirArquivosEnviados } from "@/lib/documents/conferir-envio";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { statusDepoisDoEnvio } from "@/lib/portal/progresso";
 import { notifyDocumentUploaded } from "@/lib/case-forms/notify-server";
@@ -48,8 +47,6 @@ export async function requestPortalMagicLink(
   return { error: null, sent: true };
 }
 
-export type ArquivoEnviado = { caminho: string; nome: string; hash: string | null };
-export type RegistroState = { error: string | null; enviados: number };
 
 /**
  * Registra arquivos que o navegador do cliente já subiu direto para o
@@ -65,48 +62,24 @@ export async function registrarDocumentosPortal(
   checklistItemId: string | null,
   arquivos: ArquivoEnviado[],
   categoriaId: string | null,
+  descricao: string | null = null,
 ): Promise<RegistroState> {
-  if (arquivos.length === 0) return { error: "Selecione um arquivo.", enviados: 0 };
-
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sua sessão expirou. Entre de novo no portal.", enviados: 0 };
 
-  const settings = await getStorageSettings();
-  const regras = { extensoes: settings.allowed_extensions, maxBytes: settings.max_file_size_bytes };
-  const admin = createAdminClient();
-
-  const linhas = [];
-  for (const a of arquivos) {
-    if (!caminhoDoProcesso(a.caminho, clientId, caseId)) {
-      return { error: "Arquivo fora da pasta do seu processo.", enviados: 0 };
-    }
-    const pasta = a.caminho.slice(0, a.caminho.lastIndexOf("/"));
-    const arquivo = a.caminho.slice(a.caminho.lastIndexOf("/") + 1);
-    const { data: lista } = await admin.storage.from(DOCUMENTS_BUCKET).list(pasta, { search: arquivo, limit: 1 });
-    const obj = (lista ?? []).find((o) => o.name === arquivo);
-    const tamanho = Number((obj?.metadata as { size?: number } | undefined)?.size ?? 0);
-    if (!obj) return { error: `${a.nome}: o arquivo não chegou. Tente de novo.`, enviados: 0 };
-    const problema = problemaDoArquivo({ nome: a.nome, tamanho }, regras);
-    if (problema) {
-      await admin.storage.from(DOCUMENTS_BUCKET).remove([a.caminho]);
-      return { error: problema, enviados: 0 };
-    }
-    linhas.push({
-      client_id: clientId,
-      case_id: caseId,
-      checklist_item_id: checklistItemId,
-      storage_path: a.caminho,
-      enviado_por: user.id,
-      nome: a.nome,
-      tamanho_bytes: tamanho,
-      formato: extensao(a.nome),
-      hash_sha256: a.hash,
-      categoria_id: categoriaId || null,
-    });
-  }
+  const conferencia = await conferirArquivosEnviados(clientId, caseId, arquivos, descricao);
+  if (!conferencia.ok) return { error: conferencia.error, enviados: 0 };
+  const linhas = conferencia.arquivos.map((a) => ({
+    ...a,
+    client_id: clientId,
+    case_id: caseId,
+    checklist_item_id: checklistItemId,
+    enviado_por: user.id,
+    categoria_id: categoriaId || null,
+  }));
 
   const { error: insertError } = await supabase.from("documents").insert(linhas);
   if (insertError) {

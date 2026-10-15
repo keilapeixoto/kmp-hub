@@ -1,9 +1,11 @@
 import type { IdentityDocument } from "@/lib/clients/types";
 import { daysUntil, isDocumentExpiringSoon } from "@/lib/clients/utils";
 import { addIdentityDocument, archiveIdentityDocument } from "../actions";
+import { IdCard } from "lucide-react";
+import { Etiqueta, FaixaTitulo } from "@/components/ui/vivid";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+  "mt-1 w-full rounded-xl border border-kmp-text/15 bg-white/85 px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-2 focus:ring-kmp-orange/20 dark:bg-white/10";
 
 export function DocumentsPanel({
   clientId,
@@ -15,12 +17,11 @@ export function DocumentsPanel({
   const addWithId = addIdentityDocument.bind(null, clientId);
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
-        <h2 className="font-heading text-lg text-kmp-text">
-          Adicionar documento
-        </h2>
-        <form action={addWithId} className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <section className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
+      <FaixaTitulo titulo="Documentos de identidade" cor="azul" icon={IdCard} direita={documents.length || null} />
+      <div>
+        <p className="text-sm font-semibold text-kmp-text">Adicionar documento</p>
+        <form action={addWithId} className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
             <label className="block text-sm font-medium text-kmp-text">
               Tipo
@@ -55,9 +56,9 @@ export function DocumentsPanel({
         </form>
       </div>
 
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="mt-5 border-t border-kmp-divider pt-2">
         {documents.length === 0 ? (
-          <p className="p-6 text-center text-sm text-kmp-text/50">
+          <p className="py-4 text-center text-sm text-kmp-text/60">
             Nenhum documento cadastrado.
           </p>
         ) : (
@@ -72,7 +73,7 @@ export function DocumentsPanel({
               return (
                 <li
                   key={doc.id}
-                  className="flex items-center justify-between p-4 text-sm"
+                  className="flex items-center justify-between py-3 text-sm"
                 >
                   <div>
                     <p className="font-medium text-kmp-text">
@@ -92,12 +93,9 @@ export function DocumentsPanel({
                   </div>
                   <div className="flex items-center gap-3">
                     {expiring ? (
-                      <span className="rounded-full bg-kmp-orange/10 px-2.5 py-0.5 text-xs font-medium text-orange-800">
-                        ⚠{" "}
-                        {daysUntil(doc.validade!) < 0
-                          ? "vencido"
-                          : `${daysUntil(doc.validade!)}d`}
-                      </span>
+                      <Etiqueta cor={daysUntil(doc.validade!) < 0 ? "vermelho" : "amarelo"}>
+                        {daysUntil(doc.validade!) < 0 ? "vencido" : `vence em ${daysUntil(doc.validade!)}d`}
+                      </Etiqueta>
                     ) : null}
                     {!doc.arquivado ? (
                       <form action={archiveWithIds}>
@@ -116,6 +114,6 @@ export function DocumentsPanel({
           </ul>
         )}
       </div>
-    </div>
+    </section>
   );
 }

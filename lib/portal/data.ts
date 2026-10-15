@@ -91,7 +91,7 @@ export async function getPortalChecklistItems(
   return (data ?? []) as ChecklistItem[];
 }
 
-export type PortalDocumento = { id: string; nome: string; created_at: string };
+export type PortalDocumento = { id: string; nome: string; formato: string | null; created_at: string };
 
 /**
  * Arquivos que o próprio cliente enviou no processo, agrupados por item do
@@ -108,7 +108,7 @@ export async function getPortalDocumentsByChecklistItem(
   if (!user) return {};
   const { data } = await supabase
     .from("documents")
-    .select("id, nome, checklist_item_id, created_at")
+    .select("id, nome, formato, checklist_item_id, created_at")
     .eq("case_id", caseId)
     .eq("enviado_por", user.id)
     .eq("arquivado", false)
@@ -118,7 +118,7 @@ export async function getPortalDocumentsByChecklistItem(
   for (const doc of data ?? []) {
     const key = (doc.checklist_item_id as string | null) ?? "";
     byItem[key] = byItem[key] ?? [];
-    byItem[key].push({ id: doc.id, nome: doc.nome ?? "Arquivo", created_at: doc.created_at });
+    byItem[key].push({ id: doc.id, nome: doc.nome ?? "Arquivo", formato: doc.formato ?? null, created_at: doc.created_at });
   }
   return byItem;
 }

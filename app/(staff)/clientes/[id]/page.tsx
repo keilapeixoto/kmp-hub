@@ -15,6 +15,13 @@ import { getClientTimeline } from "@/lib/timeline/data";
 import { updateClientRecord } from "../actions";
 import { ClientCasesPanel } from "../_components/client-cases-panel";
 import { ClientFilesPanel } from "../_components/client-files-panel";
+import { getDocumentCategories } from "@/lib/documents/data";
+import { getStorageSettings } from "@/lib/storage-admin/validation";
+
+async function regrasDeEnvio() {
+  const s = await getStorageSettings();
+  return { extensoes: s.allowed_extensions, maxBytes: s.max_file_size_bytes };
+}
 import { ClientForm } from "../_components/client-form";
 import { ClientSummary } from "../_components/client-summary";
 import { ClientTabs } from "../_components/client-tabs";
@@ -126,19 +133,19 @@ export default async function ClientDetailPage({
       ) : null}
 
       {tab === "documentos" ? (
-        <div className="space-y-8">
-          <div>
-            <h2 className="mb-4 font-heading text-lg text-kmp-text">
-              Arquivos do cliente
-            </h2>
-            <ClientFilesPanel clientId={id} documents={clientFiles} />
-          </div>
-          <div>
-            <h2 className="mb-4 font-heading text-lg text-kmp-text">
-              Documentos de identidade
-            </h2>
-            <DocumentsPanel clientId={id} documents={documents} />
-          </div>
+        <div className="space-y-6">
+          <ClientFilesPanel
+            clientId={id}
+            documents={clientFiles}
+            isAdmin={role === "admin"}
+            processos={cases.map((c) => ({
+              id: c.id,
+              nome: serviceTypes.find((st) => st.id === c.service_type_id)?.nome ?? "Processo",
+            }))}
+            categories={await getDocumentCategories()}
+            regras={await regrasDeEnvio()}
+          />
+          <DocumentsPanel clientId={id} documents={documents} />
         </div>
       ) : null}
 

@@ -25,7 +25,7 @@ export async function requestPortalMagicLink(
   const siteUrl = portalUrl();
   const { error } = await supabase.auth.signInWithOtp({
     email: email.trim(),
-    options: { emailRedirectTo: `${siteUrl}/auth/callback?next=/portal` },
+    options: { emailRedirectTo: `${siteUrl}/auth/confirm?next=/portal` },
   });
 
   if (error) {

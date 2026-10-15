@@ -211,7 +211,7 @@ export async function inviteClientToPortal(
   }
 
   const admin = createAdminClient();
-  const redirectTo = `${portalUrl()}/auth/callback?next=/portal`;
+  const redirectTo = `${portalUrl()}/auth/confirm?next=/portal`;
 
   let userId: string | null = null;
   const { data: invited, error: inviteError } =

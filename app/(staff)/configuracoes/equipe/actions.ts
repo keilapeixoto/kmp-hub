@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUserRole } from "@/lib/auth";
+import { siteUrl } from "@/lib/dominios";
 
 export type TeamFormState = { error: string | null; success?: boolean };
 
@@ -32,7 +33,7 @@ export async function inviteTeamMember(
   }
 
   const admin = createAdminClient();
-  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/auth/callback?next=/dashboard`;
+  const redirectTo = `${siteUrl()}/auth/confirm?next=/inicio`;
 
   const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(
     email.trim(),

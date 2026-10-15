@@ -258,6 +258,15 @@ Gravações de respostas são sempre em blocos de 8 com nova tentativa
 portal em Playwright (`tests/e2e/portal/formulario.spec.ts`) precisa de sessão
 do portal e de `E2E_FORM_CASE_ID`.
 
+**Domínios e produto (out/2026):** equipe em `crmportal.kmpconsulting.com.au`,
+clientes em `clientportal.kmpconsulting.com.au` — mesmo projeto Vercel; no
+endereço do cliente o middleware só deixa o portal acessível
+(`lib/dominios.ts`), e os links para clientes (formulário, convite, magic
+link) usam `NEXT_PUBLIC_PORTAL_URL`. DNS na GoDaddy (CNAME para a Vercel).
+A Keila pretende vender o Hub a outras empresas no futuro — **não fixar nada
+novo como "KMP" no código** (ver decisão em
+`docs/architecture/12-future-scalability.md`).
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração
@@ -296,4 +305,5 @@ Ver `.env.local` (nunca versionado). Este projeto usa o formato novo de chaves d
 - `NEXT_PUBLIC_SUPABASE_URL` — pública, pode ir ao cliente.
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — pública (`sb_publishable_...`), respeita RLS.
 - `SUPABASE_SECRET_KEY` — **somente servidor** (`sb_secret_...`), nunca prefixo `NEXT_PUBLIC_`, nunca importada em componente client. Ignora RLS — substitui a antiga service role key.
+- `NEXT_PUBLIC_PORTAL_URL` — pública; endereço do portal do cliente usado nos links e no magic link (sem barra no final). Sem ela, usa `NEXT_PUBLIC_SITE_URL`.
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — **somente servidor**, credencial OAuth2 do Google Cloud Console (integração Calendar/Gmail, ver Estado atual). Passo a passo de como gerar em `docs/architecture/` ou pedir à Keila/Claude.

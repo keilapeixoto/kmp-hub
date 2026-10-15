@@ -146,3 +146,30 @@ Esta seção é deliberadamente um **plano**, não uma implementação —
 construir isolamento multi-tenant sem um segundo tenant real para validar
 contra é o tipo de esforço que tende a errar a modelagem e precisar ser
 refeito de qualquer forma quando o caso real aparecer.
+
+
+## Decisão da Keila (out/2026): vender o Hub como produto
+
+A Keila pretende, depois que o Hub estiver funcionando na KMP, **vender acesso
+ao sistema para outras empresas** (a solução, nunca os dados da KMP). Nicho
+natural: escritórios de imigração da Austrália (pipeline por tipo de visto,
+formulários de coleta, extensão do ImmiAccount, importação da aplicação
+anterior). Decisões tomadas:
+
+- **A KMP é o cliente nº 1**, nos domínios dela: `crmportal.kmpconsulting.com.au`
+  (equipe) e `clientportal.kmpconsulting.com.au` (clientes). O produto vendido
+  terá **marca e domínio próprios**, sem "KMP".
+- **Isolamento recomendado para os primeiros 5–10 clientes: uma instalação
+  (banco Supabase) por empresa.** Mais seguro para dados de imigração e mais
+  rápido de começar; o multi-tenant por `organization_id` (seções acima) fica
+  para quando o volume justificar.
+- **Regra a partir de agora:** nada novo "fixo como KMP" no código — logo,
+  nome, cores, fuso (hoje `Australia/Sydney` no Início), textos de e-mail e
+  formulários específicos devem nascer como configuração, para a separação
+  sair barata.
+- **Antes de vender** (não construir antes da validação em uso real na KMP):
+  termos de uso, política de privacidade e acordo de tratamento de dados
+  (Privacy Act australiano), banco na região da Austrália, cobrança por
+  assinatura (Stripe, já previsto nas fases futuras) e a **verificação de
+  segurança do Google** para leitura de Gmail por usuários de outras empresas
+  (escopo restrito, paga e demorada — talvez deixar Gmail como opcional).

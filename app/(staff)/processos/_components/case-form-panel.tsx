@@ -1,6 +1,7 @@
 import type { CaseForm, CaseFormStep, CaseFormField, CaseFormView } from "@/lib/case-forms/types";
 import { CASE_FORM_STATUS_LABELS } from "@/lib/case-forms/types";
 import { ShareFormLinks } from "./share-form-links";
+import { portalUrl } from "@/lib/dominios";
 import { ImportRecordForm, type ImportResult } from "./import-record-form";
 import { CaseFormEdit } from "./case-form-edit";
 
@@ -40,8 +41,7 @@ export function CaseFormPanel({
   const answeredCount = Object.keys(responses).length;
   const totalFields = steps.reduce((n, s) => n + s.fields.length, 0);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-  const link = `${siteUrl}/portal/formulario?processo=${caseId}`;
+  const link = `${portalUrl()}/portal/formulario?processo=${caseId}`;
 
   return (
     <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">

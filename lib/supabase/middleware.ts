@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { redirecionarPortal } from "@/lib/dominios";
 
 const STAFF_PUBLIC_PATHS = ["/login"];
 const PORTAL_PUBLIC_PATHS = ["/portal/login"];
@@ -11,6 +12,14 @@ const PORTAL_PUBLIC_PATHS = ["/portal/login"];
  * isto aqui só decide para onde a navegação vai.
  */
 export async function updateSession(request: NextRequest) {
+  // Endereço do cliente (clientportal.*): só o portal fica acessível.
+  const destinoPortal = redirecionarPortal(request.headers.get("host"), request.nextUrl.pathname);
+  if (destinoPortal) {
+    const url = request.nextUrl.clone();
+    url.pathname = destinoPortal;
+    return NextResponse.redirect(url);
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

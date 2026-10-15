@@ -1,5 +1,7 @@
 "use server";
 
+import { portalUrl } from "@/lib/dominios";
+
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
@@ -19,7 +21,7 @@ export async function requestPortalMagicLink(
   }
 
   const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const siteUrl = portalUrl();
   const { error } = await supabase.auth.signInWithOtp({
     email: email.trim(),
     options: { emailRedirectTo: `${siteUrl}/auth/callback?next=/portal` },

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { camposParaAtualizar } from "@/lib/clients/update-fields";
+import { portalUrl } from "@/lib/dominios";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUserId, getCurrentUserRole } from "@/lib/auth";
 import { getValidAccessToken } from "@/lib/google/connections";
@@ -210,7 +211,7 @@ export async function inviteClientToPortal(
   }
 
   const admin = createAdminClient();
-  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/auth/callback?next=/portal`;
+  const redirectTo = `${portalUrl()}/auth/callback?next=/portal`;
 
   let userId: string | null = null;
   const { data: invited, error: inviteError } =

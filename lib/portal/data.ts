@@ -91,22 +91,34 @@ export async function getPortalChecklistItems(
   return (data ?? []) as ChecklistItem[];
 }
 
+export type PortalDocumento = { id: string; nome: string; created_at: string };
+
+/**
+ * Arquivos que o próprio cliente enviou no processo, agrupados por item do
+ * checklist ("" = sem item). Só os dele: os importados/enviados pela equipe
+ * podem ser documentos de trabalho, e a lista do portal é "o que você mandou".
+ */
 export async function getPortalDocumentsByChecklistItem(
   caseId: string,
-): Promise<Record<string, { id: string; created_at: string }[]>> {
+): Promise<Record<string, PortalDocumento[]>> {
   const supabase = await createSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return {};
   const { data } = await supabase
     .from("documents")
-    .select("id, checklist_item_id, created_at")
+    .select("id, nome, checklist_item_id, created_at")
     .eq("case_id", caseId)
+    .eq("enviado_por", user.id)
     .eq("arquivado", false)
-    .not("checklist_item_id", "is", null);
+    .order("created_at", { ascending: false });
 
-  const byItem: Record<string, { id: string; created_at: string }[]> = {};
+  const byItem: Record<string, PortalDocumento[]> = {};
   for (const doc of data ?? []) {
-    const key = doc.checklist_item_id as string;
+    const key = (doc.checklist_item_id as string | null) ?? "";
     byItem[key] = byItem[key] ?? [];
-    byItem[key].push({ id: doc.id, created_at: doc.created_at });
+    byItem[key].push({ id: doc.id, nome: doc.nome ?? "Arquivo", created_at: doc.created_at });
   }
   return byItem;
 }

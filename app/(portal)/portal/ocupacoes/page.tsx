@@ -34,10 +34,10 @@ export default async function PortalOcupacoesPage({
   }
 
   return (
-    <div className="min-h-screen bg-kmp-bg">
+    <div className="min-h-screen">
       <PortalHeader />
-      <main className="mx-auto max-w-3xl space-y-6 px-4 py-8">
-        <h1 className="font-heading text-2xl text-kmp-graphite">Ocupações</h1>
+      <main className="mx-auto max-w-5xl space-y-6 px-4 py-8">
+        <h1 className="font-heading text-2xl text-kmp-text">Ocupações</h1>
 
         <p className="rounded-md bg-amber-50 px-4 py-3 text-sm text-amber-700">
           Informação de referência pública. Fale com sua consultora antes de
@@ -46,7 +46,7 @@ export default async function PortalOcupacoesPage({
 
         <form
           method="GET"
-          className="grid grid-cols-1 gap-3 rounded-lg bg-white p-4 shadow-sm sm:grid-cols-3"
+          className="grid grid-cols-1 gap-3 rounded-3xl bg-kmp-surface p-4 shadow-sm sm:grid-cols-3"
         >
           <input
             type="text"
@@ -54,13 +54,13 @@ export default async function PortalOcupacoesPage({
             defaultValue={q}
             placeholder="Buscar por nome ou código ANZSCO"
             aria-label="Buscar por nome ou código ANZSCO"
-            className="rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange sm:col-span-2"
+            className="rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange sm:col-span-2"
           />
           <select
             name="categoria"
             defaultValue={categoria}
             aria-label="Filtrar por categoria"
-            className="rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
+            className="rounded-md border border-black/10 px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
           >
             <option value="">Todas as categorias</option>
             {OCCUPATION_CATEGORIES.map((cat) => (
@@ -79,7 +79,7 @@ export default async function PortalOcupacoesPage({
             {q || categoria ? (
               <Link
                 href="/portal/ocupacoes"
-                className="ml-3 text-sm text-kmp-graphite/70 hover:text-kmp-orange"
+                className="ml-3 text-sm text-kmp-text/70 hover:text-kmp-orange"
               >
                 Limpar filtros
               </Link>
@@ -87,9 +87,9 @@ export default async function PortalOcupacoesPage({
           </div>
         </form>
 
-        <div className="rounded-lg bg-white shadow-sm">
+        <div className="rounded-3xl bg-kmp-surface shadow-sm">
           {occupations.length === 0 ? (
-            <p className="p-8 text-center text-sm text-kmp-graphite/60">
+            <p className="p-8 text-center text-sm text-kmp-text/60">
               Nenhuma ocupação encontrada.
             </p>
           ) : (
@@ -98,11 +98,11 @@ export default async function PortalOcupacoesPage({
                 <li key={o.id} className="p-4 text-sm">
                   <Link
                     href={`/portal/ocupacoes/${o.id}`}
-                    className="font-medium text-kmp-graphite hover:text-kmp-orange"
+                    className="font-medium text-kmp-text hover:text-kmp-orange"
                   >
                     {o.nome} · {o.codigo_anzsco}
                   </Link>
-                  <p className="mt-1 text-xs text-kmp-graphite/50">
+                  <p className="mt-1 text-xs text-kmp-text/50">
                     {o.categoria} · {o.autoridade_avaliadora}
                   </p>
                   <div className="mt-2 flex gap-2">
@@ -124,7 +124,7 @@ export default async function PortalOcupacoesPage({
         </div>
 
         {totalPages > 1 ? (
-          <div className="flex items-center justify-between text-sm text-kmp-graphite/70">
+          <div className="flex items-center justify-between text-sm text-kmp-text/70">
             <span>
               Página {page} de {totalPages} · {total} ocupações
             </span>

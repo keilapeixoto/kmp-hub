@@ -267,6 +267,24 @@ A Keila pretende vender o Hub a outras empresas no futuro — **não fixar nada
 novo como "KMP" no código** (ver decisão em
 `docs/architecture/12-future-scalability.md`).
 
+**Portal do cliente redesenhado (out/2026):** mesmo visual âmbar do Hub
+(fundo `PageWash`, cartões translúcidos, logo KMP | HUB com "PORTAL" em
+laranja). Início do portal com etapas do processo, "O que falta você fazer"
+(percentual do formulário + documentos pedidos) e "Fale com sua consultora"
+(WhatsApp/e-mail do perfil). Etapas e contato da consultora vêm de
+`lib/portal/resumo.ts` pelo cliente admin, **só para processos que já vieram
+da leitura com a sessão do cliente** (RLS prova que o processo é dele); o
+cliente não tem SELECT em `case_stages`/`profiles` de propósito. O que o
+cliente vê: processos, etapa, formulário, checklist de documentos (com
+envio por item e "Outros documentos") e a lista dos arquivos que **ele mesmo**
+enviou; não vê notas internas, riscos, invoices nem documentos da equipe.
+Envio pelo portal muda o item do checklist para "Enviado"/"Reenviado".
+**Gravação do formulário do portal vai pelo cliente admin** depois de checar
+o processo com a sessão do cliente: com a sessão do cliente, as políticas de
+`case_form_responses` levavam ~5 s por linha e estouravam o tempo do banco
+(57014), travando o "Próximo". Causa de fundo (políticas chamando
+`get_user_role()` por linha, sem `(select ...)`) ainda não corrigida.
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

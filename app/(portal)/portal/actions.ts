@@ -10,6 +10,8 @@ import { createClient } from "@/lib/supabase/server";
 import { DOCUMENTS_BUCKET } from "@/lib/documents/data";
 import { getStorageSettings, validateUpload, findDuplicatesByHash } from "@/lib/storage-admin/validation";
 import { INITIAL_UPLOAD_STATE, type UploadDocumentState } from "@/lib/storage-admin/upload-state";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { statusDepoisDoEnvio } from "@/lib/portal/progresso";
 
 export type PortalLoginState = { error: string | null; sent: boolean };
 
@@ -48,7 +50,7 @@ export async function requestPortalMagicLink(
 export async function uploadPortalDocument(
   clientId: string,
   caseId: string,
-  checklistItemId: string,
+  checklistItemId: string | null,
   _prevState: UploadDocumentState,
   formData: FormData,
 ): Promise<UploadDocumentState> {
@@ -89,7 +91,7 @@ export async function uploadPortalDocument(
 
   const categoriaId = formData.get("categoria_id");
 
-  await supabase.from("documents").insert({
+  const { error: insertError } = await supabase.from("documents").insert({
     client_id: clientId,
     case_id: caseId,
     checklist_item_id: checklistItemId,
@@ -102,8 +104,33 @@ export async function uploadPortalDocument(
     categoria_id: typeof categoriaId === "string" && categoriaId ? categoriaId : null,
   });
 
+  if (insertError) {
+    console.error("[uploadPortalDocument] registro falhou:", insertError.code, insertError.message);
+    return { error: "O arquivo subiu, mas não conseguimos registrá-lo. Tente de novo.", duplicates: null };
+  }
+
+  // O registro acima passou pelo RLS do cliente (prova que o processo é dele).
+  // O item do checklist muda de status para a equipe ver que chegou — o
+  // cliente não tem UPDATE em checklist_items, então vai pelo admin, só para
+  // um item deste mesmo processo.
+  if (checklistItemId) await marcarItemComoEnviado(caseId, checklistItemId);
+
   revalidatePath("/portal/documentos");
+  revalidatePath("/portal");
   return INITIAL_UPLOAD_STATE;
+}
+
+async function marcarItemComoEnviado(caseId: string, checklistItemId: string) {
+  const admin = createAdminClient();
+  const { data: item } = await admin
+    .from("checklist_items")
+    .select("id, status, checklists!inner(case_id)")
+    .eq("id", checklistItemId)
+    .eq("checklists.case_id", caseId)
+    .maybeSingle();
+  if (!item) return;
+  const novo = statusDepoisDoEnvio(item.status as string);
+  if (novo) await admin.from("checklist_items").update({ status: novo }).eq("id", item.id);
 }
 
 export async function portalLogout() {

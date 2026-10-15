@@ -3,31 +3,28 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { CaseFormField } from "@/lib/case-forms/types";
-import { getEtapasComCampos, getCaseFormResponses } from "@/lib/case-forms/data";
+import { getEtapasComCampos } from "@/lib/case-forms/data";
 import { camposPendentes } from "@/lib/case-forms/validate";
 import { notifyFormSubmitted } from "@/lib/case-forms/notify-server";
 import { linhasDeFormData, salvarRespostasEmBlocos } from "@/lib/case-forms/save";
 
-async function ensureCaseForm(caseId: string, templateId: string) {
-  const supabase = await createClient();
-  const { data: existing } = await supabase
-    .from("case_forms")
-    .select("id")
-    .eq("case_id", caseId)
-    .eq("template_id", templateId)
-    .maybeSingle();
-  if (existing) return existing.id as string;
+// Status em que o cliente ainda pode mexer nas respostas (depois disso é a
+// equipe que decide) — mesma regra das políticas case_forms_*_client.
+const EDITAVEL = ["em_preenchimento", "enviado"];
 
-  const { data, error } = await supabase
-    .from("case_forms")
-    .insert({ case_id: caseId, template_id: templateId, status: "em_preenchimento" })
-    .select("id")
-    .single();
-  if (error || !data) return null;
-  return data.id as string;
-}
-
+/**
+ * Gravação das respostas do portal.
+ *
+ * O acesso é provado com a sessão do cliente: o processo só aparece na
+ * leitura se o RLS de `cases` liberar para ele. A gravação em si vai pelo
+ * cliente admin — com a sessão do cliente, as políticas de
+ * case_form_responses levavam ~5 s por linha e estouravam o tempo do banco
+ * (57014), e o "Próximo" ficava parado (out/2026). O trigger
+ * validate_case_form_response_field continua garantindo que cada campo é do
+ * formulário deste processo.
+ */
 export async function saveFormStep(
   caseId: string,
   templateId: string,
@@ -37,36 +34,63 @@ export async function saveFormStep(
   direction: "anterior" | "proximo" | "enviar",
   formData: FormData,
 ) {
+  const base = `/portal/formulario?processo=${caseId}`;
   const supabase = await createClient();
-  const caseFormId = await ensureCaseForm(caseId, templateId);
-  if (!caseFormId) return;
+  const { data: caso } = await supabase.from("cases").select("id").eq("id", caseId).maybeSingle();
+  if (!caso) redirect("/portal");
 
-  if (fields.length > 0) {
-    await salvarRespostasEmBlocos(supabase, linhasDeFormData(caseFormId, fields, formData));
+  const admin = createAdminClient();
+  let { data: caseForm } = await admin
+    .from("case_forms")
+    .select("id, status")
+    .eq("case_id", caseId)
+    .eq("template_id", templateId)
+    .maybeSingle();
+  if (!caseForm) {
+    const { data, error } = await admin
+      .from("case_forms")
+      .insert({ case_id: caseId, template_id: templateId, status: "em_preenchimento" })
+      .select("id, status")
+      .single();
+    if (error) console.error("[saveFormStep] criar formulário falhou:", error.code, error.message);
+    caseForm = data;
+  }
+  if (!caseForm) redirect(`${base}&etapa=${currentStep}&erro=1`);
+
+  if (fields.length > 0 && EDITAVEL.includes(caseForm.status as string)) {
+    const { erro } = await salvarRespostasEmBlocos(admin, linhasDeFormData(caseForm.id, fields, formData));
+    if (erro) {
+      console.error("[saveFormStep] gravar respostas falhou:", erro.code, erro.message);
+      redirect(`${base}&etapa=${currentStep}&erro=1`);
+    }
   }
 
   if (direction === "enviar") {
     // Obrigatórios só valem aqui: "Próximo" sempre avança e salva.
     const etapas = await getEtapasComCampos(templateId);
-    const respostas = await getCaseFormResponses(caseFormId);
+    const { data: linhas } = await admin
+      .from("case_form_responses")
+      .select("field_id, valor")
+      .eq("case_form_id", caseForm.id);
+    const respostas = Object.fromEntries((linhas ?? []).map((r) => [r.field_id, r.valor ?? ""]));
     const pendentes = camposPendentes(etapas, respostas);
     if (pendentes.length > 0) {
       revalidatePath("/portal/formulario");
-      redirect(
-        `/portal/formulario?processo=${caseId}&etapa=${pendentes[0].etapa}&pendentes=${pendentes.length}`,
-      );
+      redirect(`${base}&etapa=${pendentes[0].etapa}&pendentes=${pendentes.length}`);
     }
-    await supabase
-      .from("case_forms")
-      .update({ status: "enviado", enviado_em: new Date().toISOString() })
-      .eq("id", caseFormId);
-    await notifyFormSubmitted(caseId);
+    if (caseForm.status === "em_preenchimento") {
+      await admin
+        .from("case_forms")
+        .update({ status: "enviado", enviado_em: new Date().toISOString() })
+        .eq("id", caseForm.id);
+      await notifyFormSubmitted(caseId);
+    }
     revalidatePath("/portal");
-    redirect(`/portal/formulario?processo=${caseId}&enviado=1`);
+    redirect(`${base}&enviado=1`);
   }
 
   const nextStep =
     direction === "anterior" ? Math.max(1, currentStep - 1) : Math.min(totalSteps, currentStep + 1);
   revalidatePath("/portal/formulario");
-  redirect(`/portal/formulario?processo=${caseId}&etapa=${nextStep}`);
+  redirect(`${base}&etapa=${nextStep}`);
 }

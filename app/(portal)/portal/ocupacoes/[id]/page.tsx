@@ -14,34 +14,34 @@ export default async function PortalOcupacaoDetailPage({
   if (!occupation) notFound();
 
   return (
-    <div className="min-h-screen bg-kmp-bg">
+    <div className="min-h-screen">
       <PortalHeader />
-      <main className="mx-auto max-w-3xl space-y-6 px-4 py-8">
+      <main className="mx-auto max-w-5xl space-y-6 px-4 py-8">
         <div>
           <Link
             href="/portal/ocupacoes"
-            className="text-sm text-kmp-graphite/60 hover:text-kmp-orange"
+            className="text-sm text-kmp-text/60 hover:text-kmp-orange"
           >
             ← Ocupações
           </Link>
-          <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
+          <h1 className="mt-1 font-heading text-2xl text-kmp-text">
             {occupation.nome}
           </h1>
-          <p className="mt-1 text-xs text-kmp-graphite/50">
+          <p className="mt-1 text-xs text-kmp-text/50">
             {occupation.categoria} · Nível de habilidade{" "}
             {occupation.nivel_habilidade}
           </p>
         </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
           <dl className="divide-y divide-black/5 text-sm">
             <div className="flex justify-between py-2">
-              <dt className="text-kmp-graphite/50">Código ANZSCO</dt>
-              <dd className="text-kmp-graphite">{occupation.codigo_anzsco}</dd>
+              <dt className="text-kmp-text/50">Código ANZSCO</dt>
+              <dd className="text-kmp-text">{occupation.codigo_anzsco}</dd>
             </div>
             <div className="flex justify-between py-2">
-              <dt className="text-kmp-graphite/50">Autoridade avaliadora</dt>
-              <dd className="text-kmp-graphite">
+              <dt className="text-kmp-text/50">Autoridade avaliadora</dt>
+              <dd className="text-kmp-text">
                 {occupation.autoridade_avaliadora}
               </dd>
             </div>
@@ -61,11 +61,11 @@ export default async function PortalOcupacaoDetailPage({
           ) : null}
         </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-sm">
-          <h2 className="font-heading text-lg text-kmp-graphite">
+        <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
+          <h2 className="font-heading text-lg text-kmp-text">
             Elegibilidade por subclasse de visto
           </h2>
-          <p className="mt-1 text-xs text-kmp-graphite/50">
+          <p className="mt-1 text-xs text-kmp-text/50">
             Referência geral por ocupação — não considera cotas por estado
             nem o histórico de rodadas de convite.
           </p>
@@ -76,8 +76,8 @@ export default async function PortalOcupacaoDetailPage({
                 valor === true
                   ? "bg-green-50 text-green-700"
                   : valor === false
-                    ? "bg-black/5 text-kmp-graphite/40"
-                    : "bg-black/5 text-kmp-graphite/30";
+                    ? "bg-black/5 text-kmp-text/40"
+                    : "bg-black/5 text-kmp-text/30";
               const rotulo =
                 valor === true ? "Elegível" : valor === false ? "Não" : "—";
               return (
@@ -94,7 +94,7 @@ export default async function PortalOcupacaoDetailPage({
           </ul>
         </div>
 
-        <p className="text-xs text-kmp-graphite/50">
+        <p className="text-xs text-kmp-text/50">
           Informação de referência pública. Fale com sua consultora antes de
           tomar decisões com base nesses dados.
         </p>

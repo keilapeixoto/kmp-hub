@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { Upload } from "lucide-react";
 import type { DocumentCategory } from "@/lib/documents/types";
 import { INITIAL_UPLOAD_STATE } from "@/lib/storage-admin/upload-state";
 import { uploadPortalDocument } from "../actions";
@@ -13,34 +14,30 @@ export function PortalUploadForm({
 }: {
   clientId: string;
   caseId: string;
-  checklistItemId: string;
+  checklistItemId: string | null;
   categories: DocumentCategory[];
 }) {
-  const uploadWithIds = uploadPortalDocument.bind(
-    null,
-    clientId,
-    caseId,
-    checklistItemId,
-  );
-  const [state, formAction, isPending] = useActionState(
-    uploadWithIds,
-    INITIAL_UPLOAD_STATE,
-  );
+  const uploadWithIds = uploadPortalDocument.bind(null, clientId, caseId, checklistItemId);
+  const [state, formAction, isPending] = useActionState(uploadWithIds, INITIAL_UPLOAD_STATE);
   const [confirmar, setConfirmar] = useState(false);
+  const [arquivo, setArquivo] = useState<string | null>(null);
 
   return (
     <form
-      action={formAction}
-      className="mt-4 flex flex-col gap-2 border-t border-black/5 pt-4"
+      action={(fd) => {
+        formAction(fd);
+        setArquivo(null); // o formulário é limpo depois do envio
+      }}
+      className="mt-3 flex flex-col gap-2"
     >
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         {categories.length > 0 ? (
           <select
             name="categoria_id"
             defaultValue=""
-            className="rounded-md border border-black/10 px-2 py-1.5 text-sm text-kmp-graphite/70"
+            className="rounded-full border border-kmp-text/15 bg-white/80 px-3 py-2 text-sm text-kmp-text"
           >
-            <option value="">Categoria…</option>
+            <option value="">Tipo de documento…</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.nome}
@@ -48,43 +45,36 @@ export function PortalUploadForm({
             ))}
           </select>
         ) : null}
-        <input
-          type="file"
-          name="file"
-          required
-          className="flex-1 text-sm text-kmp-graphite/70 file:mr-3 file:rounded-md file:border-0 file:bg-kmp-graphite/10 file:px-3 file:py-1.5 file:text-sm file:text-kmp-graphite"
-        />
-        {state.duplicates && state.duplicates.length > 0 ? (
+        <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-full border border-dashed border-kmp-text/25 bg-white/70 px-4 py-2 text-sm text-kmp-text/75 transition hover:border-kmp-text/40">
+          <Upload className="h-4 w-4 shrink-0" />
+          <span className="truncate">{arquivo ?? "Escolher arquivo ou tirar foto"}</span>
           <input
-            type="hidden"
-            name="confirmar_duplicata"
-            value={confirmar ? "true" : "false"}
+            type="file"
+            name="file"
+            required
+            className="sr-only"
+            onChange={(e) => setArquivo(e.target.files?.[0]?.name ?? null)}
           />
+        </label>
+        {state.duplicates && state.duplicates.length > 0 ? (
+          <input type="hidden" name="confirmar_duplicata" value={confirmar ? "true" : "false"} />
         ) : null}
         <button
           type="submit"
-          disabled={isPending}
-          className="shrink-0 rounded-full bg-kmp-primary px-4 py-1.5 text-sm font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
+          disabled={isPending || !arquivo}
+          className="shrink-0 rounded-full bg-kmp-primary px-5 py-2 text-sm font-semibold text-kmp-on-primary transition hover:opacity-90 disabled:opacity-50"
         >
           {isPending ? "Enviando…" : "Enviar"}
         </button>
       </div>
 
-      {state.error ? (
-        <p className="text-xs text-red-600">{state.error}</p>
-      ) : null}
+      {state.error ? <p className="text-sm text-[#b0283b]">{state.error}</p> : null}
 
       {state.duplicates && state.duplicates.length > 0 ? (
-        <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
-          <p>
-            Parece que você já enviou um arquivo igual a esse antes.
-          </p>
+        <div className="rounded-2xl bg-[#fcf1cf] p-3 text-sm text-[#7a5806]">
+          <p>Parece que você já enviou um arquivo igual a esse antes.</p>
           <label className="mt-1 flex items-center gap-1.5">
-            <input
-              type="checkbox"
-              checked={confirmar}
-              onChange={(e) => setConfirmar(e.target.checked)}
-            />
+            <input type="checkbox" checked={confirmar} onChange={(e) => setConfirmar(e.target.checked)} />
             Enviar mesmo assim
           </label>
         </div>

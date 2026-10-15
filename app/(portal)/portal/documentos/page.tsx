@@ -1,30 +1,84 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, Check, Clock, FileText, FolderUp, Inbox } from "lucide-react";
 import {
   getPortalCase,
   getPortalCases,
   getPortalChecklistItems,
   getPortalDocumentsByChecklistItem,
+  type PortalDocumento,
 } from "@/lib/portal/data";
+import { STATUS_COM_O_CLIENTE } from "@/lib/portal/progresso";
 import { getDocumentCategories } from "@/lib/documents/data";
 import { CHECKLIST_ITEM_STATUS_LABELS } from "@/lib/checklists/constants";
+import type { ChecklistItem } from "@/lib/checklists/types";
+import { Etiqueta, FaixaTitulo, type CorViva } from "@/components/ui/vivid";
 import { PortalHeader } from "../_components/portal-header";
 import { PortalUploadForm } from "../_components/portal-upload-form";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
-const STATUS_COLORS: Record<string, string> = {
-  nao_solicitado: "bg-kmp-graphite/10 text-kmp-graphite/60",
-  solicitado: "bg-blue-100 text-blue-700",
-  aguardando_cliente: "bg-amber-100 text-amber-700",
-  enviado: "bg-blue-100 text-blue-700",
-  em_analise: "bg-blue-100 text-blue-700",
-  rejeitado: "bg-red-100 text-red-700",
-  reenvio_solicitado: "bg-amber-100 text-amber-700",
-  reenviado: "bg-blue-100 text-blue-700",
-  aguardando_aprovacao: "bg-blue-100 text-blue-700",
-  aprovado: "bg-green-100 text-green-700",
-};
+const cartao = "overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm";
+const COM_A_EQUIPE = ["enviado", "em_analise", "reenviado", "aguardando_aprovacao"];
+
+function corDoStatus(status: string): CorViva {
+  if (status === "aprovado") return "verde";
+  if (status === "rejeitado" || status === "reenvio_solicitado") return "vermelho";
+  if (STATUS_COM_O_CLIENTE.includes(status)) return "amarelo";
+  if (COM_A_EQUIPE.includes(status)) return "azul";
+  return "cinza";
+}
+
+const data = (iso: string) =>
+  new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", timeZone: "Australia/Sydney" }).format(new Date(iso));
+
+function Arquivos({ docs }: { docs: PortalDocumento[] }) {
+  if (docs.length === 0) return null;
+  return (
+    <ul className="mt-3 space-y-1">
+      {docs.map((d) => (
+        <li key={d.id} className="flex items-center gap-2 text-sm text-kmp-text/75">
+          <FileText className="h-4 w-4 shrink-0" />
+          <span className="min-w-0 truncate">{d.nome}</span>
+          <span className="shrink-0 text-xs text-kmp-text/60">{data(d.created_at)}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Item({
+  item,
+  docs,
+  upload,
+}: {
+  item: ChecklistItem;
+  docs: PortalDocumento[];
+  upload: React.ReactNode;
+}) {
+  const aprovado = item.status === "aprovado";
+  return (
+    <li id={`item-${item.id}`} className="scroll-mt-6 rounded-2xl bg-kmp-text/5 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-semibold text-kmp-text">{item.nome}</p>
+          {item.descricao ? <p className="mt-0.5 text-sm text-kmp-text/70">{item.descricao}</p> : null}
+        </div>
+        <Etiqueta cor={corDoStatus(item.status)}>{CHECKLIST_ITEM_STATUS_LABELS[item.status] ?? item.status}</Etiqueta>
+      </div>
+      {item.status === "rejeitado" && item.motivo_rejeicao ? (
+        <p className="mt-3 rounded-xl bg-[#fde2e5] p-3 text-sm text-[#9a2433]">
+          Precisamos de um novo envio: {item.motivo_rejeicao}
+        </p>
+      ) : null}
+      {item.observacao_equipe ? (
+        <p className="mt-3 text-sm text-kmp-text/75">Observação da equipe: {item.observacao_equipe}</p>
+      ) : null}
+      <Arquivos docs={docs} />
+      {aprovado ? null : upload}
+    </li>
+  );
+}
 
 export default async function PortalDocumentosPage({
   searchParams,
@@ -50,82 +104,67 @@ export default async function PortalDocumentosPage({
 
   if (!portalCase) notFound();
 
+  const topo = items.filter((i) => !i.parent_item_id);
+  const grupos: { titulo: string; cor: CorViva; icon: typeof Inbox; itens: ChecklistItem[] }[] = [
+    { titulo: "Pedidos para você", cor: "laranja", icon: Inbox, itens: topo.filter((i) => STATUS_COM_O_CLIENTE.includes(i.status)) },
+    { titulo: "Com a equipe", cor: "azul", icon: Clock, itens: topo.filter((i) => COM_A_EQUIPE.includes(i.status)) },
+    { titulo: "Quando tiver em mãos", cor: "cinza", icon: FileText, itens: topo.filter((i) => i.status === "nao_solicitado") },
+    { titulo: "Aprovados", cor: "verde", icon: Check, itens: topo.filter((i) => i.status === "aprovado") },
+  ];
+
+  const upload = (checklistItemId: string | null) => (
+    <PortalUploadForm
+      clientId={portalCase.client_id}
+      caseId={portalCase.id}
+      checklistItemId={checklistItemId}
+      categories={checklistItemId ? [] : categories}
+    />
+  );
+
   return (
-    <div className="min-h-screen bg-kmp-bg">
+    <>
       <PortalHeader />
-      <main className="mx-auto max-w-3xl space-y-6 px-4 py-8">
+      <main className="mx-auto w-full max-w-5xl space-y-6 px-4 py-8 sm:px-6">
         <div>
-          <Link href="/portal" className="text-sm text-kmp-graphite/60 hover:text-kmp-orange">
-            ← Seus processos
+          <Link href="/portal" className="inline-flex items-center gap-1 text-sm font-semibold text-kmp-text/70 hover:text-kmp-text">
+            <ArrowLeft className="h-4 w-4" /> Meu processo
           </Link>
-          <h1 className="mt-1 font-heading text-2xl text-kmp-graphite">
-            {portalCase.service_type_nome ?? "Processo"}
-          </h1>
-          <p className="text-sm text-kmp-graphite/60">
-            Envie aqui os documentos pedidos pela equipe. Assim que sobem,
-            já aparecem no sistema para análise.
+          <h1 className="mt-2 font-heading text-3xl font-semibold text-kmp-text">Documentos</h1>
+          <p className="mt-1 text-sm text-kmp-text/70">
+            {portalCase.service_type_nome ?? "Processo"}. Envie os documentos pedidos: assim que sobem, a equipe já
+            recebe para análise. Fotos do celular e PDFs são aceitos.
           </p>
         </div>
 
-        {items.length === 0 ? (
-          <p className="rounded-lg bg-white p-8 text-center text-sm text-kmp-graphite/60 shadow-sm">
-            Nenhum checklist criado para este processo ainda.
+        {topo.length === 0 ? (
+          <p className={`${cartao} text-center text-sm text-kmp-text/70`}>
+            A equipe ainda não montou a lista de documentos do seu processo. Se já tiver algo para mandar, use
+            &quot;Outros documentos&quot; abaixo.
           </p>
         ) : (
-          <div className="space-y-4">
-            {items.map((item) => {
-              const sentDocs = documentsByItem[item.id] ?? [];
-              return (
-                <div key={item.id} className="rounded-lg bg-white p-6 shadow-sm">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="font-medium text-kmp-graphite">{item.nome}</p>
-                      {item.descricao ? (
-                        <p className="mt-1 text-sm text-kmp-graphite/60">
-                          {item.descricao}
-                        </p>
-                      ) : null}
-                    </div>
-                    <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-                        STATUS_COLORS[item.status] ?? "bg-kmp-graphite/10 text-kmp-graphite/60"
-                      }`}
-                    >
-                      {CHECKLIST_ITEM_STATUS_LABELS[item.status] ?? item.status}
-                    </span>
-                  </div>
-
-                  {item.status === "rejeitado" && item.motivo_rejeicao ? (
-                    <p className="mt-3 rounded-md bg-red-50 p-3 text-sm text-red-700">
-                      Motivo da rejeição: {item.motivo_rejeicao}
-                    </p>
-                  ) : null}
-
-                  {item.observacao_equipe ? (
-                    <p className="mt-3 text-sm text-kmp-graphite/70">
-                      Observação da equipe: {item.observacao_equipe}
-                    </p>
-                  ) : null}
-
-                  {sentDocs.length > 0 ? (
-                    <p className="mt-3 text-xs text-kmp-graphite/50">
-                      {sentDocs.length} arquivo{sentDocs.length === 1 ? "" : "s"} enviado
-                      {sentDocs.length === 1 ? "" : "s"}.
-                    </p>
-                  ) : null}
-
-                  <PortalUploadForm
-                    clientId={portalCase.client_id}
-                    caseId={portalCase.id}
-                    checklistItemId={item.id}
-                    categories={categories}
-                  />
-                </div>
-              );
-            })}
-          </div>
+          grupos
+            .filter((g) => g.itens.length > 0)
+            .map((g) => (
+              <section key={g.titulo} className={cartao}>
+                <FaixaTitulo titulo={g.titulo} cor={g.cor} icon={g.icon} direita={g.itens.length} />
+                <ul className="space-y-3">
+                  {g.itens.map((item) => (
+                    <Item key={item.id} item={item} docs={documentsByItem[item.id] ?? []} upload={upload(item.id)} />
+                  ))}
+                </ul>
+              </section>
+            ))
         )}
+
+        <section className={cartao}>
+          <FaixaTitulo titulo="Outros documentos" cor="roxo" icon={FolderUp} />
+          <p className="text-sm text-kmp-text/70">
+            Algo que não está na lista, mas que a sua consultora pediu ou que você acha importante.
+          </p>
+          <Arquivos docs={documentsByItem[""] ?? []} />
+          {upload(null)}
+        </section>
       </main>
-    </div>
+    </>
   );
 }

@@ -11,9 +11,9 @@ export function PortalLoginForm() {
 
   if (state.sent) {
     return (
-      <p className="mt-6 text-center text-sm text-kmp-graphite/70">
-        Enviamos um link de acesso para o seu e-mail. Abra a mensagem e clique
-        no link para entrar — sem senha.
+      <p className="mt-6 rounded-2xl bg-[#dcf3e7] p-4 text-center text-sm text-[#16673f]">
+        Enviamos um link de acesso para o seu e-mail. Abra a mensagem e toque em
+        &quot;Entrar no portal&quot;: não precisa de senha.
       </p>
     );
   }
@@ -23,7 +23,7 @@ export function PortalLoginForm() {
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-kmp-graphite"
+          className="block text-sm font-semibold text-kmp-text"
         >
           E-mail
         </label>
@@ -32,18 +32,20 @@ export function PortalLoginForm() {
           name="email"
           type="email"
           required
-          className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm"
+          autoComplete="email"
+          placeholder="seu@email.com"
+          className="mt-1.5 w-full rounded-xl border border-kmp-text/15 bg-white/85 px-3.5 py-2.5 text-sm text-kmp-text outline-none focus:border-kmp-orange focus:ring-2 focus:ring-kmp-orange/20"
         />
       </div>
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
+        className="w-full rounded-full bg-kmp-primary px-4 py-2.5 text-sm font-semibold text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
       >
         {pending ? "Enviando…" : "Enviar link de acesso"}
       </button>
       {state.error ? (
-        <p className="text-sm text-red-600">{state.error}</p>
+        <p className="text-sm text-[#b0283b]">{state.error}</p>
       ) : null}
     </form>
   );

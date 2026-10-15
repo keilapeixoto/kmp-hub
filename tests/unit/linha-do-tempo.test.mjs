@@ -25,3 +25,14 @@ test("junta início, etapas, status, formulário e documentos, do mais novo para
     ],
   );
 });
+
+test("recado da equipe entra na linha do tempo como evento próprio", () => {
+  const ev = montarLinhaDoTempo({
+    inicio: null,
+    historico: [],
+    formularioEnviadoEm: null,
+    documentos: [],
+    recados: [{ mensagem: "Aguardando resposta do Home Affairs", created_at: "2026-10-10T00:00:00Z" }],
+  });
+  assert.deepEqual(ev, [{ data: "2026-10-10T00:00:00Z", titulo: "Aguardando resposta do Home Affairs", tipo: "recado" }]);
+});

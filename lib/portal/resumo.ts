@@ -14,6 +14,8 @@ export type ResumoProcesso = {
   pendentes: { id: string; nome: string; status: string }[];
   consultora: { nome: string; email: string | null; telefone: string | null } | null;
   linhaDoTempo: EventoPortal[];
+  /** recado mais recente da equipe para o cliente */
+  recado: { mensagem: string; created_at: string } | null;
 };
 
 /**
@@ -32,7 +34,7 @@ export async function getResumosDoPortal(cases: PortalCase[], usuarioId: string 
 
   return Promise.all(
     cases.map(async (c) => {
-      const [{ data: etapas }, { data: checklist }, template, consultora, { data: historico }, { data: docs }] = await Promise.all([
+      const [{ data: etapas }, { data: checklist }, template, consultora, { data: historico }, { data: docs }, { data: recados }] = await Promise.all([
         admin.from("case_stages").select("id, nome").eq("service_type_id", c.service_type_id).order("ordem"),
         admin.from("checklists").select("id").eq("case_id", c.id).maybeSingle(),
         getCaseFormTemplateForCase(c.id),
@@ -47,6 +49,12 @@ export async function getResumosDoPortal(cases: PortalCase[], usuarioId: string 
               .eq("enviado_por", usuarioId)
               .eq("arquivado", false)
           : Promise.resolve({ data: [] as { nome: string; created_at: string }[] }),
+        // tabela nova (migração 20261015120000): antes de aplicada, volta erro e fica vazio
+        admin
+          .from("case_client_updates")
+          .select("mensagem, created_at")
+          .eq("case_id", c.id)
+          .order("created_at", { ascending: false }),
       ]);
 
       const { data: itens } = checklist
@@ -90,7 +98,9 @@ export async function getResumosDoPortal(cases: PortalCase[], usuarioId: string 
         formulario,
         pendentes: itensPendentesDoCliente(itens ?? []),
         consultora,
+        recado: (recados ?? [])[0] ?? null,
         linhaDoTempo: montarLinhaDoTempo({
+          recados: recados ?? [],
           inicio: c.inicio,
           historico: historico ?? [],
           formularioEnviadoEm,

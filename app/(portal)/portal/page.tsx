@@ -196,6 +196,14 @@ export default async function PortalHomePage() {
                     <Etiqueta cor={c.status === "ativo" ? "verde" : "cinza"}>{STATUS_LABELS[c.status] ?? c.status}</Etiqueta>
                   </div>
                   <Etapas etapas={r.etapas} atual={r.etapaAtual} />
+                  {r.recado ? (
+                    <p className="mt-5 rounded-2xl bg-[#f27b20]/12 p-4 text-sm text-kmp-text">
+                      <span className="block text-xs font-semibold uppercase tracking-wide text-kmp-text/60">
+                        Recado da equipe
+                      </span>
+                      {r.recado.mensagem}
+                    </p>
+                  ) : null}
                 </section>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">

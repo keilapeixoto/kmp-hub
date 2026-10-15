@@ -2,7 +2,7 @@
 // Só eventos que o cliente pode ver: início, etapas, status, formulário e os
 // documentos que ele mesmo enviou — nunca notas, tarefas ou ações internas.
 
-export type EventoPortal = { data: string; titulo: string; tipo: "inicio" | "etapa" | "status" | "formulario" | "documento" };
+export type EventoPortal = { data: string; titulo: string; tipo: "inicio" | "etapa" | "status" | "formulario" | "documento" | "recado" };
 
 const STATUS: Record<string, string> = {
   ativo: "Processo em andamento",
@@ -17,11 +17,13 @@ export function montarLinhaDoTempo({
   historico,
   formularioEnviadoEm,
   documentos,
+  recados = [],
 }: {
   inicio: string | null;
   historico: { campo: string; para: string | null; created_at: string }[];
   formularioEnviadoEm: string | null;
   documentos: { nome: string; created_at: string }[];
+  recados?: { mensagem: string; created_at: string }[];
 }): EventoPortal[] {
   const eventos: EventoPortal[] = [];
   if (inicio) eventos.push({ data: inicio, titulo: "Início do processo", tipo: "inicio" });
@@ -33,5 +35,6 @@ export function montarLinhaDoTempo({
   }
   if (formularioEnviadoEm) eventos.push({ data: formularioEnviadoEm, titulo: "Formulário de dados enviado", tipo: "formulario" });
   for (const d of documentos) eventos.push({ data: d.created_at, titulo: `Você enviou: ${d.nome}`, tipo: "documento" });
+  for (const r of recados) eventos.push({ data: r.created_at, titulo: r.mensagem, tipo: "recado" });
   return eventos.sort((a, b) => b.data.localeCompare(a.data));
 }

@@ -286,7 +286,12 @@ portal): fases do processo (concluídas/atual/próximas) e histórico
 (`lib/portal/linha-do-tempo.ts` — só início, etapas, status, formulário
 enviado e arquivos do próprio cliente). A equipe muda a fase no perfil do
 cliente, aba Processos ("Fase que o cliente vê no portal",
-`fase-no-portal.tsx`), que é a mesma etapa do Pipeline.
+`fase-no-portal.tsx`), que é a mesma etapa do Pipeline. No mesmo lugar, "Recado
+para o cliente": texto curto que aparece em destaque no portal e entra na
+linha do tempo (tabela `case_client_updates`, append-only, migração
+`20261015120000_case_client_updates.sql`, RLS em
+`022_case_client_updates_rls.test.sql`; equipe do processo escreve, cliente
+só lê os dele).
 **Gravação do formulário do portal vai pelo cliente admin** depois de checar
 o processo com a sessão do cliente: com a sessão do cliente, as políticas de
 `case_form_responses` levavam ~5 s por linha e estouravam o tempo do banco

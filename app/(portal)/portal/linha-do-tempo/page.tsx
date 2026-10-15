@@ -41,6 +41,14 @@ export default async function PortalLinhaDoTempoPage() {
           <div key={r.caseId} className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <section className={cartao}>
               <FaixaTitulo titulo={`Fases: ${r.servico}`} cor="laranja" icon={Route} />
+              {r.recado ? (
+                <p className="mb-4 rounded-2xl bg-[#f27b20]/12 p-4 text-sm text-kmp-text">
+                  <span className="block text-xs font-semibold uppercase tracking-wide text-kmp-text/60">
+                    Recado da equipe · {quando(r.recado.created_at)}
+                  </span>
+                  {r.recado.mensagem}
+                </p>
+              ) : null}
               {r.etapas.length === 0 ? (
                 <p className="text-sm text-kmp-text/70">As fases do seu processo vão aparecer aqui.</p>
               ) : (
@@ -92,6 +100,9 @@ export default async function PortalLinhaDoTempoPage() {
                           i === 0 ? "bg-kmp-orange" : "bg-kmp-text/30"
                         }`}
                       />
+                      {e.tipo === "recado" ? (
+                        <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/60">Recado da equipe</p>
+                      ) : null}
                       <p className="text-sm font-semibold text-kmp-text">{e.titulo}</p>
                       <p className="text-xs text-kmp-text/60">{quando(e.data)}</p>
                     </li>

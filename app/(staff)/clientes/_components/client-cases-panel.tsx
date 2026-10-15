@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCaseStatusLabels } from "@/lib/cases/data";
+import { createClient } from "@/lib/supabase/server";
 import type { Case, CaseStage, ServiceType } from "@/lib/cases/types";
 import { FaseNoPortal } from "./fase-no-portal";
 
@@ -17,6 +18,18 @@ export async function ClientCasesPanel({
   allStages: CaseStage[];
 }) {
   const statusLabels = await getCaseStatusLabels();
+  // Último recado de cada processo (tabela pode ainda não existir antes da
+  // migração 20261015120000 — aí só não mostra).
+  const supabase = await createClient();
+  const { data: recados } = cases.length
+    ? await supabase
+        .from("case_client_updates")
+        .select("case_id, mensagem, created_at")
+        .in("case_id", cases.map((c) => c.id))
+        .order("created_at", { ascending: false })
+    : { data: [] };
+  const ultimoRecado: Record<string, { mensagem: string; created_at: string }> = {};
+  for (const r of recados ?? []) ultimoRecado[r.case_id] ??= r;
   const serviceTypeName = (id: string) =>
     serviceTypes.find((st) => st.id === id)?.nome ?? "—";
 
@@ -58,6 +71,7 @@ export async function ClientCasesPanel({
                 </div>
                 <FaseNoPortal
                   caseId={c.id}
+                  ultimoRecado={ultimoRecado[c.id] ?? null}
                   etapaAtual={c.etapa_id}
                   etapas={allStages
                     .filter((s) => s.service_type_id === c.service_type_id)

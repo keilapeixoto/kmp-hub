@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, Check, ClipboardList, FileUp, Mail, MessageCircle, UserRound } from "lucide-react";
+import { ArrowRight, Check, ClipboardList, FileUp, History, Mail, MessageCircle, UserRound } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 import { getPortalCases } from "@/lib/portal/data";
 import { getResumosDoPortal, type ResumoProcesso } from "@/lib/portal/resumo";
 import { linkWhatsapp } from "@/lib/portal/progresso";
@@ -152,9 +153,39 @@ function FaleComConsultora({ r }: { r: ResumoProcesso }) {
   );
 }
 
+function LinhaDoTempo({ r }: { r: ResumoProcesso }) {
+  if (r.linhaDoTempo.length === 0) return null;
+  const quando = (iso: string) =>
+    new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric", timeZone: "Australia/Sydney" }).format(
+      new Date(iso.length === 10 ? `${iso}T12:00:00Z` : iso),
+    );
+  return (
+    <section className={cartao}>
+      <FaixaTitulo titulo="Linha do tempo" cor="azul" icon={History} />
+      <ol className="relative ml-2 space-y-4 border-l-2 border-kmp-divider pl-5">
+        {r.linhaDoTempo.slice(0, 12).map((e, i) => (
+          <li key={i} className="relative">
+            <span
+              className={`absolute -left-[27px] top-1 h-3 w-3 rounded-full ring-4 ring-white/70 dark:ring-white/10 ${
+                i === 0 ? "bg-kmp-orange" : "bg-kmp-text/30"
+              }`}
+            />
+            <p className="text-sm font-semibold text-kmp-text">{e.titulo}</p>
+            <p className="text-xs text-kmp-text/60">{quando(e.data)}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
 export default async function PortalHomePage() {
   const cases = await getPortalCases();
-  const resumos = await getResumosDoPortal(cases);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const resumos = await getResumosDoPortal(cases, user?.id ?? null);
   const nome = primeiroNome(cases[0]?.client_nome ?? "");
 
   return (
@@ -197,6 +228,7 @@ export default async function PortalHomePage() {
                   <OQueFalta r={r} />
                   <FaleComConsultora r={r} />
                 </div>
+                <LinhaDoTempo r={r} />
               </div>
             );
           })

@@ -47,3 +47,29 @@ test("sem e-mail da consultora: não envia nada", async () => {
   );
   assert.equal(chamou, false);
 });
+
+test("aviso de documento: escapa nome do arquivo e manda o link do processo", async () => {
+  const { avisarDocumento } = await import("../../lib/case-forms/notify.ts");
+  let enviado;
+  await avisarDocumento(
+    {
+      siteUrl: "https://site",
+      buscarDestino: async () => ({ email: "k@x.com", clienteNome: "Maria" }),
+      enviar: async (to, s, h) => ((enviado = { to, s, h }), { ok: true, error: null }),
+    },
+    "caso-2",
+    "<b>passaporte</b>.pdf",
+  );
+  assert.deepEqual(enviado.to, ["k@x.com"]);
+  assert.ok(enviado.h.includes("&lt;b&gt;passaporte"));
+  assert.ok(enviado.h.includes("https://site/processos/caso-2"));
+});
+
+test("aviso de documento nunca lança, mesmo se a busca falhar", async () => {
+  const { avisarDocumento } = await import("../../lib/case-forms/notify.ts");
+  await avisarDocumento(
+    { siteUrl: "x", buscarDestino: async () => { throw new Error("db"); }, enviar: async () => ({ ok: true, error: null }) },
+    "c",
+    "a.pdf",
+  );
+});

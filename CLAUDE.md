@@ -278,7 +278,11 @@ cliente não tem SELECT em `case_stages`/`profiles` de propósito. O que o
 cliente vê: processos, etapa, formulário, checklist de documentos (com
 envio por item e "Outros documentos") e a lista dos arquivos que **ele mesmo**
 enviou; não vê notas internas, riscos, invoices nem documentos da equipe.
-Envio pelo portal muda o item do checklist para "Enviado"/"Reenviado".
+Envio pelo portal muda o item do checklist para "Enviado"/"Reenviado" e
+manda e-mail à consultora (`notifyDocumentUploaded`, Resend; falha do e-mail
+nunca impede o envio). "Linha do tempo" no início do portal
+(`lib/portal/linha-do-tempo.ts`): só início, etapas, status, formulário
+enviado e arquivos do próprio cliente.
 **Gravação do formulário do portal vai pelo cliente admin** depois de checar
 o processo com a sessão do cliente: com a sessão do cliente, as políticas de
 `case_form_responses` levavam ~5 s por linha e estouravam o tempo do banco

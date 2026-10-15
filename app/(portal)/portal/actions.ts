@@ -12,6 +12,7 @@ import { getStorageSettings, validateUpload, findDuplicatesByHash } from "@/lib/
 import { INITIAL_UPLOAD_STATE, type UploadDocumentState } from "@/lib/storage-admin/upload-state";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { statusDepoisDoEnvio } from "@/lib/portal/progresso";
+import { notifyDocumentUploaded } from "@/lib/case-forms/notify-server";
 
 export type PortalLoginState = { error: string | null; sent: boolean };
 
@@ -113,24 +114,26 @@ export async function uploadPortalDocument(
   // O item do checklist muda de status para a equipe ver que chegou — o
   // cliente não tem UPDATE em checklist_items, então vai pelo admin, só para
   // um item deste mesmo processo.
-  if (checklistItemId) await marcarItemComoEnviado(caseId, checklistItemId);
+  const nomeItem = checklistItemId ? await marcarItemComoEnviado(caseId, checklistItemId) : null;
+  await notifyDocumentUploaded(caseId, nomeItem ? `${nomeItem} (${file.name})` : file.name);
 
   revalidatePath("/portal/documentos");
   revalidatePath("/portal");
   return INITIAL_UPLOAD_STATE;
 }
 
-async function marcarItemComoEnviado(caseId: string, checklistItemId: string) {
+async function marcarItemComoEnviado(caseId: string, checklistItemId: string): Promise<string | null> {
   const admin = createAdminClient();
   const { data: item } = await admin
     .from("checklist_items")
-    .select("id, status, checklists!inner(case_id)")
+    .select("id, nome, status, checklists!inner(case_id)")
     .eq("id", checklistItemId)
     .eq("checklists.case_id", caseId)
     .maybeSingle();
-  if (!item) return;
+  if (!item) return null;
   const novo = statusDepoisDoEnvio(item.status as string);
   if (novo) await admin.from("checklist_items").update({ status: novo }).eq("id", item.id);
+  return item.nome as string;
 }
 
 export async function portalLogout() {

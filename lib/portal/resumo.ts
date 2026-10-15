@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getCaseFormTemplateForCase } from "@/lib/case-forms/data";
 import type { PortalCase } from "./data";
 import { itensPendentesDoCliente, percentualPreenchido } from "./progresso";
+import { montarLinhaDoTempo, type EventoPortal } from "./linha-do-tempo";
 
 export type ResumoProcesso = {
   caseId: string;
@@ -12,6 +13,7 @@ export type ResumoProcesso = {
   formulario: { templateId: string; nome: string; percentual: number; enviado: boolean } | null;
   pendentes: { id: string; nome: string; status: string }[];
   consultora: { nome: string; email: string | null; telefone: string | null } | null;
+  linhaDoTempo: EventoPortal[];
 };
 
 /**
@@ -24,17 +26,27 @@ export type ResumoProcesso = {
  * libera de propósito (etapas configuradas, nome/contato da consultora) e
  * devolve só esses campos, nunca a linha inteira.
  */
-export async function getResumosDoPortal(cases: PortalCase[]): Promise<ResumoProcesso[]> {
+export async function getResumosDoPortal(cases: PortalCase[], usuarioId: string | null): Promise<ResumoProcesso[]> {
   if (cases.length === 0) return [];
   const admin = createAdminClient();
 
   return Promise.all(
     cases.map(async (c) => {
-      const [{ data: etapas }, { data: checklist }, template, consultora] = await Promise.all([
+      const [{ data: etapas }, { data: checklist }, template, consultora, { data: historico }, { data: docs }] = await Promise.all([
         admin.from("case_stages").select("id, nome").eq("service_type_id", c.service_type_id).order("ordem"),
         admin.from("checklists").select("id").eq("case_id", c.id).maybeSingle(),
         getCaseFormTemplateForCase(c.id),
         contatoDaConsultora(c.consultor_id),
+        admin.from("case_status_history").select("campo, para, created_at").eq("case_id", c.id),
+        // só o que o próprio cliente enviou (mesma regra da tela de documentos)
+        usuarioId
+          ? admin
+              .from("documents")
+              .select("nome, created_at")
+              .eq("case_id", c.id)
+              .eq("enviado_por", usuarioId)
+              .eq("arquivado", false)
+          : Promise.resolve({ data: [] as { nome: string; created_at: string }[] }),
       ]);
 
       const { data: itens } = checklist
@@ -47,10 +59,11 @@ export async function getResumosDoPortal(cases: PortalCase[]): Promise<ResumoPro
         : { data: [] };
 
       let formulario: ResumoProcesso["formulario"] = null;
+      let formularioEnviadoEm: string | null = null;
       if (template) {
         const [{ data: passos }, { data: caseForm }] = await Promise.all([
           admin.from("case_form_steps").select("id").eq("template_id", template.id),
-          admin.from("case_forms").select("id, status").eq("case_id", c.id).eq("template_id", template.id).maybeSingle(),
+          admin.from("case_forms").select("id, status, enviado_em").eq("case_id", c.id).eq("template_id", template.id).maybeSingle(),
         ]);
         const { data: campos } = await admin
           .from("case_form_fields")
@@ -59,6 +72,7 @@ export async function getResumosDoPortal(cases: PortalCase[]): Promise<ResumoPro
         const { data: respostas } = caseForm
           ? await admin.from("case_form_responses").select("field_id, valor").eq("case_form_id", caseForm.id)
           : { data: [] };
+        formularioEnviadoEm = (caseForm?.enviado_em as string | null) ?? null;
         formulario = {
           templateId: template.id,
           nome: template.nome,
@@ -76,6 +90,12 @@ export async function getResumosDoPortal(cases: PortalCase[]): Promise<ResumoPro
         formulario,
         pendentes: itensPendentesDoCliente(itens ?? []),
         consultora,
+        linhaDoTempo: montarLinhaDoTempo({
+          inicio: c.inicio,
+          historico: historico ?? [],
+          formularioEnviadoEm,
+          documentos: (docs ?? []).map((d) => ({ nome: (d.nome as string) ?? "Arquivo", created_at: d.created_at as string })),
+        }),
       };
     }),
   );

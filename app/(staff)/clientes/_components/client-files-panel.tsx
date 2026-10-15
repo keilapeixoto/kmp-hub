@@ -14,6 +14,7 @@ import {
   archiveClientFile,
   renameClientFile,
   restoreClientFile,
+  deleteClientFilePermanently,
   updateClientFilePasta,
   updateClientFileStatusRevisao,
 } from "../actions";
@@ -127,6 +128,11 @@ export function ClientFilesPanel({
                     <RotateCcw className="h-3.5 w-3.5" /> Restaurar
                   </button>
                 </form>
+                <BotaoExcluir
+                  definitivo
+                  nome={displayName(doc)}
+                  action={deleteClientFilePermanently.bind(null, clientId, doc.id)}
+                />
               </li>
             ))}
           </ul>

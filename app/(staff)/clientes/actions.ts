@@ -418,3 +418,34 @@ export async function restoreClientFile(clientId: string, documentId: string) {
   await supabase.from("documents").update({ arquivado: false }).eq("id", documentId);
   revalidatePath(`/clientes/${clientId}`);
 }
+
+/**
+ * Exclusão definitiva (pedido da Keila, out/2026): só admin e só de um
+ * documento que já está em Arquivados. Apaga o arquivo do Storage e a linha
+ * de `documents` (o trigger de auditoria guarda o registro da exclusão).
+ */
+export async function deleteClientFilePermanently(clientId: string, documentId: string) {
+  const role = await getCurrentUserRole();
+  if (role !== "admin") return;
+
+  const supabase = await createClient();
+  const { data: doc } = await supabase
+    .from("documents")
+    .select("id, storage_path, arquivado")
+    .eq("id", documentId)
+    .maybeSingle();
+  if (!doc || !doc.arquivado) return;
+
+  const admin = createAdminClient();
+  // versões antigas também têm arquivo próprio no Storage
+  const { data: versoes } = await admin.from("document_versions").select("storage_path").eq("document_id", documentId);
+  const caminhos = [...new Set([doc.storage_path, ...(versoes ?? []).map((v) => v.storage_path as string)])];
+  const { error: storageError } = await admin.storage.from("documents").remove(caminhos);
+  if (storageError) {
+    console.error("[deleteClientFilePermanently] storage falhou:", storageError.message);
+    return;
+  }
+  const { error } = await supabase.from("documents").delete().eq("id", documentId);
+  if (error) console.error("[deleteClientFilePermanently] registro falhou:", error.code, error.message);
+  revalidatePath(`/clientes/${clientId}`);
+}

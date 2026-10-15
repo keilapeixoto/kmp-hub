@@ -18,8 +18,27 @@ function tipoDe(nome: string, formato: string | null): "pdf" | "imagem" | "outro
 // gera uma URL assinada de 5 minutos.
 export function PreviaDocumento({ id, nome, formato }: { id: string; nome: string; formato: string | null }) {
   const [aberto, setAberto] = useState(false);
+  const [link, setLink] = useState<string | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const [carregou, setCarregou] = useState(false);
   const tipo = tipoDe(nome, formato);
   const url = `/api/documents/${id}/download`;
+
+  useEffect(() => {
+    if (!aberto) return;
+    let cancelado = false;
+    fetch(`${url}?json=1`)
+      .then(async (r) => {
+        const corpo = await r.json().catch(() => ({}));
+        if (cancelado) return;
+        if (r.ok && corpo.url) setLink(corpo.url);
+        else setErro(corpo.error ?? `Não foi possível abrir (erro ${r.status}).`);
+      })
+      .catch(() => !cancelado && setErro("Sem conexão. Tente de novo."));
+    return () => {
+      cancelado = true;
+    };
+  }, [aberto, url]);
 
   useEffect(() => {
     if (!aberto) return;
@@ -32,7 +51,12 @@ export function PreviaDocumento({ id, nome, formato }: { id: string; nome: strin
     <>
       <button
         type="button"
-        onClick={() => setAberto(true)}
+        onClick={() => {
+          setLink(null);
+          setErro(null);
+          setCarregou(false);
+          setAberto(true);
+        }}
         aria-label={`Visualizar ${nome}`}
         className="flex h-8 w-8 items-center justify-center rounded-full text-kmp-text/70 transition hover:bg-kmp-text/10 hover:text-kmp-text"
       >
@@ -71,11 +95,24 @@ export function PreviaDocumento({ id, nome, formato }: { id: string; nome: strin
               </div>
             </div>
             <div className="relative flex min-h-0 flex-1 items-center justify-center bg-kmp-text/5">
-              {tipo === "pdf" ? (
-                <iframe src={url} title={nome} className="absolute inset-0 h-full w-full border-0" />
-              ) : tipo === "imagem" ? (
-                // eslint-disable-next-line @next/next/no-img-element -- URL assinada temporária, sem otimização
-                <img src={url} alt={nome} className="max-h-full max-w-full object-contain" />
+              {erro ? (
+                <p className="p-6 text-center text-sm font-medium text-[#9a2433]">{erro}</p>
+              ) : !link && tipo !== "outro" ? (
+                <p className="text-sm font-medium text-kmp-text/70">Carregando…</p>
+              ) : tipo === "pdf" && link ? (
+                <iframe src={link} title={nome} className="absolute inset-0 h-full w-full border-0" />
+              ) : tipo === "imagem" && link ? (
+                <>
+                  {!carregou ? <p className="absolute text-sm font-medium text-kmp-text/70">Carregando…</p> : null}
+                  {/* eslint-disable-next-line @next/next/no-img-element -- URL assinada temporária, sem otimização */}
+                  <img
+                    src={link}
+                    alt={nome}
+                    onLoad={() => setCarregou(true)}
+                    onError={() => setErro("A imagem não abriu no navegador. Use \"Baixar\".")}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </>
               ) : (
                 <p className="p-6 text-center text-sm text-kmp-text/70">
                   Este formato não abre no navegador. Use &quot;Baixar&quot; para ver o arquivo.

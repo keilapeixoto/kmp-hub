@@ -20,8 +20,9 @@ export async function GET(
     .eq("id", id)
     .maybeSingle();
 
+  const comoJson = new URL(request.url).searchParams.get("json");
   if (!doc) {
-    return NextResponse.json({ error: "Documento não encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Documento não encontrado ou sem permissão." }, { status: 404 });
   }
 
   const { data: signed } = await supabase.storage
@@ -41,5 +42,7 @@ export async function GET(
     );
   }
 
+  // ?json=1: a pré-visualização do Hub pede o link e mostra "Carregando…"/erro.
+  if (comoJson) return NextResponse.json({ url: signed.signedUrl });
   return NextResponse.redirect(signed.signedUrl);
 }

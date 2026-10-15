@@ -8,8 +8,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { DOCUMENTS_BUCKET } from "@/lib/documents/data";
-import { getStorageSettings, validateUpload, findDuplicatesByHash } from "@/lib/storage-admin/validation";
-import { INITIAL_UPLOAD_STATE, type UploadDocumentState } from "@/lib/storage-admin/upload-state";
+import { getStorageSettings } from "@/lib/storage-admin/validation";
+import { caminhoDoProcesso, extensao, problemaDoArquivo } from "@/lib/portal/arquivos";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { statusDepoisDoEnvio } from "@/lib/portal/progresso";
 import { notifyDocumentUploaded } from "@/lib/case-forms/notify-server";
@@ -48,78 +48,82 @@ export async function requestPortalMagicLink(
   return { error: null, sent: true };
 }
 
-export async function uploadPortalDocument(
+export type ArquivoEnviado = { caminho: string; nome: string; hash: string | null };
+export type RegistroState = { error: string | null; enviados: number };
+
+/**
+ * Registra arquivos que o navegador do cliente já subiu direto para o
+ * Storage (sem passar pelo limite de 10 MB do Server Action — vários arquivos
+ * de até 25 MB). O Storage só aceitou o arquivo porque o RLS dele confere a
+ * pasta do cliente; aqui o servidor confere de novo a pasta do processo,
+ * formato e tamanho reais (lidos do Storage, não do navegador) e grava em
+ * `documents` com a sessão do cliente (RLS de documents_insert_client).
+ */
+export async function registrarDocumentosPortal(
   clientId: string,
   caseId: string,
   checklistItemId: string | null,
-  _prevState: UploadDocumentState,
-  formData: FormData,
-): Promise<UploadDocumentState> {
-  const file = formData.get("file");
-  if (!(file instanceof File) || file.size === 0) {
-    return { error: "Selecione um arquivo.", duplicates: null };
-  }
-
-  const settings = await getStorageSettings();
-  const validation = await validateUpload(file, settings);
-  if (!validation.ok) {
-    return { error: validation.message, duplicates: null };
-  }
-
-  const confirmarDuplicata = formData.get("confirmar_duplicata") === "true";
-  if (!confirmarDuplicata) {
-    const duplicates = await findDuplicatesByHash(validation.hash);
-    if (duplicates.length > 0) {
-      return { error: null, duplicates };
-    }
-  }
+  arquivos: ArquivoEnviado[],
+  categoriaId: string | null,
+): Promise<RegistroState> {
+  if (arquivos.length === 0) return { error: "Selecione um arquivo.", enviados: 0 };
 
   const supabase = await createClient();
-  const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_");
-  const storagePath = `${clientId}/${caseId}/${Date.now()}-${safeName}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from(DOCUMENTS_BUCKET)
-    .upload(storagePath, file, { contentType: file.type });
-
-  if (uploadError) {
-    return { error: "Falha ao enviar o arquivo. Tente de novo.", duplicates: null };
-  }
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (!user) return { error: "Sua sessão expirou. Entre de novo no portal.", enviados: 0 };
 
-  const categoriaId = formData.get("categoria_id");
+  const settings = await getStorageSettings();
+  const regras = { extensoes: settings.allowed_extensions, maxBytes: settings.max_file_size_bytes };
+  const admin = createAdminClient();
 
-  const { error: insertError } = await supabase.from("documents").insert({
-    client_id: clientId,
-    case_id: caseId,
-    checklist_item_id: checklistItemId,
-    storage_path: storagePath,
-    enviado_por: user?.id ?? null,
-    nome: file.name,
-    tamanho_bytes: file.size,
-    formato: validation.formato,
-    hash_sha256: validation.hash,
-    categoria_id: typeof categoriaId === "string" && categoriaId ? categoriaId : null,
-  });
-
-  if (insertError) {
-    console.error("[uploadPortalDocument] registro falhou:", insertError.code, insertError.message);
-    return { error: "O arquivo subiu, mas não conseguimos registrá-lo. Tente de novo.", duplicates: null };
+  const linhas = [];
+  for (const a of arquivos) {
+    if (!caminhoDoProcesso(a.caminho, clientId, caseId)) {
+      return { error: "Arquivo fora da pasta do seu processo.", enviados: 0 };
+    }
+    const pasta = a.caminho.slice(0, a.caminho.lastIndexOf("/"));
+    const arquivo = a.caminho.slice(a.caminho.lastIndexOf("/") + 1);
+    const { data: lista } = await admin.storage.from(DOCUMENTS_BUCKET).list(pasta, { search: arquivo, limit: 1 });
+    const obj = (lista ?? []).find((o) => o.name === arquivo);
+    const tamanho = Number((obj?.metadata as { size?: number } | undefined)?.size ?? 0);
+    if (!obj) return { error: `${a.nome}: o arquivo não chegou. Tente de novo.`, enviados: 0 };
+    const problema = problemaDoArquivo({ nome: a.nome, tamanho }, regras);
+    if (problema) {
+      await admin.storage.from(DOCUMENTS_BUCKET).remove([a.caminho]);
+      return { error: problema, enviados: 0 };
+    }
+    linhas.push({
+      client_id: clientId,
+      case_id: caseId,
+      checklist_item_id: checklistItemId,
+      storage_path: a.caminho,
+      enviado_por: user.id,
+      nome: a.nome,
+      tamanho_bytes: tamanho,
+      formato: extensao(a.nome),
+      hash_sha256: a.hash,
+      categoria_id: categoriaId || null,
+    });
   }
 
-  // O registro acima passou pelo RLS do cliente (prova que o processo é dele).
+  const { error: insertError } = await supabase.from("documents").insert(linhas);
+  if (insertError) {
+    console.error("[registrarDocumentosPortal] registro falhou:", insertError.code, insertError.message);
+    return { error: "Os arquivos subiram, mas não conseguimos registrá-los. Tente de novo.", enviados: 0 };
+  }
+
   // O item do checklist muda de status para a equipe ver que chegou — o
   // cliente não tem UPDATE em checklist_items, então vai pelo admin, só para
   // um item deste mesmo processo.
   const nomeItem = checklistItemId ? await marcarItemComoEnviado(caseId, checklistItemId) : null;
-  await notifyDocumentUploaded(caseId, nomeItem ? `${nomeItem} (${file.name})` : file.name);
+  const nomes = linhas.map((l) => l.nome).join(", ");
+  await notifyDocumentUploaded(caseId, nomeItem ? `${nomeItem} (${nomes})` : nomes);
 
   revalidatePath("/portal/documentos");
   revalidatePath("/portal");
-  return INITIAL_UPLOAD_STATE;
+  return { error: null, enviados: linhas.length };
 }
 
 async function marcarItemComoEnviado(caseId: string, checklistItemId: string): Promise<string | null> {

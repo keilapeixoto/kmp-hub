@@ -9,7 +9,8 @@ import {
   type PortalDocumento,
 } from "@/lib/portal/data";
 import { STATUS_COM_O_CLIENTE } from "@/lib/portal/progresso";
-import { getDocumentCategories } from "@/lib/documents/data";
+import { DOCUMENTS_BUCKET, getDocumentCategories } from "@/lib/documents/data";
+import { getStorageSettings } from "@/lib/storage-admin/validation";
 import { CHECKLIST_ITEM_STATUS_LABELS } from "@/lib/checklists/constants";
 import type { ChecklistItem } from "@/lib/checklists/types";
 import { Etiqueta, FaixaTitulo, type CorViva } from "@/components/ui/vivid";
@@ -95,12 +96,14 @@ export default async function PortalDocumentosPage({
     caseId = cases[0].id;
   }
 
-  const [portalCase, items, documentsByItem, categories] = await Promise.all([
+  const [portalCase, items, documentsByItem, categories, settings] = await Promise.all([
     getPortalCase(caseId),
     getPortalChecklistItems(caseId),
     getPortalDocumentsByChecklistItem(caseId),
     getDocumentCategories(),
+    getStorageSettings(),
   ]);
+  const regras = { extensoes: settings.allowed_extensions, maxBytes: settings.max_file_size_bytes };
 
   if (!portalCase) notFound();
 
@@ -118,6 +121,8 @@ export default async function PortalDocumentosPage({
       caseId={portalCase.id}
       checklistItemId={checklistItemId}
       categories={checklistItemId ? [] : categories}
+      bucket={DOCUMENTS_BUCKET}
+      regras={regras}
     />
   );
 

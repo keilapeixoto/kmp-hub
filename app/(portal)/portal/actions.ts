@@ -2,6 +2,7 @@
 
 import { portalUrl } from "@/lib/dominios";
 import { mensagemErroLink } from "@/lib/portal/erro-link";
+import { createClient as createSupabaseJs } from "@supabase/supabase-js";
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -21,7 +22,14 @@ export async function requestPortalMagicLink(
     return { error: "Informe seu e-mail.", sent: false };
   }
 
-  const supabase = await createClient();
+  // Cliente sem cookies e com fluxo "implicit": o link sai com um token que
+  // vale em qualquer aparelho (o fluxo PKCE do cliente com cookies gerava
+  // "pkce_..." e só funcionava no mesmo navegador em que foi pedido).
+  const supabase = createSupabaseJs(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    { auth: { flowType: "implicit", persistSession: false, autoRefreshToken: false } },
+  );
   const siteUrl = portalUrl();
   const { error } = await supabase.auth.signInWithOtp({
     email: email.trim(),

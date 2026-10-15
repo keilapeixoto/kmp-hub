@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Download, Eye, X } from "lucide-react";
 
 const IMAGENS = ["jpg", "jpeg", "png", "gif", "webp", "heic", "bmp"];
@@ -37,7 +38,8 @@ export function PreviaDocumento({ id, nome, formato }: { id: string; nome: strin
       >
         <Eye className="h-4 w-4" />
       </button>
-      {aberto ? (
+      {aberto
+        ? createPortal(
         <div
           role="dialog"
           aria-modal="true"
@@ -68,9 +70,9 @@ export function PreviaDocumento({ id, nome, formato }: { id: string; nome: strin
                 </button>
               </div>
             </div>
-            <div className="flex min-h-0 flex-1 items-center justify-center bg-kmp-text/5">
+            <div className="relative flex min-h-0 flex-1 items-center justify-center bg-kmp-text/5">
               {tipo === "pdf" ? (
-                <iframe src={url} title={nome} className="h-full w-full" />
+                <iframe src={url} title={nome} className="absolute inset-0 h-full w-full border-0" />
               ) : tipo === "imagem" ? (
                 // eslint-disable-next-line @next/next/no-img-element -- URL assinada temporária, sem otimização
                 <img src={url} alt={nome} className="max-h-full max-w-full object-contain" />
@@ -81,8 +83,12 @@ export function PreviaDocumento({ id, nome, formato }: { id: string; nome: strin
               )}
             </div>
           </div>
-        </div>
-      ) : null}
+        </div>,
+            // Fora do cartão: os cartões têm backdrop-filter (vidro), que vira
+            // o "contêiner" do position:fixed e prendia a janela dentro dele.
+            document.body,
+          )
+        : null}
     </>
   );
 }

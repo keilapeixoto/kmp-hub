@@ -17,7 +17,7 @@ export default function NovoServiceTypePage() {
         </h1>
       </div>
 
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <ServiceTypeForm action={createServiceType} />
       </div>
     </div>

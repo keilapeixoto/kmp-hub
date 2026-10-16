@@ -13,7 +13,7 @@ export function SettingsForm({ settings }: { settings: StorageSettings }) {
   );
 
   return (
-    <form action={formAction} className="space-y-5 rounded-lg bg-kmp-surface p-6 shadow-sm">
+    <form action={formAction} className="space-y-5 rounded-3xl bg-kmp-surface p-6 shadow-sm">
       <div>
         <label className="block text-sm font-medium text-kmp-text">
           Tamanho máximo por arquivo (MB)

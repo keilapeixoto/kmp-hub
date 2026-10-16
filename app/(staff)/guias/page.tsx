@@ -30,7 +30,7 @@ export default async function GuiasPage() {
         ) : null}
       </div>
 
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="rounded-3xl bg-kmp-surface shadow-sm">
         {guides.length === 0 ? (
           <p className="p-8 text-center text-sm text-kmp-text/50">
             Nenhum guia cadastrado ainda.

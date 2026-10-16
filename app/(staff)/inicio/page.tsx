@@ -278,7 +278,7 @@ export default async function InicioPage() {
       </div>
 
       {canManageNews ? (
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-3xl bg-white p-6 shadow-sm">
           <h2 className="font-heading text-lg text-kmp-graphite">
             Publicar novidade
           </h2>

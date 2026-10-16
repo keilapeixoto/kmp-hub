@@ -32,7 +32,7 @@ export default async function EditarInvoicePage({
       <h1 className="font-heading text-2xl text-kmp-text">
         Editar invoice {invoice.numero}
       </h1>
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <InvoiceForm
           action={boundAction}
           invoice={invoice}

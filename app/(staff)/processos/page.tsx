@@ -91,33 +91,36 @@ export default async function ProcessosPage({
         serviceTypes={serviceTypes}
       />
 
-      <div className="flex gap-2 text-sm">
+      <div className="flex flex-wrap gap-1.5 text-sm">
         <Link
           href={`/processos?view=list${suffix}`}
-          className={`rounded-md px-3 py-1.5 font-medium ${
+          aria-current={view === "list" ? "page" : undefined}
+          className={`rounded-full px-4 py-2 font-medium shadow-sm transition ${
             view === "list"
-              ? "bg-kmp-graphite text-white"
-              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-orange"
+              ? "bg-kmp-primary text-kmp-on-primary"
+              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-text"
           }`}
         >
           Lista
         </Link>
         <Link
           href={`/processos?view=kanban${suffix}`}
-          className={`rounded-md px-3 py-1.5 font-medium ${
+          aria-current={view === "kanban" ? "page" : undefined}
+          className={`rounded-full px-4 py-2 font-medium shadow-sm transition ${
             view === "kanban"
-              ? "bg-kmp-graphite text-white"
-              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-orange"
+              ? "bg-kmp-primary text-kmp-on-primary"
+              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-text"
           }`}
         >
           Pipeline
         </Link>
         <Link
           href={`/processos?view=fila${suffix}`}
-          className={`rounded-md px-3 py-1.5 font-medium ${
+          aria-current={view === "fila" ? "page" : undefined}
+          className={`rounded-full px-4 py-2 font-medium shadow-sm transition ${
             view === "fila"
-              ? "bg-kmp-graphite text-white"
-              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-orange"
+              ? "bg-kmp-primary text-kmp-on-primary"
+              : "bg-kmp-surface text-kmp-text/70 hover:text-kmp-text"
           }`}
         >
           Fila

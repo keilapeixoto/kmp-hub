@@ -56,7 +56,7 @@ export default async function IntegracoesPage({
         </div>
       ) : null}
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
+      <div className="rounded-3xl bg-white p-6 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-kmp-orange/10">

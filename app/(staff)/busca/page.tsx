@@ -20,15 +20,15 @@ export default async function BuscaPage({
       </h1>
 
       {q.length < 2 ? (
-        <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <p className="rounded-3xl bg-kmp-surface p-8 text-center text-sm text-kmp-text/50 shadow-sm">
           Digite pelo menos 2 caracteres no campo de busca do topo.
         </p>
       ) : results.length === 0 ? (
-        <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <p className="rounded-3xl bg-kmp-surface p-8 text-center text-sm text-kmp-text/50 shadow-sm">
           Nada encontrado para &quot;{q}&quot;.
         </p>
       ) : (
-        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <div className="rounded-3xl bg-kmp-surface shadow-sm">
           <ul className="divide-y divide-kmp-divider">
             {results.map((r, i) => (
               <li key={i}>

@@ -89,7 +89,7 @@ export default async function FinanceiroPage({
       <div className="space-y-4">
         {summary.map((row) => (
           <div key={row.moeda} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-4 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+            <div className="rounded-3xl bg-kmp-surface p-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/50">
                 Recebido no mês · {row.moeda}
               </p>
@@ -97,7 +97,7 @@ export default async function FinanceiroPage({
                 {formatMoeda(row.recebidoMes, row.moeda)}
               </p>
             </div>
-            <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-4 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+            <div className="rounded-3xl bg-kmp-surface p-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/50">
                 Pendente a receber · {row.moeda}
               </p>
@@ -139,7 +139,7 @@ export default async function FinanceiroPage({
 
       <form
         method="GET"
-        className="grid grid-cols-1 gap-3 rounded-lg bg-kmp-surface p-4 shadow-sm sm:grid-cols-3"
+        className="grid grid-cols-1 gap-3 rounded-3xl bg-kmp-surface p-5 shadow-sm sm:grid-cols-3"
       >
         <input type="hidden" name="periodo" value={periodo} />
         <input
@@ -181,7 +181,7 @@ export default async function FinanceiroPage({
         </div>
       </form>
 
-      <div className="overflow-x-auto rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="overflow-x-auto rounded-3xl bg-kmp-surface shadow-sm">
         {invoices.length === 0 ? (
           <p className="p-8 text-center text-sm text-kmp-text/50">
             Nenhuma invoice encontrada.

@@ -210,7 +210,7 @@ export default async function ClientDetailPage({
       ) : null}
 
       {tab === "dados" ? (
-        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+        <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
           <ClientForm
             action={updateWithId}
             client={client}
@@ -270,14 +270,14 @@ async function ClientTimeline({
 
   if (entries.length === 0) {
     return (
-      <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <p className="rounded-3xl bg-kmp-surface p-8 text-center text-sm text-kmp-text/50 shadow-sm">
         Nenhum evento registrado ainda.
       </p>
     );
   }
 
   return (
-    <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+    <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
       <ol className="space-y-4">
         {entries.map((entry, index) => (
           <li key={index} className="border-l-2 border-kmp-orange/30 pl-4">

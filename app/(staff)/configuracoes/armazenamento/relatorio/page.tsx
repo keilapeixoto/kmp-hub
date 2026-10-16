@@ -28,7 +28,7 @@ export default async function StorageMonthlyReportPage() {
         </p>
       </div>
 
-      <dl className="space-y-4 rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <dl className="space-y-4 rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <div>
           <dt className="text-xs uppercase tracking-wide text-kmp-text/50">
             Total utilizado

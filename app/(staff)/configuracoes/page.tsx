@@ -90,7 +90,7 @@ export default async function ConfiguracoesHubPage() {
             <Link
               key={area.href}
               href={area.href}
-              className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-5 shadow-sm dark:shadow-md dark:shadow-kmp-config/20 transition dark:hover:border-kmp-config/70"
+              className="rounded-3xl bg-kmp-surface p-5 shadow-sm transition dark:hover:border-kmp-config/70"
             >
               <Icon className="h-6 w-6 text-kmp-orange" />
               <h2 className="mt-3 font-heading text-lg text-kmp-text">

@@ -71,7 +71,7 @@ export default async function CompromissoDetailPage({
         </p>
       ) : null}
 
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <h2 className="font-heading text-lg text-kmp-text">
           Resumo pós-consulta
         </h2>

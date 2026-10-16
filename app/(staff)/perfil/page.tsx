@@ -26,7 +26,7 @@ export default async function MyProfilePage() {
         <p className="text-sm text-kmp-text/60">{member.email}</p>
       </div>
 
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <AvatarUploadForm userId={member.userId} fotoUrl={member.fotoUrl} />
       </div>
 

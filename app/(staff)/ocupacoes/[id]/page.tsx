@@ -29,7 +29,7 @@ export default async function OcupacaoDetailPage({
         </p>
       </div>
 
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <dl className="divide-y divide-kmp-divider text-sm">
           <div className="flex justify-between py-2">
             <dt className="text-kmp-text/40">Código ANZSCO</dt>
@@ -63,7 +63,7 @@ export default async function OcupacaoDetailPage({
         ) : null}
       </div>
 
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <h2 className="font-heading text-lg text-kmp-text">
           Elegibilidade por subclasse de visto
         </h2>

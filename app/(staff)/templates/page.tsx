@@ -43,7 +43,7 @@ export default async function TemplatesPage() {
       </div>
 
       {templates.length === 0 ? (
-        <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <p className="rounded-3xl bg-kmp-surface p-8 text-center text-sm text-kmp-text/50 shadow-sm">
           Nenhum template cadastrado ainda.
         </p>
       ) : (
@@ -52,7 +52,7 @@ export default async function TemplatesPage() {
             const deleteWithId = deleteMessageTemplate.bind(null, template.id);
             const isSystemTemplate = template.chave !== null;
             return (
-              <div key={template.id} className="rounded-lg bg-kmp-surface p-4 shadow-sm">
+              <div key={template.id} className="rounded-3xl bg-kmp-surface p-4 shadow-sm">
                 {isAdmin ? (
                   <EditTemplateForm template={template} serviceTypes={tipos} />
                 ) : (
@@ -99,7 +99,7 @@ export default async function TemplatesPage() {
       )}
 
       {isAdmin ? (
-        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+        <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
           <h2 className="font-heading text-lg text-kmp-text">
             Novo template
           </h2>

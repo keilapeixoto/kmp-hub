@@ -54,7 +54,7 @@ export default async function NovoProcessoPage({
         </h1>
       </div>
 
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <CaseForm
           action={createCase}
           clients={clients}

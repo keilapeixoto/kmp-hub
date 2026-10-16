@@ -56,7 +56,7 @@ export default async function TarefaDetailPage({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm lg:col-span-2">
+        <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm lg:col-span-2">
           <TaskForm
             action={updateWithId}
             task={task}
@@ -68,7 +68,7 @@ export default async function TarefaDetailPage({
           />
         </div>
 
-        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
           <h2 className="font-heading text-lg text-kmp-text">
             Comentários
           </h2>

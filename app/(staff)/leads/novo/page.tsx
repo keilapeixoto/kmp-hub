@@ -27,7 +27,7 @@ export default async function NovoLeadPage() {
         </h1>
       </div>
 
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <LeadForm
           action={createLead}
           consultants={consultants}

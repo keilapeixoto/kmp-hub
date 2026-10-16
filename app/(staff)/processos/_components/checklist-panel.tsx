@@ -274,7 +274,7 @@ export async function ChecklistPanel({
   if (!checklist) {
     if (!serviceTypeChecklistTemplateId) {
       return (
-        <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <p className="rounded-3xl bg-kmp-surface p-6 text-sm text-kmp-text/50 shadow-sm">
           Este tipo de serviço ainda não tem um template de checklist
           configurado em Configurações → Tipos de serviço.
         </p>
@@ -288,7 +288,7 @@ export async function ChecklistPanel({
     );
 
     return (
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 text-center shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="rounded-3xl bg-kmp-surface p-6 text-center shadow-sm">
         <p className="text-sm text-kmp-text/50">
           Nenhum checklist criado para este processo ainda.
         </p>
@@ -306,7 +306,7 @@ export async function ChecklistPanel({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-4 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="rounded-3xl bg-kmp-surface p-4 shadow-sm">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium text-kmp-text">
             {checklist.percentual}% completo

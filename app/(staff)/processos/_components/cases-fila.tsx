@@ -105,7 +105,7 @@ export async function CasesFila({
       </div>
 
       {queued.length === 0 ? (
-        <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <p className="rounded-3xl bg-kmp-surface p-8 text-center text-sm text-kmp-text/50 shadow-sm">
           Nenhum processo nessa fila.
         </p>
       ) : (
@@ -117,7 +117,7 @@ export async function CasesFila({
                 {groupName}{" "}
                 <span className="font-normal text-kmp-text/50">({groupCases.length})</span>
               </h3>
-              <div className="overflow-hidden rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+              <div className="overflow-hidden rounded-3xl bg-kmp-surface shadow-sm">
                 <ul className="divide-y divide-kmp-divider">
                   {groupCases.map((c) => {
                     const overdue = isOverdue(c);

@@ -19,14 +19,14 @@ export function DeadlinesList({
 }) {
   if (deadlines.length === 0) {
     return (
-      <p className="rounded-lg bg-kmp-surface p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
+      <p className="rounded-3xl bg-kmp-surface p-8 text-center text-sm text-kmp-text/50 shadow-sm">
         Nenhum prazo de 28 dias cadastrado ainda.
       </p>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg bg-kmp-surface shadow-sm dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep dark:shadow-md dark:shadow-kmp-config/20">
+    <div className="overflow-x-auto rounded-3xl bg-kmp-surface shadow-sm">
       <table className="w-full min-w-[860px] text-left text-sm">
         <thead className="border-b border-kmp-divider text-xs uppercase text-kmp-text/50">
           <tr>

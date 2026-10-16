@@ -44,7 +44,7 @@ export function CaseFormPanel({
   const link = `${portalUrl()}/portal/formulario?processo=${caseId}`;
 
   return (
-    <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+    <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <h2 className="font-heading text-lg text-kmp-text">{templateNome}</h2>
         {caseForm ? (

@@ -12,7 +12,7 @@ export function ImportForm() {
   );
 
   return (
-    <form action={formAction} className="space-y-4 rounded-lg bg-kmp-surface p-6 shadow-sm">
+    <form action={formAction} className="space-y-4 rounded-3xl bg-kmp-surface p-6 shadow-sm">
       <div>
         <label htmlFor="arquivo" className="block text-sm font-medium text-kmp-text">
           Arquivo CSV

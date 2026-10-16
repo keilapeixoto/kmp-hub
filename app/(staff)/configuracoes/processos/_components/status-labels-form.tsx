@@ -13,7 +13,7 @@ export function StatusLabelsForm({ labels }: { labels: CaseStatusLabel[] }) {
   );
 
   return (
-    <form action={formAction} className="space-y-5 rounded-lg bg-kmp-surface p-6 shadow-sm">
+    <form action={formAction} className="space-y-5 rounded-3xl bg-kmp-surface p-6 shadow-sm">
       {labels.map((l) => (
         <div key={l.id}>
           <label

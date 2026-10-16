@@ -8,7 +8,7 @@ import { createCaseDeadline, type DeadlineFormState } from "../actions";
 const initialState: DeadlineFormState = { error: null };
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-kmp-divider px-2 py-1.5 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+  "mt-1 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
 const labelClass = "block text-xs font-medium text-kmp-text/70";
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -28,7 +28,7 @@ export function DeadlineForm({ cases }: { cases: ActiveCaseOption[] }) {
     <form
       ref={formRef}
       action={formAction}
-      className="grid grid-cols-1 gap-3 rounded-lg bg-kmp-surface p-4 shadow-sm sm:grid-cols-5"
+      className="grid grid-cols-1 gap-3 rounded-3xl bg-kmp-surface p-5 shadow-sm sm:grid-cols-5"
     >
       <div className="sm:col-span-2">
         <label className={labelClass}>Processo</label>

@@ -41,7 +41,7 @@ export default async function EditTeamMemberPage({
         ) : null}
       </div>
 
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <AvatarUploadForm userId={member.userId} fotoUrl={member.fotoUrl} />
       </div>
 

@@ -15,7 +15,7 @@ export function InviteTeamForm() {
   return (
     <form
       action={formAction}
-      className="space-y-4 rounded-lg bg-kmp-surface p-6 shadow-sm"
+      className="space-y-4 rounded-3xl bg-kmp-surface p-6 shadow-sm"
     >
       <div>
         <label className="block text-sm font-medium text-kmp-text">

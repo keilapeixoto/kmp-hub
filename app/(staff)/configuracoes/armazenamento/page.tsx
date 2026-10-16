@@ -57,7 +57,7 @@ export default async function StorageAdminPage() {
         </div>
       </div>
 
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <div className="flex items-end justify-between">
           <div>
             <p className="text-sm text-kmp-text/50">Total utilizado</p>
@@ -92,7 +92,7 @@ export default async function StorageAdminPage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {data.growth.map((g) => (
-          <div key={g.dias} className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-4 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <div key={g.dias} className="rounded-3xl bg-kmp-surface p-4 shadow-sm">
             <p className="text-xs uppercase tracking-wide text-kmp-text/50">
               Crescimento em {g.dias} dias
             </p>
@@ -104,7 +104,7 @@ export default async function StorageAdminPage() {
       </div>
 
       {alerts.length > 0 ? (
-        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <div className="rounded-3xl bg-kmp-surface shadow-sm">
           <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Alertas recentes
           </h2>
@@ -139,7 +139,7 @@ export default async function StorageAdminPage() {
       ) : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <div className="rounded-3xl bg-kmp-surface shadow-sm">
           <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Por cliente
           </h2>
@@ -163,7 +163,7 @@ export default async function StorageAdminPage() {
           </ul>
         </div>
 
-        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <div className="rounded-3xl bg-kmp-surface shadow-sm">
           <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Por processo
           </h2>
@@ -194,7 +194,7 @@ export default async function StorageAdminPage() {
           ) : null}
         </div>
 
-        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <div className="rounded-3xl bg-kmp-surface shadow-sm">
           <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Por categoria
           </h2>
@@ -213,7 +213,7 @@ export default async function StorageAdminPage() {
           </ul>
         </div>
 
-        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <div className="rounded-3xl bg-kmp-surface shadow-sm">
           <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Maiores arquivos
           </h2>
@@ -235,7 +235,7 @@ export default async function StorageAdminPage() {
         </div>
       </div>
 
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="rounded-3xl bg-kmp-surface shadow-sm">
         <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
           Possíveis duplicados
         </h2>
@@ -264,7 +264,7 @@ export default async function StorageAdminPage() {
       </div>
 
       {auditRuns.length > 0 ? (
-        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+        <div className="rounded-3xl bg-kmp-surface shadow-sm">
           <h2 className="border-b border-kmp-divider px-4 py-3 font-heading text-lg text-kmp-text">
             Últimas verificações automáticas
           </h2>

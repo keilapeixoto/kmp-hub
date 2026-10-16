@@ -29,7 +29,7 @@ export default async function NovoCompromissoPage() {
         </h1>
       </div>
 
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <AppointmentForm
           action={createAppointment}
           clients={clients}

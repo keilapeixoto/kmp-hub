@@ -49,7 +49,7 @@ export default async function OcupacoesPage({
 
       <form
         method="GET"
-        className="grid grid-cols-1 gap-3 rounded-lg bg-kmp-surface p-4 shadow-sm sm:grid-cols-3"
+        className="grid grid-cols-1 gap-3 rounded-3xl bg-kmp-surface p-5 shadow-sm sm:grid-cols-3"
       >
         <input
           type="text"
@@ -90,7 +90,7 @@ export default async function OcupacoesPage({
         </div>
       </form>
 
-      <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+      <div className="rounded-3xl bg-kmp-surface shadow-sm">
         {occupations.length === 0 ? (
           <p className="p-8 text-center text-sm text-kmp-text/50">
             Nenhuma ocupação encontrada.

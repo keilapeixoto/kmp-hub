@@ -27,7 +27,7 @@ export default async function NovoClientePage() {
         </h1>
       </div>
 
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <ClientForm
           action={createClientRecord}
           consultants={consultants}

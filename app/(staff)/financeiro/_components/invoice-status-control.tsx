@@ -76,7 +76,7 @@ export function InvoiceStatusControl({
   }
 
   return (
-    <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-4 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+    <div className="rounded-3xl bg-kmp-surface p-4 shadow-sm">
       <p className="mb-2 text-xs text-kmp-text/50">
         Clique em um status pra atualizar (dar baixa manual)
       </p>

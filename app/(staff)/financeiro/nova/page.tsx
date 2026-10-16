@@ -20,7 +20,7 @@ export default async function NovaInvoicePage() {
   return (
     <div className="space-y-6">
       <h1 className="font-heading text-2xl text-kmp-text">Nova invoice</h1>
-      <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+      <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
         <InvoiceForm
           action={createInvoice}
           clients={clients}

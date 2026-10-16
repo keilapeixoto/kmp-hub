@@ -58,7 +58,7 @@ export default async function ServiceTypeDetailPage({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+        <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
           <h2 className="font-heading text-lg text-kmp-text">Dados</h2>
           <div className="mt-4">
             {isAdmin ? (
@@ -88,7 +88,7 @@ export default async function ServiceTypeDetailPage({
           Checklist
         </h2>
         {serviceType.checklist_template_id ? (
-          <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
             <Link
               href={`/configuracoes/checklists/${serviceType.checklist_template_id}`}
               className="text-sm font-medium text-kmp-orange hover:underline"
@@ -97,7 +97,7 @@ export default async function ServiceTypeDetailPage({
             </Link>
           </div>
         ) : isAdmin ? (
-          <div className="rounded-lg bg-kmp-surface p-6 shadow-sm">
+          <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
             <p className="text-sm text-kmp-text/60">
               Este tipo de serviço ainda não tem um template de checklist.
             </p>
@@ -125,7 +125,7 @@ export default async function ServiceTypeDetailPage({
             </form>
           </div>
         ) : (
-          <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-6 text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
+          <p className="rounded-3xl bg-kmp-surface p-6 text-sm text-kmp-text/50 shadow-sm">
             Nenhum template de checklist configurado.
           </p>
         )}

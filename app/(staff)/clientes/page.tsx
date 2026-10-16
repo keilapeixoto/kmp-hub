@@ -73,12 +73,20 @@ export default async function ClientesPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-heading text-2xl text-kmp-text">Clientes</h1>
-        <Link
-          href="/clientes/novo"
-          className="rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
-        >
-          Novo cliente
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/clientes/novo"
+            className="rounded-full border border-kmp-divider px-4 py-2 text-sm font-medium text-kmp-text transition hover:border-kmp-orange"
+          >
+            Cadastro completo
+          </Link>
+          <Link
+            href="/clientes/novo-portal"
+            className="rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
+          >
+            Novo cliente com portal
+          </Link>
+        </div>
       </div>
 
       <ClientsFilters

@@ -42,6 +42,7 @@ import { DocumentsPanel } from "../_components/documents-panel";
 import { ClientEmailComposer } from "../_components/client-email-composer";
 import { getMinhaAssinatura, getTemplatesDeEmail } from "@/lib/email/dados";
 import { portalUrl } from "@/lib/dominios";
+import { AvisoDoCadastro } from "../_components/aviso-do-cadastro";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -139,6 +140,8 @@ export default async function ClientDetailPage({
   };
   const assinatura = usuarioId ? await getMinhaAssinatura(usuarioId, profile?.nome ?? "") : null;
   const updateWithId = updateClientRecord.bind(null, id);
+  const cadastro = Array.isArray(sp.cadastro) ? sp.cadastro[0] : sp.cadastro;
+  const faltou = (Array.isArray(sp.faltou) ? sp.faltou[0] : sp.faltou)?.split(",") ?? [];
 
   return (
     <div className="space-y-6">
@@ -153,6 +156,8 @@ export default async function ClientDetailPage({
         abaAtiva={tab}
         hoje={hoje}
       />
+
+      {cadastro ? <AvisoDoCadastro cadastro={cadastro} faltou={faltou} /> : null}
 
       {tab === "resumo" ? (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

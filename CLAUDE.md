@@ -358,6 +358,19 @@ reconectar uma vez (botão "Reconectar para criar eventos" em Integrações;
 `lib/google/agenda-calc.ts podeCriarEventos`). Sem migração (a coluna
 `google_event_id` já existia).
 
+**Cliente novo com portal (out/2026, substitui o formulário avulso HTML +
+Web3Forms do visto 600):** Clientes → "Novo cliente com portal"
+(`app/(staff)/clientes/novo-portal/`, ação em `cadastro-portal-actions.ts`)
+cria em um passo o cliente, o processo na primeira etapa, o checklist do
+tipo de serviço (itens obrigatórios já como "solicitado", que aparecem em
+"Pedidos para você" no portal) e manda o convite do portal (só
+admin/diretor; dá para desmarcar e convidar depois). Bloqueia e-mail já
+cadastrado. O visto 600 ganhou checklist próprio (10 itens tirados do
+formulário avulso) por `scripts/create-visa-600-checklist.mjs` (simulação
+antes de `--apply`; já aplicado no Supabase de dev). Próximos passos
+combinados com a Keila: pedidos avulsos ao cliente com alerta (tradução,
+documento extra, reprovação com motivo).
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

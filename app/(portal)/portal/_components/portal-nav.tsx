@@ -3,17 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const ABAS = [
-  { href: "/portal", label: "Meu processo" },
-  { href: "/portal/documentos", label: "Documentos" },
-  { href: "/portal/linha-do-tempo", label: "Linha do tempo" },
-];
-
-export function PortalNav() {
+export function PortalNav({ abas }: { abas: { href: string; label: string }[] }) {
   const pathname = usePathname();
   return (
     <nav className="scrollbar-none flex items-center gap-1 overflow-x-auto rounded-full bg-kmp-surface p-1 shadow-sm">
-      {ABAS.map((a) => {
+      {abas.map((a) => {
         const ativa = a.href === "/portal" ? pathname === "/portal" || pathname.startsWith("/portal/formulario") : pathname.startsWith(a.href);
         return (
           <Link

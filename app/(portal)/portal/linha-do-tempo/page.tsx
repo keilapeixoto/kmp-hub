@@ -4,11 +4,13 @@ import { getResumosDoPortal } from "@/lib/portal/resumo";
 import { createClient } from "@/lib/supabase/server";
 import { FaixaTitulo } from "@/components/ui/vivid";
 import { PortalHeader } from "../_components/portal-header";
+import { getIdiomaDoPortal } from "@/lib/portal/idioma";
+import { tradutor } from "@/lib/portal/i18n";
 
 const cartao = "overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm";
 
-const quando = (iso: string) =>
-  new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric", timeZone: "Australia/Sydney" }).format(
+const quando = (iso: string, idioma: string) =>
+  new Intl.DateTimeFormat(idioma === "en" ? "en-AU" : "pt-BR", { day: "2-digit", month: "short", year: "numeric", timeZone: "Australia/Sydney" }).format(
     new Date(iso.length === 10 ? `${iso}T12:00:00Z` : iso),
   );
 
@@ -20,37 +22,39 @@ export default async function PortalLinhaDoTempoPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const resumos = await getResumosDoPortal(cases, user?.id ?? null);
+  const idioma = await getIdiomaDoPortal();
+  const t = tradutor(idioma);
+  const resumos = await getResumosDoPortal(cases, user?.id ?? null, idioma);
 
   return (
     <>
-      <PortalHeader />
+      <PortalHeader idioma={idioma} />
       <main className="mx-auto w-full max-w-5xl space-y-6 px-4 py-8 sm:px-6">
         <div>
-          <h1 className="font-heading text-3xl font-semibold text-kmp-text">Linha do tempo</h1>
+          <h1 className="font-heading text-3xl font-semibold text-kmp-text">{t("linha.titulo")}</h1>
           <p className="mt-1 text-sm text-kmp-text/70">
-            Cada fase do seu processo e o que já aconteceu. Atualizamos aqui conforme o processo avança.
+            {t("linha.sub")}
           </p>
         </div>
 
         {resumos.length === 0 ? (
-          <p className={`${cartao} text-center text-sm text-kmp-text/70`}>Nenhum processo vinculado à sua conta ainda.</p>
+          <p className={`${cartao} text-center text-sm text-kmp-text/70`}>{t("linha.semProcesso")}</p>
         ) : null}
 
         {resumos.map((r) => (
           <div key={r.caseId} className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <section className={cartao}>
-              <FaixaTitulo titulo={`Fases: ${r.servico}`} cor="laranja" icon={Route} />
+              <FaixaTitulo titulo={t("linha.fasesDe", { servico: r.servico })} cor="laranja" icon={Route} />
               {r.recado ? (
                 <p className="mb-4 rounded-2xl bg-[#f27b20]/12 p-4 text-sm text-kmp-text">
                   <span className="block text-xs font-semibold uppercase tracking-wide text-kmp-text/60">
-                    Recado da equipe · {quando(r.recado.created_at)}
+                    {t("linha.recadoEm", { data: quando(r.recado.created_at, idioma) })}
                   </span>
                   {r.recado.mensagem}
                 </p>
               ) : null}
               {r.etapas.length === 0 ? (
-                <p className="text-sm text-kmp-text/70">As fases do seu processo vão aparecer aqui.</p>
+                <p className="text-sm text-kmp-text/70">{t("linha.fasesVazio")}</p>
               ) : (
                 <ol className="space-y-2">
                   {r.etapas.map((nome, i) => {
@@ -77,7 +81,7 @@ export default async function PortalLinhaDoTempoPage() {
                             {nome}
                           </span>
                           <span className="block text-xs text-kmp-text/60">
-                            {feita ? "Concluída" : agora ? "Fase atual" : "Próxima"}
+                            {feita ? t("linha.concluida") : agora ? t("linha.faseAtual") : t("linha.proxima")}
                           </span>
                         </span>
                       </li>
@@ -88,9 +92,9 @@ export default async function PortalLinhaDoTempoPage() {
             </section>
 
             <section className={cartao}>
-              <FaixaTitulo titulo="O que já aconteceu" cor="azul" icon={History} />
+              <FaixaTitulo titulo={t("linha.aconteceu")} cor="azul" icon={History} />
               {r.linhaDoTempo.length === 0 ? (
-                <p className="text-sm text-kmp-text/70">Nada registrado ainda.</p>
+                <p className="text-sm text-kmp-text/70">{t("linha.nada")}</p>
               ) : (
                 <ol className="relative ml-2 space-y-4 border-l-2 border-kmp-divider pl-5">
                   {r.linhaDoTempo.map((e, i) => (
@@ -101,10 +105,10 @@ export default async function PortalLinhaDoTempoPage() {
                         }`}
                       />
                       {e.tipo === "recado" ? (
-                        <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/60">Recado da equipe</p>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/60">{t("inicio.recado")}</p>
                       ) : null}
                       <p className="text-sm font-semibold text-kmp-text">{e.titulo}</p>
-                      <p className="text-xs text-kmp-text/60">{quando(e.data)}</p>
+                      <p className="text-xs text-kmp-text/60">{quando(e.data, idioma)}</p>
                     </li>
                   ))}
                 </ol>

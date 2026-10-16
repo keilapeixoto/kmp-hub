@@ -3,7 +3,11 @@
 import { useActionState } from "react";
 import { requestPortalMagicLink } from "../actions";
 
-export function PortalLoginForm() {
+export function PortalLoginForm({
+  textos,
+}: {
+  textos: { email: string; placeholder: string; enviar: string; enviando: string; enviado: string };
+}) {
   const [state, formAction, pending] = useActionState(requestPortalMagicLink, {
     error: null,
     sent: false,
@@ -12,8 +16,7 @@ export function PortalLoginForm() {
   if (state.sent) {
     return (
       <p className="mt-6 rounded-2xl bg-[#dcf3e7] p-4 text-center text-sm text-[#16673f]">
-        Enviamos um link de acesso para o seu e-mail. Abra a mensagem e toque em
-        &quot;Entrar no portal&quot;: não precisa de senha.
+        {textos.enviado}
       </p>
     );
   }
@@ -25,7 +28,7 @@ export function PortalLoginForm() {
           htmlFor="email"
           className="block text-sm font-semibold text-kmp-text"
         >
-          E-mail
+          {textos.email}
         </label>
         <input
           id="email"
@@ -33,7 +36,7 @@ export function PortalLoginForm() {
           type="email"
           required
           autoComplete="email"
-          placeholder="seu@email.com"
+          placeholder={textos.placeholder}
           className="mt-1.5 w-full rounded-xl border border-kmp-text/15 bg-white/85 px-3.5 py-2.5 text-sm text-kmp-text outline-none focus:border-kmp-orange focus:ring-2 focus:ring-kmp-orange/20"
         />
       </div>
@@ -42,7 +45,7 @@ export function PortalLoginForm() {
         disabled={pending}
         className="w-full rounded-full bg-kmp-primary px-4 py-2.5 text-sm font-semibold text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
       >
-        {pending ? "Enviando…" : "Enviar link de acesso"}
+        {pending ? textos.enviando : textos.enviar}
       </button>
       {state.error ? (
         <p className="text-sm text-[#b0283b]">{state.error}</p>

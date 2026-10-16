@@ -1,5 +1,7 @@
-// Regras do envio de arquivos (portal e Hub) (sem dependências: roda no
-// navegador, no servidor e nos testes).
+// Regras do envio de arquivos (portal e Hub) (sem dependências além dos
+// textos do portal: roda no navegador, no servidor e nos testes).
+
+import { traduzir, type Idioma } from "./i18n.ts";
 
 /** Mesma lista fixa de lib/storage-admin/validation.ts (executáveis/scripts). */
 const PERIGOSAS = [
@@ -17,14 +19,15 @@ export function extensao(nome: string): string {
 export function problemaDoArquivo(
   arquivo: { nome: string; tamanho: number },
   regras: { extensoes: string[]; maxBytes: number },
+  idioma: Idioma = "pt",
 ): string | null {
   const ext = extensao(arquivo.nome);
-  if (!ext) return `${arquivo.nome}: o arquivo precisa ter extensão (ex.: .pdf).`;
-  if (PERIGOSAS.includes(ext) || !regras.extensoes.includes(ext))
-    return `${arquivo.nome}: formato .${ext} não é aceito.`;
+  const nome = arquivo.nome;
+  if (!ext) return traduzir(idioma, "arquivo.semExtensao", { nome });
+  if (PERIGOSAS.includes(ext) || !regras.extensoes.includes(ext)) return traduzir(idioma, "arquivo.formato", { nome, ext });
   if (arquivo.tamanho > regras.maxBytes)
-    return `${arquivo.nome}: maior que ${Math.round(regras.maxBytes / 1024 / 1024)} MB.`;
-  if (arquivo.tamanho === 0) return `${arquivo.nome}: arquivo vazio.`;
+    return traduzir(idioma, "arquivo.grande", { nome, mb: Math.round(regras.maxBytes / 1024 / 1024) });
+  if (arquivo.tamanho === 0) return traduzir(idioma, "arquivo.vazio", { nome });
   return null;
 }
 
@@ -41,10 +44,13 @@ export function caminhoDoProcesso(caminho: string, clientId: string, caseId: str
 }
 
 /** Texto de ajuda: "PDF, JPG, PNG · até 25 MB por arquivo · vários arquivos". */
-export function textoDeFormatos(regras: { extensoes: string[]; maxBytes: number }): string {
+export function textoDeFormatos(regras: { extensoes: string[]; maxBytes: number }, idioma: Idioma = "pt"): string {
   const principais = ["pdf", "jpg", "jpeg", "png", "heic", "doc", "docx"].filter((e) => regras.extensoes.includes(e));
   const lista = (principais.length ? principais : regras.extensoes.slice(0, 5)).filter((e) => e !== "jpeg");
-  return `${lista.map((e) => e.toUpperCase()).join(", ")} · até ${Math.round(regras.maxBytes / 1024 / 1024)} MB por arquivo · vários arquivos de uma vez`;
+  return traduzir(idioma, "upload.formatos", {
+    lista: lista.map((e) => e.toUpperCase()).join(", "),
+    mb: Math.round(regras.maxBytes / 1024 / 1024),
+  });
 }
 
 export type ArquivoEnviado = { caminho: string; nome: string; hash: string | null };

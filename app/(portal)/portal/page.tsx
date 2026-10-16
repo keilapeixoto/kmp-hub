@@ -7,13 +7,15 @@ import { linkWhatsapp } from "@/lib/portal/progresso";
 import { CHECKLIST_ITEM_STATUS_LABELS } from "@/lib/checklists/constants";
 import { Etiqueta, FaixaTitulo } from "@/components/ui/vivid";
 import { PortalHeader } from "./_components/portal-header";
+import { getIdiomaDoPortal } from "@/lib/portal/idioma";
+import { STATUS_ITEM_EN, tradutor, type Chave, type Idioma } from "@/lib/portal/i18n";
 
-const STATUS_LABELS: Record<string, string> = {
-  ativo: "Em andamento",
-  pausado: "Pausado",
-  concluido: "Concluído",
-  cancelado: "Cancelado",
-  arquivado: "Concluído",
+const STATUS_CHAVE: Record<string, Chave> = {
+  ativo: "status.ativo",
+  pausado: "status.pausado",
+  concluido: "status.concluido",
+  cancelado: "status.cancelado",
+  arquivado: "status.concluido",
 };
 
 const cartao = "overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm";
@@ -50,16 +52,17 @@ function Etapas({ etapas, atual }: { etapas: string[]; atual: number }) {
   );
 }
 
-function OQueFalta({ r }: { r: ResumoProcesso }) {
+function OQueFalta({ r, idioma }: { r: ResumoProcesso; idioma: Idioma }) {
+  const t = tradutor(idioma);
+  const rotuloStatus = (s: string) => (idioma === "en" ? STATUS_ITEM_EN[s] : CHECKLIST_ITEM_STATUS_LABELS[s]) ?? s;
   const formPendente = r.formulario && !r.formulario.enviado;
   const nada = !formPendente && r.pendentes.length === 0;
   return (
     <section className={cartao}>
-      <FaixaTitulo titulo="O que falta você fazer" cor="laranja" icon={ClipboardList} />
+      <FaixaTitulo titulo={t("falta.titulo")} cor="laranja" icon={ClipboardList} />
       {nada ? (
         <p className="flex items-center gap-2 rounded-2xl bg-kmp-text/5 p-4 text-sm text-kmp-text/75">
-          <Check className="h-4 w-4 text-kmp-processos" /> Nada pendente com você agora. Avisaremos quando
-          precisarmos de algo.
+          <Check className="h-4 w-4 text-kmp-processos" /> {t("falta.nada")}
         </p>
       ) : (
         <ul className="space-y-2">
@@ -70,7 +73,7 @@ function OQueFalta({ r }: { r: ResumoProcesso }) {
                 className="block rounded-2xl bg-kmp-text/5 p-4 transition hover:bg-kmp-text/10"
               >
                 <span className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-semibold text-kmp-text">Preencher o formulário de dados</span>
+                  <span className="text-sm font-semibold text-kmp-text">{t("falta.formulario")}</span>
                   <span className="text-sm font-semibold text-kmp-text/70">{r.formulario.percentual}%</span>
                 </span>
                 <span className="mt-2 block h-2 overflow-hidden rounded-full bg-kmp-text/10">
@@ -80,7 +83,7 @@ function OQueFalta({ r }: { r: ResumoProcesso }) {
                   />
                 </span>
                 <span className="mt-2 flex items-center gap-1 text-xs font-semibold text-kmp-text/70">
-                  {r.formulario.percentual > 0 ? "Continuar de onde parou" : "Começar"} <ArrowRight className="h-3.5 w-3.5" />
+                  {r.formulario.percentual > 0 ? t("falta.continuar") : t("falta.comecar")} <ArrowRight className="h-3.5 w-3.5" />
                 </span>
               </Link>
             </li>
@@ -93,10 +96,10 @@ function OQueFalta({ r }: { r: ResumoProcesso }) {
               >
                 <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-kmp-text">
                   <FileUp className="h-4 w-4 shrink-0" />
-                  <span className="truncate">Enviar: {item.nome}</span>
+                  <span className="truncate">{t("falta.enviar", { nome: item.nome })}</span>
                 </span>
                 <Etiqueta cor={item.status === "rejeitado" || item.status === "reenvio_solicitado" ? "vermelho" : "amarelo"}>
-                  {CHECKLIST_ITEM_STATUS_LABELS[item.status] ?? item.status}
+                  {rotuloStatus(item.status)}
                 </Etiqueta>
               </Link>
             </li>
@@ -105,9 +108,9 @@ function OQueFalta({ r }: { r: ResumoProcesso }) {
       )}
       {r.formulario?.enviado ? (
         <p className="mt-3 flex items-center gap-2 text-sm text-kmp-text/70">
-          <Check className="h-4 w-4 text-kmp-processos" /> Formulário enviado.{" "}
+          <Check className="h-4 w-4 text-kmp-processos" /> {t("falta.formEnviado")}{" "}
           <Link href={`/portal/formulario?processo=${r.caseId}`} className="font-semibold underline">
-            Ver respostas
+            {t("falta.verRespostas")}
           </Link>
         </p>
       ) : null}
@@ -115,16 +118,17 @@ function OQueFalta({ r }: { r: ResumoProcesso }) {
   );
 }
 
-function FaleComConsultora({ r }: { r: ResumoProcesso }) {
+function FaleComConsultora({ r, idioma }: { r: ResumoProcesso; idioma: Idioma }) {
+  const t = tradutor(idioma);
   const c = r.consultora;
   const whats = linkWhatsapp(c?.telefone ?? null);
   return (
     <section className={cartao}>
-      <FaixaTitulo titulo="Fale com sua consultora" cor="verde" icon={UserRound} />
+      <FaixaTitulo titulo={t("consultora.titulo")} cor="verde" icon={UserRound} />
       {c ? (
         <>
           <p className="font-heading text-lg font-semibold text-kmp-text">{c.nome}</p>
-          <p className="text-sm text-kmp-text/70">Responsável pelo seu processo</p>
+          <p className="text-sm text-kmp-text/70">{t("consultora.responsavel")}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             {whats ? (
               <a
@@ -147,7 +151,7 @@ function FaleComConsultora({ r }: { r: ResumoProcesso }) {
           </div>
         </>
       ) : (
-        <p className="text-sm text-kmp-text/70">A equipe da KMP vai entrar em contato com você.</p>
+        <p className="text-sm text-kmp-text/70">{t("consultora.semContato")}</p>
       )}
     </section>
   );
@@ -159,21 +163,23 @@ export default async function PortalHomePage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const resumos = await getResumosDoPortal(cases, user?.id ?? null);
+  const idioma = await getIdiomaDoPortal();
+  const t = tradutor(idioma);
+  const resumos = await getResumosDoPortal(cases, user?.id ?? null, idioma);
   const nome = primeiroNome(cases[0]?.client_nome ?? "");
 
   return (
     <>
-      <PortalHeader />
+      <PortalHeader idioma={idioma} />
       <main className="mx-auto w-full max-w-5xl space-y-6 px-4 py-8 sm:px-6">
         <div>
-          <h1 className="font-heading text-3xl font-semibold text-kmp-text">{nome ? `Olá, ${nome}` : "Olá"}</h1>
-          <p className="mt-1 text-sm text-kmp-text/70">Acompanhe aqui o andamento do seu processo com a KMP Consulting.</p>
+          <h1 className="font-heading text-3xl font-semibold text-kmp-text">{nome ? t("inicio.olaNome", { nome }) : t("inicio.ola")}</h1>
+          <p className="mt-1 text-sm text-kmp-text/70">{t("inicio.sub")}</p>
         </div>
 
         {cases.length === 0 ? (
           <p className={`${cartao} text-center text-sm text-kmp-text/70`}>
-            Nenhum processo vinculado à sua conta ainda. Fale com sua consultora se isso não parecer certo.
+            {t("inicio.semProcesso")}
           </p>
         ) : (
           resumos.map((r, i) => {
@@ -184,22 +190,22 @@ export default async function PortalHomePage() {
                 <section className={cartao}>
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/60">Seu processo</p>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/60">{t("inicio.seuProcesso")}</p>
                       <h2 className="mt-1 font-heading text-2xl font-semibold text-kmp-text">{r.servico}</h2>
                       {etapaNome ? (
                         <p className="mt-1 text-sm text-kmp-text/75">
-                          Etapa atual: <span className="font-semibold text-kmp-text">{etapaNome}</span>
-                          {r.etapas.length > 0 ? ` (${r.etapaAtual + 1} de ${r.etapas.length})` : null}
+                          {t("inicio.etapaAtual")} <span className="font-semibold text-kmp-text">{etapaNome}</span>
+                          {r.etapas.length > 0 ? ` ${t("inicio.deTotal", { n: r.etapaAtual + 1, total: r.etapas.length })}` : null}
                         </p>
                       ) : null}
                     </div>
-                    <Etiqueta cor={c.status === "ativo" ? "verde" : "cinza"}>{STATUS_LABELS[c.status] ?? c.status}</Etiqueta>
+                    <Etiqueta cor={c.status === "ativo" ? "verde" : "cinza"}>{STATUS_CHAVE[c.status] ? t(STATUS_CHAVE[c.status]) : c.status}</Etiqueta>
                   </div>
                   <Etapas etapas={r.etapas} atual={r.etapaAtual} />
                   {r.recado ? (
                     <p className="mt-5 rounded-2xl bg-[#f27b20]/12 p-4 text-sm text-kmp-text">
                       <span className="block text-xs font-semibold uppercase tracking-wide text-kmp-text/60">
-                        Recado da equipe
+                        {t("inicio.recado")}
                       </span>
                       {r.recado.mensagem}
                     </p>
@@ -207,15 +213,15 @@ export default async function PortalHomePage() {
                 </section>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
-                  <OQueFalta r={r} />
-                  <FaleComConsultora r={r} />
+                  <OQueFalta r={r} idioma={idioma} />
+                  <FaleComConsultora r={r} idioma={idioma} />
                 </div>
                 {r.linhaDoTempo.length > 0 ? (
                   <Link
                     href="/portal/linha-do-tempo"
                     className="inline-flex items-center gap-1 text-sm font-semibold text-kmp-text/75 hover:text-kmp-text"
                   >
-                    Ver a linha do tempo completa <ArrowRight className="h-4 w-4" />
+                    {t("inicio.verLinha")} <ArrowRight className="h-4 w-4" />
                   </Link>
                 ) : null}
               </div>

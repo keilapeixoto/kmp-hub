@@ -401,6 +401,22 @@ se já existe conta com o e-mail novo, o acesso passa para ela; e-mail apagado
 tira o acesso; e-mail de alguém da equipe não é vinculado. O card "Acesso ao
 portal" mostra com qual login o cliente entra e tem "Remover acesso".
 
+**Portal em português e inglês (out/2026):** botão PT | EN no canto direito
+do portal (e na tela de login). A escolha fica num cookie e também em
+`clients.idioma_preferencial`, para os e-mails de aviso irem no mesmo idioma.
+Textos em `lib/portal/i18n.ts` (`tradutor(idioma)`); `getIdiomaDoPortal()`
+em `lib/portal/idioma.ts`. O que vem do banco (nome do visto, etapas, itens
+do checklist, perguntas do formulário) continua como a equipe cadastrou.
+
+**Cadastro do cliente com listas (out/2026):** país e nacionalidade em lista
+(Intl, Brasil e Austrália no topo), fuso horário com todos os fusos do mundo,
+endereço de origem e na Austrália em campos separados com lista de estados
+(AU e BR), guardados como JSON nas colunas de endereço (`lib/geo.ts`).
+
+**Vencimentos (out/2026):** admin renomeia as colunas do radar pelo lápis no
+título (tabela `app_settings`, migração `20261017140000`, teste `031`); o card
+abre com a data de vencimento grande e quanto falta.
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

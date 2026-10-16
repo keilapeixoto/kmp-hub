@@ -1,3 +1,5 @@
+import { getIdiomaDoPortal } from "@/lib/portal/idioma";
+import { tradutor } from "@/lib/portal/i18n";
 import Link from "next/link";
 import { ArrowLeft, Check } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -89,38 +91,38 @@ export default async function PortalFormularioPage({
   const erro = sp.erro !== undefined;
   const somenteLeitura = caseForm ? !["em_preenchimento", "enviado"].includes(caseForm.status) : false;
   const cartao = "overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm sm:p-6";
+  const idioma = await getIdiomaDoPortal();
+  const t = tradutor(idioma);
 
   return (
     <>
-      <PortalHeader />
+      <PortalHeader idioma={idioma} />
       <main className="mx-auto w-full max-w-3xl space-y-5 px-4 py-8 sm:px-6">
         <div>
           <Link href="/portal" className="inline-flex items-center gap-1 text-sm font-semibold text-kmp-text/70 hover:text-kmp-text">
-            <ArrowLeft className="h-4 w-4" /> Meu processo
+            <ArrowLeft className="h-4 w-4" /> {t("nav.processo")}
           </Link>
           <h1 className="mt-2 font-heading text-2xl font-semibold text-kmp-text sm:text-3xl">{template.nome}</h1>
           <p className="mt-1 text-sm text-kmp-text/70">
-            Suas respostas são salvas a cada etapa: você pode parar e continuar depois.
+            {t("form.sub")}
           </p>
         </div>
 
         {enviado && caseForm?.status === "enviado" ? (
           <p className="flex items-center gap-2 rounded-2xl bg-[#dcf3e7] p-4 text-sm font-medium text-[#16673f]">
-            <Check className="h-4 w-4" /> Formulário enviado. A equipe da KMP Consulting vai revisar as informações.
+            <Check className="h-4 w-4" /> {t("form.enviado")}
           </p>
         ) : null}
 
         {erro ? (
           <p className="rounded-2xl bg-[#fde2e5] p-4 text-sm font-medium text-[#9a2433]">
-            Não conseguimos salvar esta etapa. Confira sua conexão e tente de novo; se continuar, fale com sua
-            consultora.
+            {t("form.erro")}
           </p>
         ) : null}
 
         {somenteLeitura ? (
           <p className="rounded-2xl bg-kmp-text/5 p-4 text-sm text-kmp-text/75">
-            A equipe já está analisando este formulário, então as respostas não podem mais ser alteradas por aqui.
-            Precisa corrigir algo? Fale com sua consultora.
+            {t("form.somenteLeitura")}
           </p>
         ) : null}
 
@@ -128,7 +130,7 @@ export default async function PortalFormularioPage({
           <div className="flex items-baseline justify-between gap-3">
             <p className="font-heading text-lg font-semibold text-kmp-text">{currentStep.titulo}</p>
             <p className="shrink-0 text-sm font-semibold text-kmp-text/60">
-              Etapa {currentStepNumber} de {steps.length}
+              {t("form.etapa", { n: currentStepNumber, total: steps.length })}
             </p>
           </div>
           <div className="mt-3 flex items-center gap-1.5">
@@ -146,12 +148,12 @@ export default async function PortalFormularioPage({
 
         {pendentes.length > 0 ? (
           <div className="rounded-2xl bg-[#fcf1cf] p-4 text-sm text-[#7a5806]">
-            <p className="font-semibold">Faltam {pendentes.length} campo(s) obrigatório(s) para enviar:</p>
+            <p className="font-semibold">{t("form.faltam", { n: pendentes.length })}</p>
             <ul className="mt-2 space-y-1">
               {pendentes.map((p) => (
                 <li key={p.fieldId}>
                   <Link href={`/portal/formulario?processo=${caseId}&etapa=${p.etapa}`} className="underline">
-                    Etapa {p.etapa}: {p.label}
+                    {t("form.etapaCampo", { n: p.etapa, campo: p.label })}
                   </Link>
                 </li>
               ))}
@@ -173,7 +175,7 @@ export default async function PortalFormularioPage({
                 formNoValidate
                 className="rounded-full bg-kmp-text/5 px-5 py-2.5 text-sm font-semibold text-kmp-text transition hover:bg-kmp-text/10"
               >
-                Anterior
+                {t("form.anterior")}
               </SubmitButton>
             ) : (
               <span />
@@ -184,7 +186,7 @@ export default async function PortalFormularioPage({
               formNoValidate
               className="rounded-full bg-kmp-primary px-6 py-2.5 text-sm font-semibold text-kmp-on-primary transition hover:opacity-90"
             >
-              {isLastStep ? (somenteLeitura ? "Concluir" : "Enviar formulário") : "Próximo"}
+              {isLastStep ? (somenteLeitura ? t("form.concluir") : t("form.enviar")) : t("form.proximo")}
             </SubmitButton>
           </div>
         </form>

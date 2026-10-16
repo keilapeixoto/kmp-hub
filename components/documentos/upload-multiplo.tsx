@@ -1,5 +1,6 @@
 "use client";
 
+import { tradutor, type Idioma } from "@/lib/portal/i18n";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Upload, X } from "lucide-react";
@@ -30,8 +31,9 @@ export function UploadMultiplo({
   bucket,
   regras,
   registrar,
-  rotulo = "Escolher arquivos ou tirar foto",
+  rotulo,
   pedirDescricao = false,
+  idioma = "pt",
 }: {
   clientId: string;
   /** id do processo, ou "geral" para arquivo do cliente sem processo */
@@ -43,7 +45,10 @@ export function UploadMultiplo({
   rotulo?: string;
   /** pede "Qual documento é?" (envio fora da lista, ex.: "Outros documentos") */
   pedirDescricao?: boolean;
+  /** Portal: idioma escolhido pelo cliente. No Hub fica em português. */
+  idioma?: Idioma;
 }) {
+  const t = tradutor(idioma);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [arquivos, setArquivos] = useState<File[]>([]);
@@ -57,7 +62,7 @@ export function UploadMultiplo({
   function adicionar(lista: FileList | null) {
     if (!lista) return;
     const novos = Array.from(lista);
-    const problema = novos.map((f) => problemaDoArquivo({ nome: f.name, tamanho: f.size }, regras)).find(Boolean);
+    const problema = novos.map((f) => problemaDoArquivo({ nome: f.name, tamanho: f.size }, regras, idioma)).find(Boolean);
     setErro(problema ?? null);
     setOk(null);
     setArquivos((atuais) => [
@@ -69,7 +74,7 @@ export function UploadMultiplo({
   async function enviar() {
     if (arquivos.length === 0) return;
     if (pedirDescricao && !descricao.trim()) {
-      setErro("Escreva qual documento você está enviando.");
+      setErro(t("upload.qualDocumento"));
       return;
     }
     setErro(null);
@@ -77,18 +82,18 @@ export function UploadMultiplo({
     const enviados: ArquivoEnviado[] = [];
     for (let i = 0; i < arquivos.length; i++) {
       const f = arquivos[i];
-      setProgresso(`Enviando ${i + 1} de ${arquivos.length}…`);
+      setProgresso(t("upload.enviando", { i: i + 1, n: arquivos.length }));
       const caminho = caminhoNoBucket(clientId, pastaProcesso, f.name);
       const { error } = await supabase.storage.from(bucket).upload(caminho, f, { contentType: f.type || undefined });
       if (error) {
         setProgresso(null);
-        setErro(`${f.name}: não conseguimos enviar. Confira a conexão e tente de novo.`);
+        setErro(t("upload.falhou", { nome: f.name }));
         if (enviados.length === 0) return;
         break;
       }
       enviados.push({ caminho, nome: f.name, hash: await sha256(f) });
     }
-    setProgresso("Registrando…");
+    setProgresso(t("upload.registrando"));
     const r = await registrar(enviados, categoria || null, descricao.trim() || null);
     setProgresso(null);
     if (r.error) {
@@ -124,9 +129,9 @@ export function UploadMultiplo({
         }`}
       >
         <span className="flex items-center gap-2 font-semibold text-kmp-text">
-          <Upload className="h-4 w-4" /> {rotulo}
+          <Upload className="h-4 w-4" /> {rotulo ?? t("upload.escolher")}
         </span>
-        <span className="text-xs text-kmp-text/60">{textoDeFormatos(regras)}</span>
+        <span className="text-xs text-kmp-text/60">{textoDeFormatos(regras, idioma)}</span>
       </button>
       <input
         ref={inputRef}
@@ -149,7 +154,7 @@ export function UploadMultiplo({
                 {!ocupado ? (
                   <button
                     type="button"
-                    aria-label={`Tirar ${f.name}`}
+                    aria-label={t("upload.tirar", { nome: f.name })}
                     onClick={() => setArquivos((a) => a.filter((_, j) => j !== i))}
                     className="text-kmp-text/60 hover:text-kmp-text"
                   >
@@ -164,7 +169,7 @@ export function UploadMultiplo({
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
               maxLength={120}
-              placeholder="Qual documento é? Ex.: Escritura da casa"
+              placeholder={t("upload.placeholder")}
               className="w-full rounded-full border border-kmp-text/15 bg-white/85 px-4 py-2 text-sm text-kmp-text outline-none focus:border-kmp-orange dark:bg-white/10"
             />
           ) : null}
@@ -175,7 +180,7 @@ export function UploadMultiplo({
                 onChange={(e) => setCategoria(e.target.value)}
                 className="rounded-full border border-kmp-text/15 bg-white/85 px-3 py-2 text-sm text-kmp-text"
               >
-                <option value="">Tipo de documento…</option>
+                <option value="">{t("upload.tipo")}</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.nome}
@@ -189,7 +194,7 @@ export function UploadMultiplo({
               disabled={ocupado}
               className="rounded-full bg-kmp-primary px-5 py-2 text-sm font-semibold text-kmp-on-primary transition hover:opacity-90 disabled:opacity-60"
             >
-              {progresso ?? `Enviar ${arquivos.length} arquivo${arquivos.length === 1 ? "" : "s"}`}
+              {progresso ?? (arquivos.length === 1 ? t("upload.enviar1") : t("upload.enviarN", { n: arquivos.length }))}
             </button>
           </div>
         </div>
@@ -197,7 +202,7 @@ export function UploadMultiplo({
 
       {ok ? (
         <p className="flex items-center gap-1.5 text-sm font-medium text-[#16673f]">
-          <Check className="h-4 w-4" /> {ok === 1 ? "Arquivo enviado." : `${ok} arquivos enviados.`} A equipe já recebeu.
+          <Check className="h-4 w-4" /> {ok === 1 ? t("upload.ok1") : t("upload.okN", { n: ok })} {t("upload.equipeRecebeu")}
         </p>
       ) : null}
       {erro ? <p className="text-sm text-[#b0283b]">{erro}</p> : null}

@@ -9,6 +9,7 @@ export function PortalUploadForm({
   categories,
   bucket,
   regras,
+  idioma = "pt",
 }: {
   clientId: string;
   caseId: string;
@@ -16,6 +17,7 @@ export function PortalUploadForm({
   categories: DocumentCategory[];
   bucket: string;
   regras: { extensoes: string[]; maxBytes: number };
+  idioma?: "pt" | "en";
 }) {
   return (
     <UploadMultiplo
@@ -26,6 +28,7 @@ export function PortalUploadForm({
       regras={regras}
       registrar={registrarDocumentosPortal.bind(null, clientId, caseId, checklistItemId)}
       pedirDescricao={!checklistItemId}
+      idioma={idioma}
     />
   );
 }

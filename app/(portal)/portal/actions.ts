@@ -118,3 +118,31 @@ export async function portalLogout() {
   await supabase.auth.signOut();
   redirect("/portal/login");
 }
+
+/**
+ * Troca o idioma do portal (botão PT/EN). Guarda no navegador e no cadastro
+ * do cliente, para os e-mails de aviso irem no mesmo idioma. O cadastro é
+ * gravado pelo cliente admin só para os clientes que a sessão já provou serem
+ * deste usuário (client_access lido com a sessão dele).
+ */
+export async function trocarIdiomaDoPortal(idioma: string): Promise<void> {
+  const { cookies } = await import("next/headers");
+  const { COOKIE_IDIOMA } = await import("@/lib/portal/idioma");
+  if (idioma !== "pt" && idioma !== "en") return;
+  const jar = await cookies();
+  jar.set(COOKIE_IDIOMA, idioma, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    const { data } = await supabase.from("client_access").select("client_id").eq("client_user_id", user.id);
+    const ids = (data ?? []).map((r) => r.client_id as string);
+    if (ids.length) {
+      const { error } = await createAdminClient().from("clients").update({ idioma_preferencial: idioma }).in("id", ids);
+      if (error) console.error("[trocarIdiomaDoPortal]", error.code, error.message);
+    }
+  }
+  revalidatePath("/portal", "layout");
+}

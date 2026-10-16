@@ -1,3 +1,4 @@
+import type { Idioma } from "./i18n";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCaseFormTemplateForCase } from "@/lib/case-forms/data";
 import type { PortalCase } from "./data";
@@ -28,7 +29,11 @@ export type ResumoProcesso = {
  * libera de propósito (etapas configuradas, nome/contato da consultora) e
  * devolve só esses campos, nunca a linha inteira.
  */
-export async function getResumosDoPortal(cases: PortalCase[], usuarioId: string | null): Promise<ResumoProcesso[]> {
+export async function getResumosDoPortal(
+  cases: PortalCase[],
+  usuarioId: string | null,
+  idioma: Idioma = "pt",
+): Promise<ResumoProcesso[]> {
   if (cases.length === 0) return [];
   const admin = createAdminClient();
 
@@ -100,6 +105,7 @@ export async function getResumosDoPortal(cases: PortalCase[], usuarioId: string 
         consultora,
         recado: (recados ?? [])[0] ?? null,
         linhaDoTempo: montarLinhaDoTempo({
+          idioma,
           recados: recados ?? [],
           inicio: c.inicio,
           historico: historico ?? [],

@@ -30,21 +30,18 @@ export async function updateChecklistItemStatus(
 
   if (typeof status !== "string" || !status.trim()) return;
 
+  // Só grava o que veio no formulário: o "Salvar" da linha manda só status e
+  // prazo, e antes apagava a observação da equipe e o motivo da recusa.
+  const opcional = (v: FormDataEntryValue | null) => (typeof v === "string" && v.trim() ? v.trim() : null);
+  const campos: Record<string, string | null> = { status };
+  if (formData.has("observacao_equipe")) campos.observacao_equipe = opcional(observacaoEquipe);
+  if (formData.has("motivo_rejeicao")) campos.motivo_rejeicao = opcional(motivoRejeicao);
+  if (formData.has("prazo")) campos.prazo = opcional(prazo);
+
   const supabase = await createClient();
   await supabase
     .from("checklist_items")
-    .update({
-      status,
-      observacao_equipe:
-        typeof observacaoEquipe === "string" && observacaoEquipe.trim()
-          ? observacaoEquipe.trim()
-          : null,
-      motivo_rejeicao:
-        typeof motivoRejeicao === "string" && motivoRejeicao.trim()
-          ? motivoRejeicao.trim()
-          : null,
-      prazo: typeof prazo === "string" && prazo.trim() ? prazo.trim() : null,
-    })
+    .update(campos)
     .eq("id", itemId);
 
   revalidatePath(`/processos/${caseId}`);

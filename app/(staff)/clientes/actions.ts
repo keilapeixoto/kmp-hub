@@ -6,9 +6,13 @@ import { createClient } from "@/lib/supabase/server";
 import { camposParaAtualizar } from "@/lib/clients/update-fields";
 import { portalUrl } from "@/lib/dominios";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getCurrentUserId, getCurrentUserRole } from "@/lib/auth";
+import { getCurrentUserId, getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
 import { getValidAccessToken } from "@/lib/google/connections";
-import { sendGmail } from "@/lib/google/gmail";
+import { sendGmailRaw } from "@/lib/google/gmail";
+import { htmlDaAssinatura } from "@/lib/email/assinatura";
+import { getMinhaAssinatura } from "@/lib/email/dados";
+import { montarMensagem, type AnexoDoEmail } from "@/lib/email/mime";
+import { textoParaHtml } from "@/lib/email/variaveis";
 import { conferirArquivosEnviados } from "@/lib/documents/conferir-envio";
 import type { ArquivoEnviado, RegistroState } from "@/lib/portal/arquivos";
 
@@ -323,54 +327,99 @@ export type SendEmailState = {
   sent: boolean;
 };
 
+/** Limite do total de anexos (o Gmail aceita até 25 MB por e-mail). */
+const LIMITE_ANEXOS_BYTES = 20 * 1024 * 1024;
+
 /**
- * Manda e-mail pelo Gmail de quem está logado (precisa ter conectado a
- * conta Google em /configuracoes/integracoes) — aparece na caixa de
- * Enviados de quem mandou, diferente do Resend (avisos automáticos de
- * sistema, lib/storage-admin/email.ts).
+ * Manda e-mail ao cliente pelo Gmail de quem está logado (conta Google
+ * conectada em /configuracoes/integracoes): texto do template ou digitado,
+ * anexos fixos do template e/ou documentos do cliente, e a assinatura da
+ * pessoa no fim. Diferente do Resend (avisos automáticos do sistema,
+ * lib/storage-admin/email.ts).
+ *
+ * Os anexos são conferidos com a sessão (o RLS decide se a pessoa enxerga o
+ * documento e o anexo do template); só depois o arquivo é baixado pelo
+ * cliente admin, porque os buckets são privados.
  */
-export async function sendClientEmail(
+export async function enviarEmailAoCliente(
+  clientId: string,
   _prevState: SendEmailState,
   formData: FormData,
 ): Promise<SendEmailState> {
-  const to = formData.get("to");
-  const subject = formData.get("subject");
-  const body = formData.get("body");
+  const subject = String(formData.get("subject") ?? "").trim();
+  const body = String(formData.get("body") ?? "").trim();
+  const anexosTemplate = formData.getAll("anexo_template").map(String).filter(Boolean);
+  const anexosCliente = formData.getAll("anexo_documento").map(String).filter(Boolean);
+  const comAssinatura = formData.get("assinatura") === "on";
 
-  if (typeof to !== "string" || !to.trim()) {
-    return { error: "Sem e-mail do cliente cadastrado.", sent: false };
-  }
-  if (typeof subject !== "string" || !subject.trim()) {
-    return { error: "Escreva o assunto.", sent: false };
-  }
-  if (typeof body !== "string" || !body.trim()) {
-    return { error: "Escreva a mensagem.", sent: false };
-  }
+  if (!subject) return { error: "Escreva o assunto.", sent: false };
+  if (!body) return { error: "Escreva a mensagem.", sent: false };
+
+  const supabase = await createClient();
+  const { data: cliente } = await supabase.from("clients").select("id, email").eq("id", clientId).maybeSingle();
+  if (!cliente) return { error: "Cliente não encontrado.", sent: false };
+  if (!cliente.email) return { error: "Sem e-mail do cliente cadastrado.", sent: false };
 
   const userId = await getCurrentUserId();
-  if (!userId) {
-    return { error: "Sessão expirada — entre de novo.", sent: false };
-  }
-
+  if (!userId) return { error: "Sessão expirada — entre de novo.", sent: false };
   const accessToken = await getValidAccessToken(userId);
   if (!accessToken) {
-    return {
-      error: "Conecte sua conta Google em Configurações → Integrações primeiro.",
-      sent: false,
-    };
+    return { error: "Conecte sua conta Google em Configurações → Integrações primeiro.", sent: false };
   }
 
-  const html = body
-    .trim()
-    .split("\n")
-    .map((line) => `<p>${line}</p>`)
-    .join("");
-
-  const result = await sendGmail(accessToken, { to: to.trim(), subject: subject.trim(), html });
-  if (!result.ok) {
-    return { error: result.error ?? "Não foi possível enviar.", sent: false };
+  // Anexos: só o que a sessão enxerga.
+  const [{ data: doTemplate }, { data: doCliente }] = await Promise.all([
+    anexosTemplate.length
+      ? supabase.from("message_template_attachments").select("nome, storage_path, content_type, tamanho").in("id", anexosTemplate)
+      : Promise.resolve({ data: [] as { nome: string; storage_path: string; content_type: string | null; tamanho: number }[] }),
+    anexosCliente.length
+      ? supabase
+          .from("documents")
+          .select("nome, storage_path, formato, tamanho_bytes")
+          .eq("client_id", clientId)
+          .eq("arquivado", false)
+          .in("id", anexosCliente)
+      : Promise.resolve({ data: [] as { nome: string | null; storage_path: string; formato: string | null; tamanho_bytes: number | null }[] }),
+  ]);
+  const lista = [
+    ...(doTemplate ?? []).map((a) => ({ bucket: "email-anexos", caminho: a.storage_path as string, nome: a.nome as string, tipo: (a.content_type as string | null) ?? "", tamanho: Number(a.tamanho ?? 0) })),
+    ...(doCliente ?? []).map((d) => ({ bucket: "documents", caminho: d.storage_path as string, nome: ((d.nome as string | null) ?? (d.storage_path as string).split("/").pop()) as string, tipo: (d.formato as string | null) ?? "", tamanho: Number(d.tamanho_bytes ?? 0) })),
+  ];
+  if (lista.length !== anexosTemplate.length + anexosCliente.length) {
+    return { error: "Algum anexo não está mais disponível. Recarregue a página.", sent: false };
+  }
+  if (lista.reduce((t, a) => t + a.tamanho, 0) > LIMITE_ANEXOS_BYTES) {
+    return { error: "Os anexos passam de 20 MB juntos. Tire algum e envie em outro e-mail.", sent: false };
   }
 
+  const admin = createAdminClient();
+  const anexos: AnexoDoEmail[] = [];
+  for (const a of lista) {
+    const { data: arquivo, error } = await admin.storage.from(a.bucket).download(a.caminho);
+    if (error || !arquivo) return { error: `Não foi possível ler o anexo "${a.nome}".`, sent: false };
+    anexos.push({ nome: a.nome, contentType: a.tipo || arquivo.type || "application/octet-stream", conteudo: Buffer.from(await arquivo.arrayBuffer()) });
+  }
+  if (anexos.reduce((t, a) => t + a.conteudo.length, 0) > LIMITE_ANEXOS_BYTES) {
+    return { error: "Os anexos passam de 20 MB juntos. Tire algum e envie em outro e-mail.", sent: false };
+  }
+
+  const perfil = await getCurrentUserProfile();
+  const assinatura = comAssinatura ? htmlDaAssinatura(await getMinhaAssinatura(userId, perfil?.nome ?? "")) : "";
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#161814;">${textoParaHtml(body)}${assinatura}</div>`;
+
+  const result = await sendGmailRaw(accessToken, montarMensagem({ to: cliente.email, subject, html, anexos }));
+  if (!result.ok) return { error: result.error ?? "Não foi possível enviar.", sent: false };
+
+  // Registro na linha do tempo do cliente (falhar aqui não desfaz o envio).
+  const { error: erroLinha } = await supabase.from("timeline_events").insert({
+    entidade: "client",
+    entidade_id: clientId,
+    tipo: "email_enviado",
+    descricao: `E-mail enviado: ${subject}${anexos.length ? ` (${anexos.length} ${anexos.length === 1 ? "anexo" : "anexos"})` : ""}`,
+  });
+  if (erroLinha) console.error("[enviarEmailAoCliente] linha do tempo:", erroLinha.code, erroLinha.message);
+
+  revalidatePath(`/clientes/${clientId}`);
   return { error: null, sent: true };
 }
 

@@ -4,16 +4,24 @@ import { CANAL_LABELS } from "@/lib/message-templates/constants";
 import { createMessageTemplate, deleteMessageTemplate } from "./actions";
 import { CopyTemplateButton } from "./_components/copy-template-button";
 import { EditTemplateForm } from "./_components/edit-template-form";
+import { TemplateAttachments } from "./_components/template-attachments";
+import { getServiceTypes } from "@/lib/cases/data";
+import { getTemplatesDeEmail } from "@/lib/email/dados";
+import { VARIAVEIS_DISPONIVEIS } from "@/lib/email/variaveis";
 
 const inputClass =
   "mt-1 w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
 
 export default async function TemplatesPage() {
-  const [role, templates] = await Promise.all([
+  const [role, templates, serviceTypes, templatesEmail] = await Promise.all([
     getCurrentUserRole(),
     getMessageTemplates(),
+    getServiceTypes(),
+    getTemplatesDeEmail(),
   ]);
   const isAdmin = role === "admin";
+  const anexosPorTemplate = Object.fromEntries(templatesEmail.map((t) => [t.id, t.anexos]));
+  const tipos = serviceTypes.map((st) => ({ id: st.id, nome: st.nome }));
 
   return (
     <div className="space-y-6">
@@ -22,8 +30,15 @@ export default async function TemplatesPage() {
           Templates de mensagem
         </h1>
         <p className="mt-1 text-sm text-kmp-text/60">
-          Nesta fase o envio é manual: copie o texto e cole no e-mail ou
-          WhatsApp, substituindo as variáveis {"{{assim}}"}.
+          Templates de e-mail aparecem em &quot;Enviar e-mail&quot; no perfil do cliente, já com as
+          variáveis preenchidas e os anexos marcados. Os de WhatsApp continuam para copiar.
+        </p>
+        <p className="mt-2 flex flex-wrap gap-1.5 text-xs text-kmp-text/70">
+          {VARIAVEIS_DISPONIVEIS.map((v) => (
+            <span key={v.chave} className="rounded-full bg-kmp-text/5 px-2.5 py-1" title={v.descricao}>
+              {`{{${v.chave}}}`} <span className="text-kmp-text/50">{v.descricao}</span>
+            </span>
+          ))}
         </p>
       </div>
 
@@ -39,7 +54,7 @@ export default async function TemplatesPage() {
             return (
               <div key={template.id} className="rounded-lg bg-kmp-surface p-4 shadow-sm">
                 {isAdmin ? (
-                  <EditTemplateForm template={template} />
+                  <EditTemplateForm template={template} serviceTypes={tipos} />
                 ) : (
                   <div>
                     <h2 className="text-sm font-medium text-kmp-text">{template.nome}</h2>
@@ -57,6 +72,13 @@ export default async function TemplatesPage() {
                     </p>
                   </div>
                 )}
+                {template.canal === "email" && !isSystemTemplate ? (
+                  <TemplateAttachments
+                    templateId={template.id}
+                    anexos={anexosPorTemplate[template.id] ?? []}
+                    isAdmin={isAdmin}
+                  />
+                ) : null}
                 <div className="mt-3 flex items-center gap-2">
                   <CopyTemplateButton corpo={template.corpo} />
                   {isAdmin && !isSystemTemplate ? (
@@ -108,6 +130,19 @@ export default async function TemplatesPage() {
               <select name="idioma" defaultValue="pt" className={inputClass}>
                 <option value="pt">Português</option>
                 <option value="en">English</option>
+              </select>
+            </div>
+            <div className="sm:col-span-3">
+              <label className="block text-sm font-medium text-kmp-text">
+                Tipo de visto
+              </label>
+              <select name="service_type_id" defaultValue="" className={inputClass}>
+                <option value="">Geral (qualquer cliente)</option>
+                {tipos.map((st) => (
+                  <option key={st.id} value={st.id}>
+                    {st.nome}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="sm:col-span-3">

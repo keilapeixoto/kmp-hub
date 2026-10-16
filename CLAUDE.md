@@ -319,10 +319,20 @@ interna nunca aparece no portal). Dados em `lib/clients/perfil.ts`, contas em
 tarefas padrão (`case_stage_tasks`, editadas em Pipeline → "Editar etapas
 desta pipeline", só admin). Ao entrar na etapa o processo ganha as tarefas;
 concluída a última, o banco passa o processo para a próxima etapa sozinho
-(triggers em `20261016150000_stage_tasks.sql`, **ainda não aplicada**). O
+(triggers em `20261016150000_stage_tasks.sql`, aplicada). O
 processo mostra "Tarefas da etapa" com checkboxes; os cards da Pipeline
 mostram o progresso. Tarefas também são editáveis direto na lista de
 Tarefas (status, prioridade, prazo).
+
+**E-mail com templates, anexos e assinatura (out/2026):** no perfil do
+cliente, "Enviar e-mail" escolhe um template (os do visto do cliente
+primeiro), preenche as variáveis (`lib/email/variaveis.ts`: nome_cliente,
+primeiro_nome, visto, etapa, prazo, consultor, link_portal; `nome_estudante`
+continua valendo), marca os anexos fixos do template, deixa marcar documentos
+do cliente e põe a assinatura de quem envia (cadastrada em Meu perfil:
+imagem + fecho + links clicáveis). Vai pelo Gmail conectado, com anexos
+(`sendGmailRaw`), e entra na linha do tempo do cliente. Anexos fixos em
+Templates (só admin). Migração `20261016160000_email_templates.sql`.
 
 ## Dados de demonstração
 

@@ -12,7 +12,14 @@ const inputClass =
  * assunto/corpo dos e-mails pelo Hub, sem precisar editar arquivo de código
  * (isso já quebrou o build duas vezes).
  */
-export function EditTemplateForm({ template }: { template: MessageTemplate }) {
+export function EditTemplateForm({
+  template,
+  serviceTypes,
+}: {
+  template: MessageTemplate;
+  serviceTypes: { id: string; nome: string }[];
+}) {
+  const visto = serviceTypes.find((st) => st.id === template.service_type_id)?.nome ?? null;
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
@@ -27,6 +34,7 @@ export function EditTemplateForm({ template }: { template: MessageTemplate }) {
             <p className="text-xs text-kmp-text/50">
               {CANAL_LABELS[template.canal] ?? template.canal} ·{" "}
               {template.idioma === "en" ? "English" : "Português"}
+              {visto ? ` · ${visto}` : " · geral"}
               {isSystemTemplate ? " · usado automaticamente pelo sistema" : ""}
             </p>
           </div>
@@ -84,14 +92,26 @@ export function EditTemplateForm({ template }: { template: MessageTemplate }) {
       </div>
       <div>
         <label className="block text-xs font-medium text-kmp-text">
+          Tipo de visto (o template aparece primeiro para clientes com esse processo)
+        </label>
+        <select name="service_type_id" defaultValue={template.service_type_id ?? ""} className={inputClass}>
+          <option value="">Geral (qualquer cliente)</option>
+          {serviceTypes.map((st) => (
+            <option key={st.id} value={st.id}>
+              {st.nome}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="block text-xs font-medium text-kmp-text">
           Assunto (só usado em e-mail)
         </label>
         <input name="assunto" defaultValue={template.assunto ?? ""} className={inputClass} />
       </div>
       <div>
         <label className="block text-xs font-medium text-kmp-text">
-          Corpo (use {"{{nome_estudante}}"}, {"{{tipo_documento}}"}, {"{{data_limite}}"},{" "}
-          {"{{dias_restantes}}"} ou as variáveis do seu template)
+          Corpo (variáveis entre {"{{ }}"}, veja a lista no topo da página)
         </label>
         <textarea
           name="corpo"

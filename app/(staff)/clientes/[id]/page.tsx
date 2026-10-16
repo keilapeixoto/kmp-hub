@@ -39,7 +39,9 @@ import { ClientNotesPanel } from "../_components/client-notes-panel";
 import { DependentsPanel } from "../_components/dependents-panel";
 import { PortalAccessCard } from "../_components/portal-access-card";
 import { DocumentsPanel } from "../_components/documents-panel";
-import { SendEmailPanel } from "../_components/send-email-panel";
+import { ClientEmailComposer } from "../_components/client-email-composer";
+import { getMinhaAssinatura, getTemplatesDeEmail } from "@/lib/email/dados";
+import { portalUrl } from "@/lib/dominios";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -86,6 +88,7 @@ export default async function ClientDetailPage({
     staff,
     notas,
     usuarioId,
+    templatesEmail,
   ] = await Promise.all([
     getCurrentUserProfile(),
     getCurrentUserRole(),
@@ -103,6 +106,7 @@ export default async function ClientDetailPage({
     getTeamMembersStaff(),
     getClientNotes(id),
     getCurrentUserId(),
+    getTemplatesDeEmail(),
   ]);
 
   const stagesById = Object.fromEntries(allStages.map((s) => [s.id, s]));
@@ -119,6 +123,21 @@ export default async function ClientDetailPage({
     })),
   );
   const hoje = dayKeySydney(new Date().toISOString());
+
+  // Variáveis dos templates de e-mail: processo em andamento mais recente.
+  const processoPrincipal = cases.find((c) => c.status === "ativo" || c.status === "pausado") ?? cases[0] ?? null;
+  const variaveisEmail = {
+    nome_cliente: client.nome,
+    primeiro_nome: client.nome.trim().split(/\s+/)[0] ?? client.nome,
+    visto: processoPrincipal ? (serviceNameById[processoPrincipal.service_type_id] ?? "") : "",
+    etapa: processoPrincipal?.etapa_id ? (stagesById[processoPrincipal.etapa_id]?.nome ?? "") : "",
+    prazo: processoPrincipal?.prazo
+      ? new Date(`${processoPrincipal.prazo.slice(0, 10)}T00:00:00`).toLocaleDateString("pt-BR")
+      : "",
+    consultor: profile?.nome ?? "",
+    link_portal: `${portalUrl()}/portal`,
+  };
+  const assinatura = usuarioId ? await getMinhaAssinatura(usuarioId, profile?.nome ?? "") : null;
   const updateWithId = updateClientRecord.bind(null, id);
 
   return (
@@ -169,7 +188,23 @@ export default async function ClientDetailPage({
               hasAccess={hasPortalAccess}
               canInvite={role === "admin" || role === "director"}
             />
-            {client.email ? <SendEmailPanel clientEmail={client.email} /> : null}
+            {client.email ? (
+              <ClientEmailComposer
+                clientId={id}
+                clientEmail={client.email}
+                templates={templatesEmail}
+                serviceTypeIds={[...new Set(cases.map((c) => c.service_type_id))]}
+                variaveis={variaveisEmail}
+                documentos={clientFiles
+                  .filter((d) => !d.arquivado)
+                  .map((d) => ({
+                    id: d.id,
+                    nome: d.nome ?? d.storage_path.split("/").pop() ?? "arquivo",
+                    tamanho: Number(d.tamanho_bytes ?? 0),
+                  }))}
+                temAssinatura={Boolean(assinatura?.url || assinatura?.fecho)}
+              />
+            ) : null}
           </div>
         </div>
       ) : null}

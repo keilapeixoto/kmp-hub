@@ -346,7 +346,8 @@ sem pooler) — preferível quando `psql`/Docker estiverem disponíveis.
 
 ## Pipeline por tarefas (out/2026)
 
-- `migrations/20261016150000_stage_tasks.sql` — **ainda não aplicada.**
+- `migrations/20261016150000_stage_tasks.sql` — **aplicada em 2026-10-16**
+  (testada no banco real com um processo demo: GTE → Lodgement, desfeito).
   `case_stage_tasks`: tarefas padrão de cada etapa (só admin edita, equipe
   lê). Ao entrar numa etapa, o processo ganha as tarefas dela (`tasks` com
   `etapa_id`/`stage_task_id`, responsável = consultor do processo, prazo =
@@ -357,3 +358,15 @@ sem pooler) — preferível quando `psql`/Docker estiverem disponíveis.
   processo. `public.gerar_tarefas_da_etapa(case_id)` para processos que já
   estavam na etapa. Conferida no PGlite (etapa 1 → 2 → 3 com histórico).
 - `tests/database/027_stage_tasks.test.sql` — 11 testes.
+
+## E-mail com templates, anexos e assinatura (out/2026)
+
+- `migrations/20261016160000_email_templates.sql` — **aplicada em 2026-10-16.**
+  `profiles.assinatura_*` (imagem no bucket público avatars, frase de fecho,
+  WhatsApp e Instagram clicáveis); `message_templates.service_type_id`
+  (template por visto); `message_template_attachments` + bucket privado
+  `email-anexos` (anexos fixos do template; só admin cadastra, equipe lê,
+  cliente nunca vê). Envio pelo Gmail de quem está logado com anexos
+  (`lib/email/mime.ts`, endereço de upload do Gmail, até 20 MB de anexos),
+  registrado em `timeline_events`. Conferida no PGlite.
+- `tests/database/028_email_templates_rls.test.sql` — 7 testes.

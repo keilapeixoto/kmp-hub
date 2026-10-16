@@ -170,3 +170,29 @@ export async function sendGmail(
   }
   return { ok: true, error: null };
 }
+
+/**
+ * Envia uma mensagem MIME já montada (lib/email/mime.ts), com ou sem anexos.
+ * Usa o endereço de upload do Gmail, que aceita até 35 MB (o envio em JSON de
+ * sendGmail fica perto de 5 MB, pouco para anexos).
+ */
+export async function sendGmailRaw(
+  accessToken: string,
+  mensagemMime: string,
+): Promise<{ ok: boolean; error: string | null }> {
+  const res = await fetch(
+    "https://gmail.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=media",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "message/rfc822",
+      },
+      body: mensagemMime,
+    },
+  );
+  if (!res.ok) {
+    return { ok: false, error: `Gmail respondeu ${res.status} ao enviar` };
+  }
+  return { ok: true, error: null };
+}

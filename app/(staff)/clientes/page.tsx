@@ -1,15 +1,25 @@
 import Link from "next/link";
-import { getConsultants } from "@/lib/leads/data";
 import { getClients, getDistinctClientValues } from "@/lib/clients/data";
+import {
+  getAllCaseStages,
+  getCases,
+  getCaseStatusLabels,
+  getServiceTypes,
+  getTeamMembersStaff,
+} from "@/lib/cases/data";
 import type { ClientFilters } from "@/lib/clients/types";
 import { ClientsFilters } from "./_components/clients-filters";
-import { ClientsTable } from "./_components/clients-table";
+import { ClientsTable, type ProcessoDaLista } from "./_components/clients-table";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
 function firstValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
+
+// Processo que aparece na lista: o em andamento (ativo/pausado) mais recente;
+// sem nenhum em andamento, o mais recente de todos.
+const EM_ANDAMENTO = ["ativo", "pausado"];
 
 export default async function ClientesPage({
   searchParams,
@@ -25,12 +35,39 @@ export default async function ClientesPage({
     busca: firstValue(params.busca),
   };
 
-  const [clients, consultants, paises, situacoes] = await Promise.all([
+  const [clients, staff, paises, situacoes, cases, serviceTypes, stages, statusLabels] = await Promise.all([
     getClients(filters),
-    getConsultants(),
+    getTeamMembersStaff(),
     getDistinctClientValues("pais"),
     getDistinctClientValues("situacao"),
+    getCases({}),
+    getServiceTypes(),
+    getAllCaseStages(),
+    getCaseStatusLabels(),
   ]);
+
+  const staffNameById = Object.fromEntries(staff.map((m) => [m.user_id, m.nome]));
+  const servicoPorId = Object.fromEntries(serviceTypes.map((st) => [st.id, st.nome]));
+  const etapaPorId = Object.fromEntries(stages.map((s) => [s.id, s.nome]));
+
+  // getCases já vem do mais recente para o mais antigo.
+  const processoPorCliente: Record<string, { principal: ProcessoDaLista; total: number }> = {};
+  for (const c of cases) {
+    const atual = processoPorCliente[c.client_id];
+    const item: ProcessoDaLista = {
+      servico: servicoPorId[c.service_type_id] ?? "Processo",
+      status: c.status,
+      etapa: c.etapa_id ? (etapaPorId[c.etapa_id] ?? null) : null,
+    };
+    if (!atual) {
+      processoPorCliente[c.client_id] = { principal: item, total: 1 };
+      continue;
+    }
+    atual.total += 1;
+    if (!EM_ANDAMENTO.includes(atual.principal.status) && EM_ANDAMENTO.includes(c.status)) {
+      atual.principal = item;
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -46,12 +83,17 @@ export default async function ClientesPage({
 
       <ClientsFilters
         filters={filters}
-        consultants={consultants}
+        responsaveis={staff.map((m) => ({ user_id: m.user_id, nome: m.nome }))}
         paises={paises}
         situacoes={situacoes}
       />
 
-      <ClientsTable clients={clients} consultants={consultants} />
+      <ClientsTable
+        clients={clients}
+        staffNameById={staffNameById}
+        processoPorCliente={processoPorCliente}
+        statusLabels={statusLabels}
+      />
     </div>
   );
 }

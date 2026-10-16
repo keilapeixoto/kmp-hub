@@ -1,97 +1,109 @@
 import Link from "next/link";
-import type { ConsultantOption } from "@/lib/leads/types";
+import { Search } from "lucide-react";
 import type { ClientFilters } from "@/lib/clients/types";
 
-const inputClass =
-  "mt-1 w-full rounded-md border border-kmp-divider px-2 py-1.5 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
-const labelClass = "block text-xs font-medium text-kmp-text/70";
+const selectClass =
+  "w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+const labelClass = "mb-1 block text-xs font-semibold text-kmp-text/70";
 
 export function ClientsFilters({
   filters,
-  consultants,
+  responsaveis,
   paises,
   situacoes,
 }: {
   filters: ClientFilters;
-  consultants: ConsultantOption[];
+  /** Equipe inteira (admin, diretor, consultor...), não só a função consultor. */
+  responsaveis: { user_id: string; nome: string }[];
   paises: string[];
   situacoes: string[];
 }) {
   return (
-    <form
-      method="GET"
-      className="grid grid-cols-2 gap-3 rounded-lg bg-kmp-surface p-4 shadow-sm sm:grid-cols-4"
-    >
-      <div>
-        <label className={labelClass}>Buscar por nome</label>
+    <form method="GET" className="rounded-3xl bg-kmp-surface p-5 shadow-sm">
+      <label htmlFor="busca-clientes" className="sr-only">
+        Buscar cliente por nome
+      </label>
+      <div className="relative">
+        <Search
+          aria-hidden="true"
+          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-kmp-graphite/50"
+        />
         <input
+          id="busca-clientes"
           type="text"
           name="busca"
           defaultValue={filters.busca ?? ""}
-          className={inputClass}
+          placeholder="Buscar cliente por nome…"
+          className="w-full rounded-2xl border border-black/10 bg-white py-3 pl-12 pr-4 text-base text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange"
         />
       </div>
 
-      {consultants.length > 0 ? (
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {responsaveis.length > 0 ? (
+          <div>
+            <label htmlFor="filtro-responsavel" className={labelClass}>
+              Responsável
+            </label>
+            <select
+              id="filtro-responsavel"
+              name="consultor"
+              defaultValue={filters.consultor ?? ""}
+              className={selectClass}
+            >
+              <option value="">Todos</option>
+              {responsaveis.map((c) => (
+                <option key={c.user_id} value={c.user_id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : null}
+
         <div>
-          <label className={labelClass}>Consultor</label>
-          <select
-            name="consultor"
-            defaultValue={filters.consultor ?? ""}
-            className={inputClass}
-          >
+          <label htmlFor="filtro-pais" className={labelClass}>
+            País
+          </label>
+          <select id="filtro-pais" name="pais" defaultValue={filters.pais ?? ""} className={selectClass}>
             <option value="">Todos</option>
-            {consultants.map((c) => (
-              <option key={c.user_id} value={c.user_id}>
-                {c.nome}
+            {paises.map((v) => (
+              <option key={v} value={v}>
+                {v}
               </option>
             ))}
           </select>
         </div>
-      ) : null}
 
-      <div>
-        <label className={labelClass}>País</label>
-        <select
-          name="pais"
-          defaultValue={filters.pais ?? ""}
-          className={inputClass}
-        >
-          <option value="">Todos</option>
-          {paises.map((v) => (
-            <option key={v} value={v}>
-              {v}
-            </option>
-          ))}
-        </select>
+        <div>
+          <label htmlFor="filtro-situacao" className={labelClass}>
+            Situação
+          </label>
+          <select
+            id="filtro-situacao"
+            name="situacao"
+            defaultValue={filters.situacao ?? ""}
+            className={selectClass}
+          >
+            <option value="">Todas</option>
+            {situacoes.map((v) => (
+              <option key={v} value={v}>
+                {v}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div>
-        <label className={labelClass}>Situação</label>
-        <select
-          name="situacao"
-          defaultValue={filters.situacao ?? ""}
-          className={inputClass}
-        >
-          <option value="">Todas</option>
-          {situacoes.map((v) => (
-            <option key={v} value={v}>
-              {v}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="col-span-2 flex items-end gap-2 sm:col-span-4">
+      <div className="mt-4 flex items-center gap-2">
         <button
           type="submit"
-          className="rounded-full bg-kmp-primary px-4 py-1.5 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
+          className="rounded-full bg-kmp-primary px-5 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
         >
           Filtrar
         </button>
         <Link
           href="/clientes"
-          className="rounded-md px-4 py-1.5 text-sm font-medium text-kmp-text/70 transition hover:text-kmp-orange"
+          className="rounded-full px-4 py-2 text-sm font-medium text-kmp-text/70 transition hover:text-kmp-text"
         >
           Limpar filtros
         </Link>

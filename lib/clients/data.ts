@@ -11,7 +11,9 @@ export async function getClients(filters: ClientFilters): Promise<Client[]> {
   let query = supabase
     .from("clients")
     .select("*")
-    .order("created_at", { ascending: false });
+    // Ordem alfabética (pedido da Keila, out/2026) — vale também para os
+    // seletores de cliente das outras telas.
+    .order("nome", { ascending: true });
 
   if (filters.consultor) query = query.eq("consultor_id", filters.consultor);
   if (filters.pais) query = query.eq("pais", filters.pais);

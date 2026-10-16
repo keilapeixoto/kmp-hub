@@ -14,7 +14,7 @@ export function InactivityBadge({ days }: { days: number }) {
       className="inline-flex items-center gap-1 rounded-full bg-kmp-orange/10 px-2.5 py-0.5 text-xs font-medium text-orange-800"
       title={`Sem contato há ${days} dias`}
     >
-      ⚠ {days}d
+      {days}d
     </span>
   );
 }

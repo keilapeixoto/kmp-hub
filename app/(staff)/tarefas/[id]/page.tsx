@@ -49,7 +49,7 @@ export default async function TarefaDetailPage({
         </h1>
         {dependency && dependency.status !== "concluida" ? (
           <p className="mt-1 text-sm text-kmp-orange">
-            ⚠ Depende de &quot;{dependency.titulo}&quot; (
+            Depende de &quot;{dependency.titulo}&quot; (
             {dependency.status === "pendente" ? "pendente" : "em andamento"})
           </p>
         ) : null}

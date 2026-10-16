@@ -66,7 +66,7 @@ export default async function CompromissoDetailPage({
 
       {past && !summary ? (
         <p className="rounded-lg border border-kmp-orange/30 bg-kmp-orange/5 p-4 text-sm font-medium text-orange-800">
-          ⚠ Este compromisso já aconteceu e ainda não tem resumo — o registro é
+          Este compromisso já aconteceu e ainda não tem resumo — o registro é
           obrigatório após cada consulta.
         </p>
       ) : null}

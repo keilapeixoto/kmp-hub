@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { TASK_PRIORITIES, TASK_STATUSES } from "@/lib/tasks/constants";
 
 export type TaskFormState = {
   error: string | null;
@@ -76,10 +77,13 @@ export async function updateTask(
     return { error: "Informe o título da tarefa." };
   }
 
+  // "Eu mesmo(a)" chega vazio; na edição isso apagava o responsável (coluna
+  // obrigatória) e o banco recusava a gravação inteira. Vazio = manter.
+  const { responsavel, ...resto } = fields;
   const supabase = await createClient();
   const { error } = await supabase
     .from("tasks")
-    .update({ ...fields, participantes })
+    .update({ ...resto, ...(responsavel ? { responsavel } : {}), participantes })
     .eq("id", id);
 
   if (error) {
@@ -89,6 +93,42 @@ export async function updateTask(
   revalidatePath("/tarefas");
   revalidatePath(`/tarefas/${id}`);
   redirect(`/tarefas/${id}`);
+}
+
+/**
+ * Edição rápida direto na lista de tarefas (status, prioridade, prazo). Só
+ * esses três campos e só valores válidos; o RLS de tasks decide se a pessoa
+ * pode mexer naquela tarefa.
+ */
+export async function updateTaskField(
+  id: string,
+  campo: "status" | "prioridade" | "prazo",
+  valor: string,
+): Promise<{ error: string | null }> {
+  const validos: Record<string, readonly string[]> = {
+    status: TASK_STATUSES.map((s) => s.slug),
+    prioridade: TASK_PRIORITIES.map((p) => p.slug),
+  };
+  const novo: string | null = valor.trim() || null;
+  if (campo === "prazo") {
+    if (novo && !/^\d{4}-\d{2}-\d{2}$/.test(novo)) return { error: "Data inválida." };
+  } else if (!novo || !validos[campo].includes(novo)) {
+    return { error: "Valor inválido." };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({ [campo]: novo })
+    .eq("id", id)
+    .select("id");
+  if (error || !data?.length) {
+    if (error) console.error("[updateTaskField]", error.code, error.message);
+    return { error: "Não foi possível salvar." };
+  }
+  revalidatePath("/tarefas");
+  revalidatePath(`/tarefas/${id}`);
+  return { error: null };
 }
 
 export async function updateTaskStatus(id: string, status: string) {

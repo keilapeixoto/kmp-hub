@@ -1,13 +1,13 @@
 import Link from "next/link";
+import { BarChart3, ListChecks } from "lucide-react";
+import { FaixaTitulo } from "@/components/ui/vivid";
 import { getTeamMembersStaff } from "@/lib/cases/data";
-import {
-  TASK_PRIORITY_LABELS,
-  TASK_STATUS_LABELS,
-  TASK_PRIORITIES,
-  TASK_STATUSES,
-} from "@/lib/tasks/constants";
+import { getClients } from "@/lib/clients/data";
+import { iniciais } from "@/lib/clients/perfil-calc";
+import { TASK_PRIORITIES, TASK_STATUSES } from "@/lib/tasks/constants";
 import { getTasks, getWorkload } from "@/lib/tasks/data";
 import type { TaskFilters } from "@/lib/tasks/types";
+import { TaskDeadlineInput, TaskPrioritySelect, TaskStatusSelect } from "./_components/task-quick-edit";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -15,9 +15,12 @@ function firstValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-const inputClass =
-  "mt-1 w-full rounded-md border border-kmp-divider px-2 py-1.5 text-sm text-kmp-text focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
-const labelClass = "block text-xs font-medium text-kmp-text/70";
+const selectClass =
+  "w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-kmp-graphite focus:border-kmp-orange focus:outline-none focus:ring-1 focus:ring-kmp-orange";
+const labelClass = "mb-1 block text-xs font-semibold text-kmp-text/70";
+
+const colunas =
+  "md:grid-cols-[minmax(0,2fr)_minmax(0,1.1fr)_7.5rem_9rem_9.5rem]";
 
 export default async function TarefasPage({
   searchParams,
@@ -31,15 +34,16 @@ export default async function TarefasPage({
     responsavel: firstValue(params.responsavel),
   };
 
-  const [tasks, staff, workload] = await Promise.all([
+  const [tasks, staff, workload, clients] = await Promise.all([
     getTasks(filters),
     getTeamMembersStaff(),
     getWorkload(),
+    getClients({}),
   ]);
 
-  const staffName = (id: string) =>
-    staff.find((m) => m.user_id === id)?.nome ?? "—";
-
+  const staffName = (id: string) => staff.find((m) => m.user_id === id)?.nome ?? "—";
+  const clienteNome = Object.fromEntries(clients.map((c) => [c.id, c.nome]));
+  const hoje = new Date().toISOString().slice(0, 10);
   const maxLoad = Math.max(1, ...Array.from(workload.values()));
 
   return (
@@ -55,152 +59,130 @@ export default async function TarefasPage({
       </div>
 
       {workload.size > 0 ? (
-        <div className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-4 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-kmp-text/60">
-            Carga da equipe (tarefas abertas)
-          </h2>
+        <section className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
+          <FaixaTitulo titulo="Carga da equipe (tarefas abertas)" cor="amarelo" icon={BarChart3} />
           <div className="space-y-2">
             {Array.from(workload.entries())
               .sort((a, b) => b[1] - a[1])
               .map(([userId, count]) => (
                 <div key={userId} className="flex items-center gap-3 text-sm">
-                  <span className="w-44 truncate text-kmp-text/80">
-                    {staffName(userId)}
-                  </span>
-                  <div className="h-2 flex-1 rounded-full bg-kmp-divider">
-                    <div
-                      className="h-2 rounded-full bg-kmp-orange"
-                      style={{ width: `${(count / maxLoad) * 100}%` }}
-                    />
+                  <span className="w-44 truncate text-kmp-text/80">{staffName(userId)}</span>
+                  <div className="h-2 flex-1 rounded-full bg-kmp-text/10">
+                    <div className="h-2 rounded-full bg-kmp-orange" style={{ width: `${(count / maxLoad) * 100}%` }} />
                   </div>
-                  <span className="w-8 text-right text-kmp-text/50">
-                    {count}
-                  </span>
+                  <span className="w-8 text-right font-semibold text-kmp-text/70">{count}</span>
                 </div>
               ))}
           </div>
-        </div>
+        </section>
       ) : null}
 
-      <form
-        method="GET"
-        className="grid grid-cols-2 gap-3 rounded-lg bg-kmp-surface p-4 shadow-sm sm:grid-cols-4"
-      >
-        <div>
-          <label className={labelClass}>Status</label>
-          <select name="status" defaultValue={filters.status ?? ""} className={inputClass}>
-            <option value="">Todos</option>
-            {TASK_STATUSES.map((s) => (
-              <option key={s.slug} value={s.slug}>
-                {s.label}
-              </option>
-            ))}
-          </select>
+      <form method="GET" className="rounded-3xl bg-kmp-surface p-5 shadow-sm">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div>
+            <label htmlFor="filtro-status" className={labelClass}>Status</label>
+            <select id="filtro-status" name="status" defaultValue={filters.status ?? ""} className={selectClass}>
+              <option value="">Todos</option>
+              {TASK_STATUSES.map((s) => (
+                <option key={s.slug} value={s.slug}>{s.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="filtro-prioridade" className={labelClass}>Prioridade</label>
+            <select id="filtro-prioridade" name="prioridade" defaultValue={filters.prioridade ?? ""} className={selectClass}>
+              <option value="">Todas</option>
+              {TASK_PRIORITIES.map((p) => (
+                <option key={p.slug} value={p.slug}>{p.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="filtro-responsavel" className={labelClass}>Responsável</label>
+            <select id="filtro-responsavel" name="responsavel" defaultValue={filters.responsavel ?? ""} className={selectClass}>
+              <option value="">Todos</option>
+              {staff.map((m) => (
+                <option key={m.user_id} value={m.user_id}>{m.nome}</option>
+              ))}
+            </select>
+          </div>
         </div>
-        <div>
-          <label className={labelClass}>Prioridade</label>
-          <select
-            name="prioridade"
-            defaultValue={filters.prioridade ?? ""}
-            className={inputClass}
-          >
-            <option value="">Todas</option>
-            {TASK_PRIORITIES.map((p) => (
-              <option key={p.slug} value={p.slug}>
-                {p.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className={labelClass}>Responsável</label>
-          <select
-            name="responsavel"
-            defaultValue={filters.responsavel ?? ""}
-            className={inputClass}
-          >
-            <option value="">Todos</option>
-            {staff.map((m) => (
-              <option key={m.user_id} value={m.user_id}>
-                {m.nome}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex items-end gap-2">
-          <button
-            type="submit"
-            className="rounded-full bg-kmp-primary px-4 py-1.5 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
-          >
+        <div className="mt-4 flex items-center gap-2">
+          <button type="submit" className="rounded-full bg-kmp-primary px-5 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90">
             Filtrar
           </button>
-          <Link
-            href="/tarefas"
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-kmp-text/70 transition hover:text-kmp-orange"
-          >
-            Limpar
+          <Link href="/tarefas" className="rounded-full px-4 py-2 text-sm font-medium text-kmp-text/70 transition hover:text-kmp-text">
+            Limpar filtros
           </Link>
         </div>
       </form>
 
-      {tasks.length === 0 ? (
-        <p className="rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep p-8 text-center text-sm text-kmp-text/50 shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
-          Nenhuma tarefa encontrada.
-        </p>
-      ) : (
-        <div className="overflow-x-auto rounded-lg bg-kmp-surface dark:border dark:border-kmp-config/40 dark:bg-gradient-to-br dark:from-kmp-panel dark:to-kmp-panel-deep shadow-sm dark:shadow-md dark:shadow-kmp-config/20">
-          <table className="w-full min-w-[700px] text-left text-sm">
-            <thead className="border-b border-kmp-divider text-xs uppercase text-kmp-text/50">
-              <tr>
-                <th className="px-4 py-3 font-medium">Tarefa</th>
-                <th className="px-4 py-3 font-medium">Responsável</th>
-                <th className="px-4 py-3 font-medium">Prioridade</th>
-                <th className="px-4 py-3 font-medium">Prazo</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody>
+      <section className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
+        <FaixaTitulo
+          titulo="Tarefas"
+          cor="azul"
+          icon={ListChecks}
+          direita={`${tasks.length} ${tasks.length === 1 ? "tarefa" : "tarefas"}`}
+        />
+        {tasks.length === 0 ? (
+          <p className="rounded-2xl bg-kmp-text/5 p-4 text-sm text-kmp-text/70">Nenhuma tarefa encontrada.</p>
+        ) : (
+          <div>
+            <div className={`hidden gap-4 px-3 pb-2 text-xs font-semibold uppercase tracking-wide text-kmp-text/50 md:grid ${colunas}`}>
+              <span>Tarefa</span>
+              <span>Responsável</span>
+              <span>Prioridade</span>
+              <span>Prazo</span>
+              <span>Status</span>
+            </div>
+            <ul className="divide-y divide-kmp-divider">
               {tasks.map((task) => {
-                const overdue =
-                  task.prazo &&
-                  new Date(task.prazo) < new Date() &&
-                  (task.status === "pendente" || task.status === "em_andamento");
+                const aberta = task.status === "pendente" || task.status === "em_andamento";
+                const atrasada = Boolean(task.prazo && task.prazo.slice(0, 10) < hoje && aberta);
+                const nome = staffName(task.responsavel);
                 return (
-                  <tr key={task.id} className="border-b border-kmp-divider last:border-0">
-                    <td className="px-4 py-3">
+                  <li key={task.id} className={`grid grid-cols-1 gap-2 px-3 py-3 md:items-center md:gap-4 ${colunas}`}>
+                    <span className="min-w-0">
                       <Link
                         href={`/tarefas/${task.id}`}
-                        className="font-medium text-kmp-text hover:text-kmp-orange"
+                        className={`block truncate font-medium hover:text-kmp-orange ${aberta ? "text-kmp-text" : "text-kmp-text/50 line-through"}`}
                       >
                         {task.titulo}
                       </Link>
-                    </td>
-                    <td className="px-4 py-3 text-kmp-text/70">
-                      {staffName(task.responsavel)}
-                    </td>
-                    <td className="px-4 py-3 text-kmp-text/70">
-                      {TASK_PRIORITY_LABELS[task.prioridade]}
-                    </td>
-                    <td className="px-4 py-3">
-                      {task.prazo ? (
-                        <span className={overdue ? "font-medium text-kmp-orange" : "text-kmp-text/70"}>
-                          {overdue ? "⚠ " : ""}
-                          {new Date(task.prazo).toLocaleDateString("pt-BR")}
-                        </span>
-                      ) : (
-                        <span className="text-kmp-text/40">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-kmp-text/70">
-                      {TASK_STATUS_LABELS[task.status]}
-                    </td>
-                  </tr>
+                      {task.client_id && clienteNome[task.client_id] ? (
+                        <Link
+                          href={`/clientes/${task.client_id}`}
+                          className="block truncate text-xs text-kmp-text/60 hover:text-kmp-orange"
+                        >
+                          {clienteNome[task.client_id]}
+                        </Link>
+                      ) : null}
+                    </span>
+                    <span className="flex min-w-0 items-center gap-2 text-sm text-kmp-text/80">
+                      <span
+                        aria-hidden="true"
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-kmp-text/10 text-xs font-semibold text-kmp-text/70"
+                      >
+                        {iniciais(nome)}
+                      </span>
+                      <span className="truncate">{nome}</span>
+                    </span>
+                    <span>
+                      <TaskPrioritySelect id={task.id} prioridade={task.prioridade} />
+                    </span>
+                    <span>
+                      <TaskDeadlineInput id={task.id} prazo={task.prazo ? task.prazo.slice(0, 10) : null} atrasada={atrasada} />
+                    </span>
+                    <span>
+                      <TaskStatusSelect id={task.id} status={task.status} />
+                    </span>
+                  </li>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
-      )}
+            </ul>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

@@ -85,3 +85,33 @@ test("montarMensagem: cabeçalho não aceita quebra de linha injetada", () => {
   const m = montarMensagem({ to: "a@b.com\r\nBcc: x@y.com", subject: "x\r\nBcc: z", html: "", anexos: [] });
   assert.doesNotMatch(m, /\r\nBcc:/);
 });
+
+test("htmlDaAssinatura: cartão com foto, contatos clicáveis, botões e aviso", () => {
+  const html = htmlDaAssinatura({
+    url: null,
+    fecho: null,
+    whatsapp: "+61 451 051 806",
+    instagram: "@keilamayara",
+    nome: "Keila <Peixoto>",
+    cartao: {
+      cargo: "Founder & Consultant",
+      credencial: "QEAC #09831",
+      slogan: "Strategy that connects.",
+      telefone: "+61 451 051 806",
+      email: "keila@exemplo.com.au",
+      fotoUrl: "https://cdn/foto.png",
+      logoUrl: "javascript:alert(1)",
+      aviso: "Confidencial.",
+      baseUrl: "https://hub.exemplo/",
+    },
+  });
+  assert.match(html, /Keila &lt;Peixoto&gt;/);
+  assert.match(html, /Founder &amp; Consultant/);
+  assert.match(html, /href="tel:\+61451051806"/);
+  assert.match(html, /href="mailto:keila@exemplo.com.au"/);
+  assert.match(html, /src="https:\/\/hub.exemplo\/assinatura\/telefone.png"/);
+  assert.match(html, />WhatsApp<\/a>/);
+  assert.match(html, /<img src="https:\/\/cdn\/foto.png"/);
+  assert.doesNotMatch(html, /javascript:/);
+  assert.match(html, /Confidencial\./);
+});

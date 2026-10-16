@@ -1,11 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
 import { dayKeySydney } from "@/lib/appointments/timezones";
+import type { CorViva } from "@/components/ui/vivid";
 
 // O que pede atenção de quem está logado (sino do cabeçalho). Tudo com a
 // sessão: o RLS já limita cada pessoa ao que ela pode ver.
 
 export type Notificacao = { id: string; titulo: string; detalhe: string | null; href: string };
-export type GrupoDeNotificacoes = { chave: string; titulo: string; total: number; itens: Notificacao[]; verTudo: string };
+export type GrupoDeNotificacoes = {
+  chave: string;
+  titulo: string;
+  total: number;
+  itens: Notificacao[];
+  verTudo: string;
+  /** Cor do grupo no painel (mesma do módulo; visto vencido é sempre vermelho). */
+  cor: CorViva;
+};
 
 type ComCliente = { cases?: { id: string; clients?: { nome: string } | null } | null } | null;
 
@@ -13,7 +22,17 @@ export async function getNotificacoes(usuarioId: string): Promise<GrupoDeNotific
   const supabase = await createClient();
   const hoje = dayKeySydney(new Date().toISOString());
 
-  const [tarefas, documentos, formularios, leads] = await Promise.all([
+  // Visto vencido nos últimos 90 dias (os antigos ficam no radar de Vencimentos).
+  const noventaDias = dayKeySydney(new Date(Date.now() - 90 * 864e5).toISOString());
+  const [vistos, tarefas, documentos, formularios, leads] = await Promise.all([
+    supabase
+      .from("clients")
+      .select("id, nome, visto_atual_subclasse, visto_atual_validade", { count: "exact" })
+      .eq("is_demo", false)
+      .lt("visto_atual_validade", hoje)
+      .gte("visto_atual_validade", noventaDias)
+      .order("visto_atual_validade", { ascending: false })
+      .limit(5),
     supabase
       .from("tasks")
       .select("id, titulo, prazo", { count: "exact" })
@@ -42,9 +61,24 @@ export async function getNotificacoes(usuarioId: string): Promise<GrupoDeNotific
       .limit(5),
   ]);
 
+  const data = (iso: string) => new Date(`${iso.slice(0, 10)}T00:00:00`).toLocaleDateString("pt-BR");
   const grupos: GrupoDeNotificacoes[] = [
     {
+      chave: "vistos",
+      titulo: "Vistos vencidos",
+      cor: "vermelho",
+      total: vistos.count ?? 0,
+      verTudo: "/vencimentos",
+      itens: (vistos.data ?? []).map((c) => ({
+        id: c.id as string,
+        titulo: c.nome as string,
+        detalhe: `${c.visto_atual_subclasse ? `${c.visto_atual_subclasse} · ` : ""}venceu em ${data(c.visto_atual_validade as string)}`,
+        href: `/clientes/${c.id}`,
+      })),
+    },
+    {
       chave: "tarefas",
+      cor: "laranja",
       titulo: "Tarefas vencidas ou para hoje",
       total: tarefas.count ?? 0,
       verTudo: "/tarefas",
@@ -57,6 +91,7 @@ export async function getNotificacoes(usuarioId: string): Promise<GrupoDeNotific
     },
     {
       chave: "documentos",
+      cor: "roxo",
       titulo: "Documentos enviados pelos clientes",
       total: documentos.count ?? 0,
       verTudo: "/documentos",
@@ -72,6 +107,7 @@ export async function getNotificacoes(usuarioId: string): Promise<GrupoDeNotific
     },
     {
       chave: "formularios",
+      cor: "verde",
       titulo: "Formulários enviados",
       total: formularios.count ?? 0,
       verTudo: "/inicio",
@@ -87,6 +123,7 @@ export async function getNotificacoes(usuarioId: string): Promise<GrupoDeNotific
     },
     {
       chave: "leads",
+      cor: "turquesa",
       titulo: "Leads novos",
       total: leads.count ?? 0,
       verTudo: "/leads",

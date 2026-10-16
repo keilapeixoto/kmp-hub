@@ -36,6 +36,7 @@ export function ClientsTable({
   podeTrocarResponsavel: boolean;
 }) {
   const equipe = Object.entries(staffNameById).map(([id, nome]) => ({ id, nome }));
+  const hoje = new Intl.DateTimeFormat("en-CA", { timeZone: "Australia/Sydney" }).format(new Date());
   return (
     <section className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
       <FaixaTitulo
@@ -73,9 +74,16 @@ export function ClientsTable({
                     </span>
                     <span className="min-w-0">
                       <span className="block truncate font-medium text-kmp-text group-hover:text-kmp-orange">{client.nome}</span>
-                      <span className="block truncate text-xs text-kmp-text/60">
-                        {client.email ?? client.telefone ?? "Sem contato cadastrado"}
-                      </span>
+                      {client.visto_atual_validade && client.visto_atual_validade.slice(0, 10) < hoje ? (
+                        <span className="mt-0.5 inline-flex rounded-full bg-[#fde2e5] px-2 py-0.5 text-[11px] font-semibold text-[#9a2433] dark:bg-[#ef6b7d]/20 dark:text-[#f6b6bf]">
+                          Visto {client.visto_atual_subclasse ?? ""} vencido em{" "}
+                          {new Date(`${client.visto_atual_validade.slice(0, 10)}T00:00:00`).toLocaleDateString("pt-BR")}
+                        </span>
+                      ) : (
+                        <span className="block truncate text-xs text-kmp-text/60">
+                          {client.email ?? client.telefone ?? "Sem contato cadastrado"}
+                        </span>
+                      )}
                     </span>
                   </Link>
                   <span className="text-sm text-kmp-text/75">{client.pais ?? "—"}</span>

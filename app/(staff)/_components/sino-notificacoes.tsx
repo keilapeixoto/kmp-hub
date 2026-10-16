@@ -2,10 +2,26 @@ import Link from "next/link";
 import { Bell } from "lucide-react";
 import { MenuSuspenso } from "@/components/ui/menu-suspenso";
 import type { GrupoDeNotificacoes } from "@/lib/notificacoes";
+import { SUAVE, type CorViva } from "@/components/ui/vivid";
+
+/** Borda colorida de cada grupo (mesma cor do módulo). */
+const BORDA: Record<CorViva, string> = {
+  azul: "border-[#5f92f2]",
+  turquesa: "border-[#45b4c5]",
+  lilas: "border-[#9184f2]",
+  verde: "border-[#45c285]",
+  amarelo: "border-[#f0c040]",
+  rosa: "border-[#e8679a]",
+  roxo: "border-[#bd72ae]",
+  laranja: "border-kmp-orange",
+  vermelho: "border-[#e5484d]",
+  cinza: "border-[#a3a6ad]",
+};
 
 /** Sino do cabeçalho: número do que pede atenção e um painel com os atalhos. */
 export function SinoNotificacoes({ grupos, botaoClassName }: { grupos: GrupoDeNotificacoes[]; botaoClassName: string }) {
   const total = grupos.reduce((n, g) => n + g.total, 0);
+  const temVencido = grupos.some((g) => g.chave === "vistos");
   return (
     <MenuSuspenso
       className="relative"
@@ -15,7 +31,11 @@ export function SinoNotificacoes({ grupos, botaoClassName }: { grupos: GrupoDeNo
         <>
           <Bell className="h-4 w-4" />
           {total > 0 ? (
-            <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-kmp-orange px-1 text-[10px] font-bold text-white">
+            <span
+              className={`absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white ${
+                temVencido ? "bg-[#e5484d]" : "bg-kmp-orange"
+              }`}
+            >
               {total > 99 ? "99+" : total}
             </span>
           ) : null}
@@ -28,17 +48,23 @@ export function SinoNotificacoes({ grupos, botaoClassName }: { grupos: GrupoDeNo
         ) : (
           <div className="space-y-3">
             {grupos.map((g) => (
-              <section key={g.chave}>
-                <div className="flex items-center justify-between px-2 pb-1">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-kmp-text/60">{g.titulo}</p>
-                  <span className="rounded-full bg-kmp-text/10 px-2 py-0.5 text-xs font-semibold text-kmp-text/70">{g.total}</span>
+              <section key={g.chave} className={`border-l-4 pl-2 ${BORDA[g.cor]}`}>
+                <div className={`mb-1 flex items-center justify-between rounded-xl px-2 py-1 ${SUAVE[g.cor]}`}>
+                  <p className="text-xs font-semibold uppercase tracking-wide">{g.titulo}</p>
+                  <span className="rounded-full bg-white/70 px-2 py-0.5 text-xs font-bold dark:bg-black/20">{g.total}</span>
                 </div>
                 <ul>
                   {g.itens.map((n) => (
                     <li key={n.id}>
                       <Link href={n.href} className="flex items-baseline justify-between gap-3 rounded-xl px-2 py-1.5 text-sm hover:bg-kmp-text/5">
                         <span className="min-w-0 truncate text-kmp-text">{n.titulo}</span>
-                        {n.detalhe ? <span className="shrink-0 truncate text-xs text-kmp-text/60">{n.detalhe}</span> : null}
+                        {n.detalhe ? (
+                          <span
+                            className={`shrink-0 truncate text-xs ${g.chave === "vistos" ? "font-semibold text-[#c2343f]" : "text-kmp-text/60"}`}
+                          >
+                            {n.detalhe}
+                          </span>
+                        ) : null}
                       </Link>
                     </li>
                   ))}

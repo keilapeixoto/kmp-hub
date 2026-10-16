@@ -111,12 +111,13 @@ export function ClientHero({
 }) {
   const noProcesso = (ancora: string) => (processoId ? `/processos/${processoId}#${ancora}` : null);
   const prazo = prazoRelativo(indicadores.proximoPrazo, hoje);
+  const validade = client.visto_atual_validade
+    ? new Date(`${client.visto_atual_validade}T00:00:00`).toLocaleDateString("pt-BR")
+    : null;
+  // Visto vencido fica sempre em vermelho.
+  const vencido = Boolean(client.visto_atual_validade && client.visto_atual_validade.slice(0, 10) < hoje);
   const visto = client.visto_atual_subclasse
-    ? `Visto ${client.visto_atual_subclasse}${
-        client.visto_atual_validade
-          ? ` · vale até ${new Date(`${client.visto_atual_validade}T00:00:00`).toLocaleDateString("pt-BR")}`
-          : ""
-      }`
+    ? `Visto ${client.visto_atual_subclasse}${validade && !vencido ? ` · vale até ${validade}` : ""}`
     : null;
   const local = [client.cidade, client.pais].filter(Boolean).join(", ");
 
@@ -128,8 +129,13 @@ export function ClientHero({
             <FotoDoCliente clientId={client.id} fotoUrl={fotoUrl} iniciais={iniciais(client.nome)} />
             <div className="min-w-0">
               <h1 className="break-words font-heading text-2xl font-semibold leading-tight sm:text-3xl">{client.nome}</h1>
+              {vencido ? (
+                <p className="mt-1.5 inline-flex rounded-full bg-[#e5484d] px-3 py-0.5 text-sm font-semibold text-white shadow-sm">
+                  {client.visto_atual_subclasse ? `Visto ${client.visto_atual_subclasse} ` : "Visto "}venceu em {validade}
+                </p>
+              ) : null}
               <p className="mt-1 text-sm text-white/85">
-                {[visto ?? (client.visto_aplicado ? `Aplicou: ${client.visto_aplicado}` : "Sem visto atual cadastrado"), local]
+                {[vencido ? null : (visto ?? (client.visto_aplicado ? `Aplicou: ${client.visto_aplicado}` : "Sem visto atual cadastrado")), local]
                   .filter(Boolean)
                   .join(" · ")}
               </p>

@@ -1,5 +1,6 @@
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 import type { DadosDaAssinatura } from "./assinatura";
+import { siteUrl } from "@/lib/dominios";
 
 // Dados do envio de e-mail (migração 20261016160000_email_templates.sql), com
 // a sessão de quem está logado. Antes de a migração ser aplicada, devolve o
@@ -59,17 +60,38 @@ export async function getTemplatesDeEmail(): Promise<TemplateDeEmail[]> {
 /** Assinatura de quem está logado (vazia se não configurada ou antes da migração). */
 export async function getMinhaAssinatura(userId: string, nome: string): Promise<DadosDaAssinatura> {
   const supabase = await createSupabaseClient();
-  const { data, error } = await supabase
+  const colunas = "assinatura_url, assinatura_fecho, assinatura_whatsapp, assinatura_instagram";
+  let { data, error } = await supabase
     .from("profiles")
-    .select("assinatura_url, assinatura_fecho, assinatura_whatsapp, assinatura_instagram")
+    .select(`${colunas}, assinatura_dados`)
     .eq("user_id", userId)
     .maybeSingle();
+  if (error && (error.code === "42703" || error.code === "PGRST204")) {
+    // Antes da migração 20261017150000: sem o cartão.
+    ({ data, error } = await supabase.from("profiles").select(colunas).eq("user_id", userId).maybeSingle());
+  }
   if (error || !data) return { url: null, fecho: null, whatsapp: null, instagram: null, nome };
+  const d = ((data as { assinatura_dados?: Record<string, string | null> }).assinatura_dados ?? {}) as Record<
+    string,
+    string | null
+  >;
+  const texto = (k: string) => (typeof d[k] === "string" && d[k]!.trim() ? d[k]!.trim() : null);
   return {
     url: data.assinatura_url ?? null,
     fecho: data.assinatura_fecho ?? null,
     whatsapp: data.assinatura_whatsapp ?? null,
     instagram: data.assinatura_instagram ?? null,
     nome,
+    cartao: {
+      cargo: texto("cargo"),
+      credencial: texto("credencial"),
+      slogan: texto("slogan"),
+      telefone: texto("telefone"),
+      email: texto("email"),
+      fotoUrl: texto("foto_url"),
+      logoUrl: texto("logo_url"),
+      aviso: texto("aviso"),
+      baseUrl: siteUrl(),
+    },
   };
 }

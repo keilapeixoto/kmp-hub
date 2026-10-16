@@ -32,6 +32,7 @@ import {
 } from "@/lib/case-forms/data";
 import { updateCase } from "../actions";
 import { ChecklistPanel } from "../_components/checklist-panel";
+import { PedidoAoCliente } from "../_components/pedido-ao-cliente";
 import { DocumentUploadClassifier } from "../_components/document-upload-classifier";
 import { PendingClassificationPanel } from "../_components/pending-classification-panel";
 import { CaseForm } from "../_components/case-form";
@@ -236,6 +237,12 @@ export default async function ProcessoDetailPage({
         <h2 className="mb-4 font-heading text-lg text-kmp-text">
           Checklist
         </h2>
+        <div className="mb-4">
+          <PedidoAoCliente
+            caseId={id}
+            documentos={checklistItems.filter((i) => !i.parent_item_id).map((i) => i.nome)}
+          />
+        </div>
         <ChecklistPanel
           caseId={id}
           clientId={caseItem.client_id}

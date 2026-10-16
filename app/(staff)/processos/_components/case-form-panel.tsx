@@ -4,6 +4,7 @@ import { ShareFormLinks } from "./share-form-links";
 import { portalUrl } from "@/lib/dominios";
 import { ImportRecordForm, type ImportResult } from "./import-record-form";
 import { CaseFormEdit } from "./case-form-edit";
+import { reabrirFormulario } from "../pedidos-actions";
 
 export type StepWithFields = CaseFormStep & { fields: CaseFormField[] };
 
@@ -73,6 +74,36 @@ export function CaseFormPanel({
           <p>Concluiu (enviou) em {formatDateTime(caseForm.enviado_em)}.</p>
         ) : null}
       </div>
+
+      {caseForm && caseForm.status !== "em_preenchimento" ? (
+        <details className="mt-4 rounded-2xl bg-kmp-text/5 p-3 text-sm">
+          <summary className="cursor-pointer font-medium text-kmp-text">Reabrir para o cliente atualizar</summary>
+          <form action={reabrirFormulario.bind(null, caseId, caseForm.id)} className="mt-3 space-y-2">
+            <textarea
+              name="motivo"
+              required
+              rows={2}
+              maxLength={400}
+              placeholder="O que o cliente precisa atualizar (aparece no portal)"
+              className="w-full rounded-md border border-kmp-divider px-3 py-2 text-sm text-kmp-text"
+            />
+            <div className="flex items-center justify-between gap-2">
+              <label className="flex items-center gap-2 text-xs text-kmp-text/70">
+                <input type="checkbox" name="avisar" defaultChecked /> Avisar o cliente por e-mail
+              </label>
+              <button
+                type="submit"
+                className="rounded-full bg-kmp-primary px-3 py-1.5 text-xs font-medium text-kmp-on-primary hover:opacity-90"
+              >
+                Reabrir formulário
+              </button>
+            </div>
+            <p className="text-xs text-kmp-text/60">
+              As respostas continuam; o formulário volta para &ldquo;em preenchimento&rdquo; até o cliente enviar de novo.
+            </p>
+          </form>
+        </details>
+      ) : null}
 
       <div className="mt-4 border-t border-kmp-divider pt-4">
         <p className="mb-2 text-xs font-medium text-kmp-text/60">

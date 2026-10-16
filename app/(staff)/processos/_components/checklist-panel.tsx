@@ -14,6 +14,7 @@ import {
   updateDocumentPasta,
   uploadDocument,
 } from "../checklist-actions";
+import { aprovarItem, reprovarItem } from "../pedidos-actions";
 
 function displayName(doc: Document): string {
   return doc.nome ?? doc.storage_path.split("/").pop() ?? doc.storage_path;
@@ -109,6 +110,7 @@ function SubtaskRow({
           className="rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
         />
         <select
+          key={item.status}
           name="status"
           defaultValue={item.status}
           className="rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
@@ -167,6 +169,48 @@ function AddSubtaskForm({
   );
 }
 
+/** Aprovar ou recusar com motivo (o cliente é avisado por e-mail se marcado). */
+function RevisaoDoItem({ caseId, item }: { caseId: string; item: ChecklistItem }) {
+  if (item.status === "aprovado" || item.status === "nao_solicitado") return null;
+  const aprovar = aprovarItem.bind(null, caseId, item.id);
+  const reprovar = reprovarItem.bind(null, caseId, item.id);
+  return (
+    <div className="mt-3 flex flex-wrap items-start gap-2">
+      <form action={aprovar}>
+        <button
+          type="submit"
+          className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800 transition hover:bg-emerald-100"
+        >
+          Aprovar
+        </button>
+      </form>
+      <details className="text-xs">
+        <summary className="cursor-pointer rounded-full bg-red-50 px-3 py-1 font-medium text-red-800 hover:bg-red-100">
+          Reprovar
+        </summary>
+        <form action={reprovar} className="mt-2 flex flex-wrap items-center gap-2">
+          <input
+            name="motivo"
+            required
+            maxLength={500}
+            placeholder="Motivo (o cliente vê)"
+            className="w-64 rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
+          />
+          <label className="flex items-center gap-1 text-kmp-text/70">
+            <input type="checkbox" name="avisar" defaultChecked /> avisar por e-mail
+          </label>
+          <button
+            type="submit"
+            className="rounded-full bg-kmp-graphite/10 px-2 py-1 font-medium text-kmp-text hover:bg-kmp-graphite/20"
+          >
+            Enviar
+          </button>
+        </form>
+      </details>
+    </div>
+  );
+}
+
 function ChecklistItemRow({
   caseId,
   checklistId,
@@ -209,6 +253,7 @@ function ChecklistItemRow({
             className="rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
           />
           <select
+            key={item.status}
             name="status"
             defaultValue={item.status}
             className="rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
@@ -227,6 +272,14 @@ function ChecklistItemRow({
           </button>
         </form>
       </div>
+
+      {item.observacao_equipe ? (
+        <p className="mt-2 text-xs text-kmp-text/70">Instruções ao cliente: {item.observacao_equipe}</p>
+      ) : null}
+      {item.status === "rejeitado" && item.motivo_rejeicao ? (
+        <p className="mt-2 text-xs text-red-700">Recusado: {item.motivo_rejeicao}</p>
+      ) : null}
+      <RevisaoDoItem caseId={caseId} item={item} />
 
       {subtasks.length > 0 ? (
         <ul className="mt-3 space-y-1">

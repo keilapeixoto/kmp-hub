@@ -77,6 +77,11 @@ function Item({
       {item.observacao_equipe ? (
         <p className="mt-3 text-sm text-kmp-text/75">Observação da equipe: {item.observacao_equipe}</p>
       ) : null}
+      {item.prazo && !aprovado ? (
+        <p className="mt-2 text-sm font-medium text-kmp-text">
+          Prazo: {new Date(`${item.prazo.slice(0, 10)}T00:00:00`).toLocaleDateString("pt-BR")}
+        </p>
+      ) : null}
       <Arquivos docs={docs} />
       {aprovado ? null : upload}
     </li>

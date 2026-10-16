@@ -367,9 +367,19 @@ tipo de serviço (itens obrigatórios já como "solicitado", que aparecem em
 admin/diretor; dá para desmarcar e convidar depois). Bloqueia e-mail já
 cadastrado. O visto 600 ganhou checklist próprio (10 itens tirados do
 formulário avulso) por `scripts/create-visa-600-checklist.mjs` (simulação
-antes de `--apply`; já aplicado no Supabase de dev). Próximos passos
-combinados com a Keila: pedidos avulsos ao cliente com alerta (tradução,
-documento extra, reprovação com motivo).
+antes de `--apply`; já aplicado no Supabase de dev). 
+
+**Pedidos ao cliente (out/2026):** no processo, "Pedir ao cliente"
+(documento ou tradução juramentada, com instruções e prazo) cria um item de
+checklist "solicitado" — o cliente vê em "Pedidos para você" e envia pelo
+portal. Cada item tem "Aprovar" e "Reprovar" (motivo aparece no portal); o
+card do formulário tem "Reabrir para o cliente atualizar" (volta para "em
+preenchimento" e deixa um recado no portal). Em todos, "Avisar o cliente por
+e-mail" manda alerta pelo Resend no idioma do portal
+(`lib/portal/avisos-cliente.ts`; falha do e-mail nunca impede a gravação).
+Ações em `app/(staff)/processos/pedidos-actions.ts`. Processo sem modelo de
+checklist ganha um checklist vazio só com os pedidos (migração
+`20261017120000_checklist_sem_modelo.sql`, teste `030`).
 
 ## Dados de demonstração
 

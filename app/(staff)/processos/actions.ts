@@ -222,3 +222,91 @@ export async function marcarTarefaDaEtapa(caseId: string, taskId: string, conclu
   revalidatePath("/tarefas");
   return { error: error ? "Não foi possível salvar." : null };
 }
+
+// ---------------------------------------------------------------------------
+// Andamento da aplicação no Department e do skills assessment
+// (migração 20261016170000_application_status.sql). O RLS de cases decide
+// quem pode mudar (quem edita o processo).
+// ---------------------------------------------------------------------------
+
+const APLICACAO_VALIDOS = ["nao_enviada", "enviada", "em_analise", "pedido_informacao", "concedida", "recusada", "retirada"];
+const SKILLS_VALIDOS = ["nao_se_aplica", "a_aplicar", "aplicado", "aprovado", "negado"];
+const DECIDIDA = ["concedida", "recusada", "retirada"];
+
+function hojeIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** Troca rápida no quadro de Aplicações: preenche as datas que faltarem. */
+export async function mudarStatusDaAplicacao(caseId: string, status: string): Promise<{ error: string | null }> {
+  if (!APLICACAO_VALIDOS.includes(status)) return { error: "Status inválido." };
+  const supabase = await createClient();
+  const { data: atual } = await supabase
+    .from("cases")
+    .select("aplicacao_enviada_em, aplicacao_decidida_em")
+    .eq("id", caseId)
+    .maybeSingle();
+  if (!atual) return { error: "Processo não encontrado." };
+  const enviadaOuDepois = status !== "nao_enviada";
+  const { data, error } = await supabase
+    .from("cases")
+    .update({
+      aplicacao_status: status,
+      ...(enviadaOuDepois && !atual.aplicacao_enviada_em ? { aplicacao_enviada_em: hojeIso() } : {}),
+      ...(DECIDIDA.includes(status) && !atual.aplicacao_decidida_em ? { aplicacao_decidida_em: hojeIso() } : {}),
+    })
+    .eq("id", caseId)
+    .select("id");
+  if (error || !data?.length) {
+    if (error) console.error("[mudarStatusDaAplicacao]", error.code, error.message);
+    return { error: "Não foi possível salvar." };
+  }
+  revalidatePath("/vencimentos/aplicacoes");
+  revalidatePath(`/processos/${caseId}`);
+  return { error: null };
+}
+
+export type AndamentoState = { error: string | null; ok: boolean };
+
+/** Formulário completo do card "Andamento da aplicação" no processo. */
+export async function salvarAndamento(caseId: string, _prev: AndamentoState, formData: FormData): Promise<AndamentoState> {
+  const texto = (k: string) => {
+    const v = formData.get(k);
+    return typeof v === "string" && v.trim() ? v.trim() : null;
+  };
+  const aplicacao = texto("aplicacao_status") ?? "nao_enviada";
+  const skills = texto("skills_status") ?? "nao_se_aplica";
+  if (!APLICACAO_VALIDOS.includes(aplicacao) || !SKILLS_VALIDOS.includes(skills)) {
+    return { error: "Valor inválido.", ok: false };
+  }
+  const data = (k: string) => {
+    const v = texto(k);
+    return v && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : null;
+  };
+  const supabase = await createClient();
+  const { data: linhas, error } = await supabase
+    .from("cases")
+    .update({
+      aplicacao_status: aplicacao,
+      aplicacao_enviada_em: data("aplicacao_enviada_em"),
+      aplicacao_decidida_em: data("aplicacao_decidida_em"),
+      skills_status: skills,
+      skills_orgao: texto("skills_orgao"),
+      skills_aplicado_em: data("skills_aplicado_em"),
+    })
+    .eq("id", caseId)
+    .select("id");
+  if (error || !linhas?.length) {
+    if (error) console.error("[salvarAndamento]", error.code, error.message);
+    return {
+      error:
+        error?.code === "PGRST204" || error?.code === "42703"
+          ? "O andamento ainda não foi ativado no banco (migração 20261016170000)."
+          : "Não foi possível salvar.",
+      ok: false,
+    };
+  }
+  revalidatePath(`/processos/${caseId}`);
+  revalidatePath("/vencimentos/aplicacoes");
+  return { error: null, ok: true };
+}

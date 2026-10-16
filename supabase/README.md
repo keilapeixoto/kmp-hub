@@ -370,3 +370,16 @@ sem pooler) — preferível quando `psql`/Docker estiverem disponíveis.
   (`lib/email/mime.ts`, endereço de upload do Gmail, até 20 MB de anexos),
   registrado em `timeline_events`. Conferida no PGlite.
 - `tests/database/028_email_templates_rls.test.sql` — 7 testes.
+
+## Radar de vistos e andamento das aplicações (out/2026)
+
+- `migrations/20261016170000_application_status.sql` — **aplicada em 2026-10-16;**
+  ** Colunas em `cases`: `aplicacao_status` (nao_enviada, enviada,
+  em_analise, pedido_informacao, concedida, recusada, retirada) com datas de
+  envio/decisão, e `skills_status` (nao_se_aplica, a_aplicar, aplicado,
+  aprovado, negado) com órgão e data. Sem política nova (as de cases cobrem).
+  O RFI com prazo continua em `case_deadlines` (aba Prazos).
+- `tests/database/029_application_status.test.sql` — 6 testes.
+- Carta de visto (grant notice/VEVO): lida no servidor e não guardada
+  (`lib/carta-visto/parse.ts`); só grava depois da confirmação. Estrutura de
+  uma carta real sem dados: `node scripts/carta-visto-estrutura.mjs carta.pdf`.

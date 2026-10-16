@@ -34,6 +34,13 @@ export type Case = {
   prioridade: CasePriority;
   riscos: string | null;
   proxima_acao: string | null;
+  /** Andamento no Department (migração 20261016170000). */
+  aplicacao_status?: string;
+  aplicacao_enviada_em?: string | null;
+  aplicacao_decidida_em?: string | null;
+  skills_status?: string;
+  skills_orgao?: string | null;
+  skills_aplicado_em?: string | null;
   created_at: string;
   updated_at: string;
 };

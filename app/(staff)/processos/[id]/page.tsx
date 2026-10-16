@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getStageTasks, getTarefasDaEtapa } from "@/lib/cases/stage-tasks";
 import { StageTasksCard } from "../_components/stage-tasks-card";
+import { AndamentoCard } from "../_components/andamento-card";
 import { notFound } from "next/navigation";
 import { getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
 import { getConsultants } from "@/lib/leads/data";
@@ -191,6 +192,20 @@ export default async function ProcessoDetailPage({
           </div>
         </div>
       </div>
+
+      {caseItem.aplicacao_status !== undefined ? (
+        <AndamentoCard
+          caseId={id}
+          valores={{
+            aplicacao_status: caseItem.aplicacao_status,
+            aplicacao_enviada_em: caseItem.aplicacao_enviada_em ?? null,
+            aplicacao_decidida_em: caseItem.aplicacao_decidida_em ?? null,
+            skills_status: caseItem.skills_status ?? "nao_se_aplica",
+            skills_orgao: caseItem.skills_orgao ?? null,
+            skills_aplicado_em: caseItem.skills_aplicado_em ?? null,
+          }}
+        />
+      ) : null}
 
       {etapaAtual ? (
         <StageTasksCard

@@ -84,16 +84,17 @@ export function VencimentosKanban({
                   ? daysUntil(c.visto_atual_validade)
                   : null;
                 return (
-                  <Link
+                  <div
                     key={c.id}
-                    href={`/clientes/${c.id}`}
                     draggable
                     onDragStart={(e) =>
                       e.dataTransfer.setData("text/client-id", c.id)
                     }
                     className="block rounded-md bg-kmp-surface p-3 text-sm shadow-sm transition hover:shadow-md dark:border dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
                   >
-                    <p className="font-medium text-kmp-text">{c.nome}</p>
+                    <Link href={`/clientes/${c.id}`} className="font-medium text-kmp-text hover:text-kmp-orange">
+                      {c.nome}
+                    </Link>
                     <p className="mt-1 text-xs text-kmp-text/60">
                       {c.visto_atual_subclasse ?? "Subclasse não informada"}
                     </p>
@@ -104,7 +105,17 @@ export function VencimentosKanban({
                           }`
                         : "Sem data cadastrada"}
                     </p>
-                  </Link>
+                    {c.temProcessoAtivo ? (
+                      <p className="mt-2 text-[11px] font-semibold text-[#16673f] dark:text-[#a9e6c7]">Com processo em andamento</p>
+                    ) : (
+                      <Link
+                        href={`/processos/novo?clientId=${c.id}`}
+                        className="mt-2 inline-flex rounded-full bg-kmp-orange/15 px-2.5 py-1 text-[11px] font-semibold text-[#8f3f07] hover:bg-kmp-orange/25 dark:text-[#f9c39b]"
+                      >
+                        Alocar próximo processo
+                      </Link>
+                    )}
+                  </div>
                 );
               })}
               {rows.length === 0 ? (

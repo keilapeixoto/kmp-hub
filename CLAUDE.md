@@ -334,6 +334,17 @@ imagem + fecho + links clicáveis). Vai pelo Gmail conectado, com anexos
 (`sendGmailRaw`), e entra na linha do tempo do cliente. Anexos fixos em
 Templates (só admin). Migração `20261016160000_email_templates.sql`.
 
+**Vencimentos como radar (out/2026):** o radar mostra todo cliente com
+vencimento de visto cadastrado (antes só quem tinha processo ativo), com
+"Alocar próximo processo" para quem ainda não tem. "Importar carta do visto"
+lê grant notice ou VEVO (PDF lido no servidor e não guardado), mostra os
+dados para conferir e cria o cliente ou atualiza um existente. Aba
+"Aplicações": quadro por situação no Department (cases.aplicacao_status) com
+pedido de informação aberto (de case_deadlines) e skills assessment; o
+processo tem o card "Andamento da aplicação". Leitura da carta testada só
+com texto sintético — ajustar com `scripts/carta-visto-estrutura.mjs` numa
+carta real (mostra só os rótulos). Migração `20261016170000_application_status.sql`.
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

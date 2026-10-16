@@ -4,6 +4,7 @@ import { BUCKET_ORDER, type VisaBucket } from "@/lib/vencimentos/constants";
 import { VencimentosFilters } from "./_components/vencimentos-filters";
 import { VencimentosKanban } from "./_components/vencimentos-kanban";
 import { VencimentosTabs } from "./_components/vencimentos-tabs";
+import { ImportarCarta } from "./_components/importar-carta";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -60,13 +61,16 @@ export default async function VencimentosPage({
           Vencimento de vistos
         </h1>
         <p className="text-sm text-kmp-text/60">
-          Clientes com processo em andamento. Arraste um cliente para outra
-          coluna para reclassificar rapidamente — para o vencimento exato,
-          edite pelo cadastro do cliente.
+          Todo cliente com vencimento de visto cadastrado (e os com processo em
+          andamento). Quem ainda não tem o próximo processo mostra &quot;Alocar
+          próximo processo&quot;. Para incluir alguém, importe a carta do visto
+          abaixo ou preencha o visto no cadastro do cliente.
         </p>
       </div>
 
       <VencimentosTabs />
+
+      <ImportarCarta />
 
       <VencimentosFilters busca={busca} />
 

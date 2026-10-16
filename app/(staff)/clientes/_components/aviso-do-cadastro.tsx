@@ -23,3 +23,25 @@ export function AvisoDoCadastro({ cadastro, faltou }: { cadastro: string; faltou
     </div>
   );
 }
+
+const ACESSO: Record<string, { ok: boolean; texto: string }> = {
+  renomeado: { ok: true, texto: "O login do portal passou para o e-mail novo. O cliente entra com ele (link de acesso na tela de login do portal)." },
+  movido: { ok: true, texto: "Já existia uma conta com o e-mail novo: o acesso ao portal passou para ela." },
+  removido: { ok: true, texto: "O login que não era o e-mail do cadastro saiu do portal deste cliente (ou o e-mail foi apagado e o acesso foi removido)." },
+  convidar: { ok: false, texto: "O login antigo saiu (era usado por outros clientes também). Use \"Convidar para o portal\" para o e-mail novo." },
+  equipe: { ok: false, texto: "O e-mail novo é de alguém da equipe: o acesso ao portal não foi mudado. Confira o e-mail do cliente." },
+  erro: { ok: false, texto: "O cadastro foi salvo, mas não consegui ajustar o acesso ao portal. Confira no card \"Acesso ao portal\"." },
+};
+
+/** Aviso depois de mudar o e-mail do cliente (o login do portal acompanha). */
+export function AvisoDoAcesso({ acesso }: { acesso: string }) {
+  const a = ACESSO[acesso];
+  if (!a) return null;
+  return (
+    <div
+      className={`rounded-3xl border p-4 text-sm ${a.ok ? "border-emerald-300 bg-emerald-50 text-emerald-900" : "border-amber-300 bg-amber-50 text-amber-900"}`}
+    >
+      {a.texto}
+    </div>
+  );
+}

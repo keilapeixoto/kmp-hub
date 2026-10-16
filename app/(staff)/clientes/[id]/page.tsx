@@ -41,10 +41,11 @@ import { DocumentsPanel } from "../_components/documents-panel";
 import { ClientEmailComposer } from "../_components/client-email-composer";
 import { getMinhaAssinatura, getTemplatesDeEmail } from "@/lib/email/dados";
 import { portalUrl } from "@/lib/dominios";
-import { AvisoDoCadastro } from "../_components/aviso-do-cadastro";
+import { AvisoDoAcesso, AvisoDoCadastro } from "../_components/aviso-do-cadastro";
 import { getAcessosAoPortal } from "@/lib/clients/portal-acesso";
 
 type SearchParams = Record<string, string | string[] | undefined>;
+const um = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 const VALID_TABS = [
   "resumo",
@@ -158,6 +159,7 @@ export default async function ClientDetailPage({
       />
 
       {cadastro ? <AvisoDoCadastro cadastro={cadastro} faltou={faltou} /> : null}
+      {um(sp.acesso) ? <AvisoDoAcesso acesso={um(sp.acesso)!} /> : null}
 
       {tab === "resumo" ? (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

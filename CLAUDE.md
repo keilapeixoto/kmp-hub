@@ -392,6 +392,15 @@ Ações em `app/(staff)/processos/pedidos-actions.ts`. Processo sem modelo de
 checklist ganha um checklist vazio só com os pedidos (migração
 `20261017120000_checklist_sem_modelo.sql`, teste `030`).
 
+**Login do portal = e-mail do cadastro (out/2026, pedido da Keila):** o acesso
+ao portal é o vínculo `client_access` (conta de login ↔ cliente). Ao mudar o
+e-mail no perfil, o acesso acompanha (`lib/clients/acesso-regra.ts`, regra
+testada em `tests/unit/acesso-portal.test.mjs`; execução em
+`lib/clients/portal-acesso.ts`): login só deste cliente troca de e-mail;
+se já existe conta com o e-mail novo, o acesso passa para ela; e-mail apagado
+tira o acesso; e-mail de alguém da equipe não é vinculado. O card "Acesso ao
+portal" mostra com qual login o cliente entra e tem "Remover acesso".
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

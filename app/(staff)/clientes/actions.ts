@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { camposParaAtualizar } from "@/lib/clients/update-fields";
 import { portalUrl } from "@/lib/dominios";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sincronizarAcessoComEmail } from "@/lib/clients/portal-acesso";
 import { getCurrentUserId, getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
 import { getValidAccessToken } from "@/lib/google/connections";
 import { sendGmailRaw } from "@/lib/google/gmail";
@@ -99,6 +100,7 @@ export async function updateClientRecord(
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Sua sessão expirou. Entre de novo." };
 
+  const { data: antes } = await supabase.from("clients").select("email").eq("id", id).maybeSingle();
   const { error } = await supabase
     .from("clients")
     .update(
@@ -114,9 +116,14 @@ export async function updateClientRecord(
     return { error: "Não foi possível salvar as alterações." };
   }
 
+  // O login do portal acompanha o e-mail do cadastro.
+  const mudouEmail =
+    (antes?.email ?? "").trim().toLowerCase() !== (fields.email ?? "").trim().toLowerCase();
+  const acesso = mudouEmail ? await sincronizarAcessoComEmail(id, fields.email) : "nada";
+
   revalidatePath("/clientes");
   revalidatePath(`/clientes/${id}`);
-  redirect(`/clientes/${id}`);
+  redirect(acesso === "nada" ? `/clientes/${id}` : `/clientes/${id}?acesso=${acesso}`);
 }
 
 export async function addDependent(clientId: string, formData: FormData) {

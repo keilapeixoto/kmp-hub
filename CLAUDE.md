@@ -417,6 +417,20 @@ endereço de origem e na Austrália em campos separados com lista de estados
 título (tabela `app_settings`, migração `20261017140000`, teste `031`); o card
 abre com a data de vencimento grande e quanto falta.
 
+**Etapas do 485 (out/2026, fluxo da Keila):** Análise de documentos →
+Lodgement do visto → Skill Assessment aplicado → Visto aplicado → Aguardando
+aprovação do Skill Assessment → Aguardando agendamento do exame médico →
+Request recebido da imigração → Visto aprovado (`scripts/pipeline-485.mjs`,
+já aplicado nos 5 tipos de 485; Police Check entrou em Análise de
+documentos). Ao entrar numa etapa (`updateCaseEtapa`), o Hub atualiza o
+"Andamento da aplicação" e abre o prazo de 28 dias quando a etapa pede (exame
+médico, pedido da imigração) — regras pelo nome da etapa em
+`lib/cases/efeitos-da-etapa.ts`.
+
+**Assinatura de e-mail em cartão (out/2026):** layout da KMP em Meu perfil
+(`lib/email/assinatura.ts`, ícones e logo em `public/assinatura/`), campos em
+`profiles.assinatura_dados` (migração `20261017150000`).
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

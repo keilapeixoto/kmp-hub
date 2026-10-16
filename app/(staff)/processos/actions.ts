@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { camposParaAtualizar } from "@/lib/clients/update-fields";
+import { efeitosDaEtapa, mais28Dias } from "@/lib/cases/efeitos-da-etapa";
+import { dayKeySydney } from "@/lib/appointments/timezones";
 
 export type CaseFormState = {
   error: string | null;
@@ -107,10 +109,62 @@ export async function updateCase(
 
 export async function updateCaseEtapa(id: string, etapaId: string) {
   const supabase = await createClient();
-  await supabase.from("cases").update({ etapa_id: etapaId }).eq("id", id);
+  const { error } = await supabase.from("cases").update({ etapa_id: etapaId }).eq("id", id);
+  if (!error) await aplicarEfeitosDaEtapa(id, etapaId);
   revalidatePath("/processos");
   revalidatePath("/clientes/[id]", "page");
   revalidatePath("/portal", "layout"); // o cliente vê a fase nova no portal
+}
+
+/**
+ * Ao entrar numa etapa: atualiza o "Andamento da aplicação" e abre o prazo de
+ * 28 dias quando a etapa pede (exame médico, pedido da imigração) — regras em
+ * lib/cases/efeitos-da-etapa.ts. Não abre prazo repetido do mesmo tipo.
+ */
+async function aplicarEfeitosDaEtapa(caseId: string, etapaId: string) {
+  const supabase = await createClient();
+  const { data: etapa } = await supabase.from("case_stages").select("nome").eq("id", etapaId).maybeSingle();
+  if (!etapa) return;
+  const efeitos = efeitosDaEtapa(etapa.nome as string);
+  const hoje = dayKeySydney(new Date().toISOString());
+
+  const mudar: Record<string, string> = {};
+  if (efeitos.aplicacao) {
+    mudar.aplicacao_status = efeitos.aplicacao;
+    if (efeitos.aplicacao === "concedida") mudar.aplicacao_decidida_em = hoje;
+  }
+  if (efeitos.skills) mudar.skills_status = efeitos.skills;
+  if (Object.keys(mudar).length) {
+    const { error } = await supabase.from("cases").update(mudar).eq("id", caseId);
+    if (error) console.error("[aplicarEfeitosDaEtapa] andamento:", error.code, error.message);
+    if (efeitos.aplicacao === "em_analise") {
+      // Data de envio só na primeira vez.
+      await supabase.from("cases").update({ aplicacao_enviada_em: hoje }).eq("id", caseId).is("aplicacao_enviada_em", null);
+    }
+  }
+
+  if (efeitos.prazo) {
+    const { data: aberto } = await supabase
+      .from("case_deadlines")
+      .select("id")
+      .eq("case_id", caseId)
+      .eq("tipo_pedido", efeitos.prazo)
+      .in("status", ["aguardando_documento", "extensao_solicitada"])
+      .limit(1)
+      .maybeSingle();
+    if (!aberto) {
+      const { error } = await supabase.from("case_deadlines").insert({
+        case_id: caseId,
+        tipo_pedido: efeitos.prazo,
+        data_pedido: hoje,
+        prazo_final: mais28Dias(hoje),
+        notas: `Aberto ao entrar na etapa "${etapa.nome}". Ajuste a data se o pedido da imigração for de outro dia.`,
+      });
+      if (error) console.error("[aplicarEfeitosDaEtapa] prazo:", error.code, error.message);
+    }
+    revalidatePath("/vencimentos/prazos");
+  }
+  revalidatePath(`/processos/${caseId}`);
 }
 
 export async function updateCaseStatusDrag(id: string, status: string) {

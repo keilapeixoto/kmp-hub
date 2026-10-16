@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
+import { getCurrentUserId, getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
 import { getConsultants } from "@/lib/leads/data";
 import {
   getClient,
@@ -16,7 +16,8 @@ import {
   getTeamMembersStaff,
 } from "@/lib/cases/data";
 import { getPerfilDoCliente } from "@/lib/clients/perfil";
-import { indicadoresDoCliente } from "@/lib/clients/perfil-calc";
+import { haQuantoTempo, indicadoresDoCliente } from "@/lib/clients/perfil-calc";
+import { getClientNotes } from "@/lib/clients/notas";
 import { dayKeySydney } from "@/lib/appointments/timezones";
 import { getDocumentsByClient } from "@/lib/documents/data";
 import { getClientTimeline } from "@/lib/timeline/data";
@@ -34,6 +35,7 @@ import { ClientForm } from "../_components/client-form";
 import { ClientSummary } from "../_components/client-summary";
 import { ClientHero } from "../_components/client-hero";
 import { ClientProcessCards, ClientTasks } from "../_components/client-overview";
+import { ClientNotesPanel } from "../_components/client-notes-panel";
 import { DependentsPanel } from "../_components/dependents-panel";
 import { PortalAccessCard } from "../_components/portal-access-card";
 import { DocumentsPanel } from "../_components/documents-panel";
@@ -82,6 +84,8 @@ export default async function ClientDetailPage({
     hasPortalAccess,
     statusLabels,
     staff,
+    notas,
+    usuarioId,
   ] = await Promise.all([
     getCurrentUserProfile(),
     getCurrentUserRole(),
@@ -97,6 +101,8 @@ export default async function ClientDetailPage({
     getClientHasPortalAccess(id),
     getCaseStatusLabels(),
     getTeamMembersStaff(),
+    getClientNotes(id),
+    getCurrentUserId(),
   ]);
 
   const stagesById = Object.fromEntries(allStages.map((s) => [s.id, s]));
@@ -143,6 +149,19 @@ export default async function ClientDetailPage({
             <ClientTasks clientId={id} tarefas={perfil.tarefas} staffNameById={staffNameById} hoje={hoje} />
           </div>
           <div className="space-y-6">
+            <ClientNotesPanel
+              clientId={id}
+              ativas={notas.ativas}
+              usuarioId={usuarioId}
+              isAdmin={role === "admin"}
+              notas={notas.notas.map((n) => ({
+                id: n.id,
+                autor: n.autor,
+                autorNome: staffNameById[n.autor] ?? "Equipe",
+                texto: n.texto,
+                quando: haQuantoTempo(n.created_at, new Date()),
+              }))}
+            />
             <ClientSummary client={client} relations={relations} documents={documents} />
             <PortalAccessCard
               clientId={id}

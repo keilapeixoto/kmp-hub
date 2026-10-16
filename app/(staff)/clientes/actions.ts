@@ -449,3 +449,48 @@ export async function deleteClientFilePermanently(clientId: string, documentId: 
   if (error) console.error("[deleteClientFilePermanently] registro falhou:", error.code, error.message);
   revalidatePath(`/clientes/${clientId}`);
 }
+
+// ---------------------------------------------------------------------------
+// Notas internas da equipe (client_notes) — nunca aparecem no portal. Tudo
+// com a sessão de quem está logado: o RLS decide quem lê, escreve e exclui.
+// ---------------------------------------------------------------------------
+
+export type ClientNoteState = { error: string | null; ok: boolean };
+
+export async function addClientNote(
+  clientId: string,
+  _prev: ClientNoteState,
+  formData: FormData,
+): Promise<ClientNoteState> {
+  const texto = formData.get("texto");
+  if (typeof texto !== "string" || !texto.trim()) {
+    return { error: "Escreva a nota antes de salvar.", ok: false };
+  }
+  if (texto.trim().length > 4000) {
+    return { error: "A nota passou de 4.000 caracteres.", ok: false };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("client_notes")
+    .insert({ client_id: clientId, texto: texto.trim() });
+  if (error) {
+    console.error("[addClientNote]", error.code, error.message);
+    return {
+      error:
+        error.code === "42P01" || error.code === "PGRST205"
+          ? "As notas ainda não foram ativadas no banco (migração 20261016140000)."
+          : "Não foi possível salvar a nota.",
+      ok: false,
+    };
+  }
+  revalidatePath(`/clientes/${clientId}`);
+  return { error: null, ok: true };
+}
+
+export async function deleteClientNote(clientId: string, noteId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("client_notes").delete().eq("id", noteId);
+  if (error) console.error("[deleteClientNote]", error.code, error.message);
+  revalidatePath(`/clientes/${clientId}`);
+}

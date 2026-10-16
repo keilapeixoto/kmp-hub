@@ -254,6 +254,20 @@ ordem, antes de testar `/tarefas` e `/agenda`.
   0,5 s, Início 0,6 s, detalhe do processo 0,7 s, aba Documentos 0,9 s —
   de 4 a 9 vezes mais rápido.
 
+## Notas internas do cliente (out/2026)
+
+- `migrations/20261016140000_client_notes.sql` — **aplicada em 2026-10-16**
+  (depois do `create table`, foi preciso `notify pgrst, 'reload schema';`
+  para a API enxergar a tabela).
+  Tabela `client_notes` (painel "Notas da equipe" no perfil do cliente).
+  Lê e escreve quem da equipe já enxerga o cliente: admin/diretor (todos),
+  consultor (clientes dele), operacional (clientes de processos em que está
+  na equipe). Financeiro, parceiro e cliente nunca leem. Sem edição;
+  excluir só o autor ou admin; trigger `audit()` registra tudo. Posse por
+  `private.acesso_cliente_equipe` (sem RLS aninhado). Conferida no PGlite
+  com o mesmo roteiro do teste.
+- `tests/database/026_client_notes_rls.test.sql` — 16 testes por função.
+
 ## Validação de testes pgTAP (registro manual)
 
 Os testes de `tests/database/` são aplicados manualmente no SQL Editor do

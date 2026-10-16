@@ -5,7 +5,18 @@ import {
   prazoRelativo,
   indicadoresDoCliente,
   ordenarTarefas,
+  haQuantoTempo,
 } from "../../lib/clients/perfil-calc.ts";
+
+test("haQuantoTempo: minutos, horas, ontem, dias e data", () => {
+  const agora = new Date("2026-10-16T12:00:00Z");
+  assert.equal(haQuantoTempo("2026-10-16T11:59:40Z", agora), "agora");
+  assert.equal(haQuantoTempo("2026-10-16T11:55:00Z", agora), "há 5 min");
+  assert.equal(haQuantoTempo("2026-10-16T09:00:00Z", agora), "há 3 h");
+  assert.equal(haQuantoTempo("2026-10-15T08:00:00Z", agora), "ontem");
+  assert.equal(haQuantoTempo("2026-10-10T12:00:00Z", agora), "há 6 dias");
+  assert.equal(haQuantoTempo("2026-08-01T12:00:00Z", agora), "01/08/2026");
+});
 
 const hoje = "2026-10-16";
 
@@ -13,6 +24,8 @@ test("iniciais: primeira letra do primeiro e do último nome", () => {
   assert.equal(iniciais("Maria da Silva Souza"), "MS");
   assert.equal(iniciais("joão"), "J");
   assert.equal(iniciais("  "), "?");
+  assert.equal(iniciais("Conferência visual (temporário)"), "CT");
+  assert.equal(iniciais("Élise O'Brien"), "ÉO");
 });
 
 test("prazoRelativo: hoje, futuro e atrasado", () => {

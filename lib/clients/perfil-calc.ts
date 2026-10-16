@@ -3,10 +3,15 @@
 
 /** Iniciais para o avatar sem foto: primeiro e último nome. */
 export function iniciais(nome: string): string {
-  const partes = nome.trim().split(/\s+/).filter(Boolean);
+  // Primeira letra de cada palavra, ignorando pontuação: "(temporário)" vira "t".
+  const partes = nome
+    .trim()
+    .split(/\s+/)
+    .map((p) => p.match(/\p{L}/u)?.[0] ?? "")
+    .filter(Boolean);
   if (partes.length === 0) return "?";
-  const primeira = partes[0][0];
-  const ultima = partes.length > 1 ? partes[partes.length - 1][0] : "";
+  const primeira = partes[0];
+  const ultima = partes.length > 1 ? partes[partes.length - 1] : "";
   return (primeira + ultima).toUpperCase();
 }
 
@@ -27,6 +32,22 @@ export function prazoRelativo(
   return dias > 0
     ? { texto: `em ${dias} dias`, atrasado: false }
     : { texto: `há ${-dias} dias`, atrasado: true };
+}
+
+/** "agora", "há 5 min", "há 3 h", "ontem", "há 6 dias"; mais de 30 dias vira a data (DD/MM/AAAA). */
+export function haQuantoTempo(iso: string, agora: Date): string {
+  const minutos = Math.floor((agora.getTime() - Date.parse(iso)) / 60000);
+  if (minutos < 1) return "agora";
+  if (minutos < 60) return `há ${minutos} min`;
+  const horas = Math.floor(minutos / 60);
+  if (horas < 24) return `há ${horas} h`;
+  const dias = Math.floor(horas / 24);
+  if (dias === 1) return "ontem";
+  if (dias <= 30) return `há ${dias} dias`;
+  const d = new Date(iso);
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+  return `${dd}/${mm}/${d.getUTCFullYear()}`;
 }
 
 export type ResumoParaIndicador = {

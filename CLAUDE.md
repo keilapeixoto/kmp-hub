@@ -306,6 +306,15 @@ dentro dos EXISTS). Corrigido com `20261015130000_rls_initplan_performance.sql`
 SECURITY DEFINER em `private`), ambas aplicadas: ~200–400 ms por bloco de 8
 (`node scripts/measure-form-rls.mjs`).
 
+**Perfil do cliente redesenhado (out/2026, referência visual da Keila):**
+cabeçalho na cor de Clientes com iniciais, visto, responsável e anéis de
+andamento (checklist, formulário, documentos com o cliente, próximo prazo);
+abas em pílula; Resumo com processos em cartões, tarefas do cliente e
+"Notas da equipe" (`client_notes`, migração `20261016140000_client_notes.sql`,
+aplicada; sem a tabela o painel avisa e a página não quebra; nota
+interna nunca aparece no portal). Dados em `lib/clients/perfil.ts`, contas em
+`lib/clients/perfil-calc.ts` (testes em `tests/unit/perfil-cliente.test.mjs`).
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

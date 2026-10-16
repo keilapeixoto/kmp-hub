@@ -156,3 +156,15 @@ export async function deleteTask(id: string) {
   revalidatePath("/tarefas");
   redirect("/tarefas");
 }
+
+/** Excluir direto da lista (sem sair da página). O RLS decide quem pode. */
+export async function excluirTarefa(id: string): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("tasks").delete().eq("id", id).select("id");
+  if (error || !data?.length) {
+    if (error) console.error("[excluirTarefa]", error.code, error.message);
+    return { error: "Só quem criou a tarefa (ou admin/diretor) pode excluir." };
+  }
+  revalidatePath("/tarefas");
+  return { error: null };
+}

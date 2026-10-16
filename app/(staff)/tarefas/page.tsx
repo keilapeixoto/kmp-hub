@@ -7,6 +7,7 @@ import { iniciais } from "@/lib/clients/perfil-calc";
 import { TASK_PRIORITIES, TASK_STATUSES } from "@/lib/tasks/constants";
 import { getTasks, getWorkload } from "@/lib/tasks/data";
 import type { TaskFilters } from "@/lib/tasks/types";
+import { TaskDelete, TaskDoneCircle, TaskStar } from "./_components/task-row-actions";
 import { TaskDeadlineInput, TaskPrioritySelect, TaskStatusSelect } from "./_components/task-quick-edit";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -20,7 +21,7 @@ const selectClass =
 const labelClass = "mb-1 block text-xs font-semibold text-kmp-text/70";
 
 const colunas =
-  "md:grid-cols-[minmax(0,2fr)_minmax(0,1.1fr)_7.5rem_9rem_9.5rem]";
+  "md:grid-cols-[1.75rem_minmax(0,2fr)_minmax(0,1.1fr)_7.5rem_9rem_9.5rem_4.5rem]";
 
 export default async function TarefasPage({
   searchParams,
@@ -129,11 +130,13 @@ export default async function TarefasPage({
         ) : (
           <div>
             <div className={`hidden gap-4 px-3 pb-2 text-xs font-semibold uppercase tracking-wide text-kmp-text/50 md:grid ${colunas}`}>
+              <span />
               <span>Tarefa</span>
               <span>Responsável</span>
               <span>Prioridade</span>
               <span>Prazo</span>
               <span>Status</span>
+              <span />
             </div>
             <ul className="divide-y divide-kmp-divider">
               {tasks.map((task) => {
@@ -141,7 +144,10 @@ export default async function TarefasPage({
                 const atrasada = Boolean(task.prazo && task.prazo.slice(0, 10) < hoje && aberta);
                 const nome = staffName(task.responsavel);
                 return (
-                  <li key={task.id} className={`grid grid-cols-1 gap-2 px-3 py-3 md:items-center md:gap-4 ${colunas}`}>
+                  <li key={task.id} className={`group grid grid-cols-[1.75rem_minmax(0,1fr)] gap-2 px-3 py-3 md:items-center md:gap-4 ${colunas}`}>
+                    <span className="pt-0.5 md:pt-0">
+                      <TaskDoneCircle key={task.status} id={task.id} status={task.status} titulo={task.titulo} />
+                    </span>
                     <span className="min-w-0">
                       <Link
                         href={`/tarefas/${task.id}`}
@@ -158,7 +164,7 @@ export default async function TarefasPage({
                         </Link>
                       ) : null}
                     </span>
-                    <span className="flex min-w-0 items-center gap-2 text-sm text-kmp-text/80">
+                    <span className="col-start-2 flex min-w-0 items-center gap-2 text-sm text-kmp-text/80 md:col-start-auto">
                       <span
                         aria-hidden="true"
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-kmp-text/10 text-xs font-semibold text-kmp-text/70"
@@ -167,14 +173,18 @@ export default async function TarefasPage({
                       </span>
                       <span className="truncate">{nome}</span>
                     </span>
-                    <span>
-                      <TaskPrioritySelect id={task.id} prioridade={task.prioridade} />
+                    <span className="col-start-2 md:col-start-auto">
+                      <TaskPrioritySelect key={task.prioridade} id={task.id} prioridade={task.prioridade} />
                     </span>
-                    <span>
+                    <span className="col-start-2 md:col-start-auto">
                       <TaskDeadlineInput id={task.id} prazo={task.prazo ? task.prazo.slice(0, 10) : null} atrasada={atrasada} />
                     </span>
-                    <span>
-                      <TaskStatusSelect id={task.id} status={task.status} />
+                    <span className="col-start-2 md:col-start-auto">
+                      <TaskStatusSelect key={task.status} id={task.id} status={task.status} />
+                    </span>
+                    <span className="col-start-2 flex items-center md:col-start-auto md:justify-end">
+                      <TaskStar key={task.prioridade} id={task.id} prioridade={task.prioridade} />
+                      <TaskDelete id={task.id} titulo={task.titulo} />
                     </span>
                   </li>
                 );

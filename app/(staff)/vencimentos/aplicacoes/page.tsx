@@ -6,6 +6,7 @@ import { REQUEST_TYPE_LABELS } from "@/lib/case-deadlines/constants";
 import { prazoRelativo } from "@/lib/clients/perfil-calc";
 import { VencimentosTabs } from "../_components/vencimentos-tabs";
 import { StatusAplicacaoSelect } from "../_components/status-aplicacao-select";
+import { CartaoArrastavel, ColunaQueRecebe } from "../_components/aplicacoes-dnd";
 
 // Quadro de Aplicações: em que pé está cada aplicação no Department, com o
 // pedido de informação (RFI) aberto e o skills assessment de cada processo.
@@ -49,7 +50,7 @@ export default async function AplicacoesPage() {
             {COLUNAS_APLICACAO.map((col) => {
               const cards = porColuna(col.slug);
               return (
-                <section key={col.slug} className="flex w-72 shrink-0 flex-col overflow-hidden rounded-3xl bg-kmp-surface shadow-sm">
+                <ColunaQueRecebe key={col.slug} status={col.slug} className="flex w-72 shrink-0 flex-col overflow-hidden rounded-3xl bg-kmp-surface shadow-sm">
                   <h2 className={`flex items-center justify-between px-4 py-3 font-heading text-sm font-semibold ${FAIXA[col.cor]}`}>
                     {col.slug === "recusada" ? "Recusada / retirada" : APLICACAO_LABELS[col.slug]}
                     <span className="rounded-full bg-white/70 px-2 py-0.5 text-xs dark:bg-white/10">{cards.length}</span>
@@ -58,7 +59,7 @@ export default async function AplicacoesPage() {
                     {cards.map((l: LinhaDeAplicacao) => {
                       const prazo = l.pedidoAberto ? prazoRelativo(l.pedidoAberto.prazo, hoje) : null;
                       return (
-                        <div key={l.caseId} className="rounded-2xl bg-white p-3 text-sm shadow-sm ring-1 ring-black/5 dark:bg-white/10 dark:ring-white/10">
+                        <CartaoArrastavel key={l.caseId} caseId={l.caseId} className="rounded-2xl bg-white p-3 text-sm shadow-sm ring-1 ring-black/5 dark:bg-white/10 dark:ring-white/10">
                           <Link href={`/clientes/${l.clientId}`} className="font-semibold text-kmp-text hover:text-kmp-orange">
                             {l.clienteNome}
                           </Link>
@@ -80,16 +81,16 @@ export default async function AplicacoesPage() {
                             ) : null}
                           </div>
                           <div className="mt-2">
-                            <StatusAplicacaoSelect caseId={l.caseId} status={l.aplicacaoStatus} />
+                            <StatusAplicacaoSelect key={l.aplicacaoStatus} caseId={l.caseId} status={l.aplicacaoStatus} />
                           </div>
-                        </div>
+                        </CartaoArrastavel>
                       );
                     })}
                     {cards.length === 0 ? (
                       <p className="rounded-2xl border border-dashed border-kmp-divider p-3 text-center text-xs text-kmp-text/50">Vazio</p>
                     ) : null}
                   </div>
-                </section>
+                </ColunaQueRecebe>
               );
             })}
           </div>

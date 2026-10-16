@@ -43,6 +43,7 @@ import { ClientEmailComposer } from "../_components/client-email-composer";
 import { getMinhaAssinatura, getTemplatesDeEmail } from "@/lib/email/dados";
 import { portalUrl } from "@/lib/dominios";
 import { AvisoDoAcesso, AvisoDoCadastro } from "../_components/aviso-do-cadastro";
+import { ExcluirCliente } from "../_components/excluir-cliente";
 import { getAcessosAoPortal } from "@/lib/clients/portal-acesso";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -234,6 +235,8 @@ export default async function ClientDetailPage({
           />
         </div>
       ) : null}
+
+      {tab === "dados" && role === "admin" ? <ExcluirCliente clientId={id} nome={client.nome} /> : null}
 
       {tab === "documentos" ? (
         <div className="space-y-6">

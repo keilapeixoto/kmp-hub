@@ -83,6 +83,9 @@ export default async function ClientesPage({
 
   return (
     <div className="space-y-6">
+      {firstValue(params.excluido) ? (
+        <p className="rounded-3xl border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-900">Cliente excluído.</p>
+      ) : null}
       <div className="flex items-center justify-between">
         <h1 className="font-heading text-2xl text-kmp-text">Clientes</h1>
         <div className="flex items-center gap-2">

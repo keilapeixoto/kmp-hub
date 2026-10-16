@@ -417,15 +417,24 @@ endereço de origem e na Austrália em campos separados com lista de estados
 título (tabela `app_settings`, migração `20261017140000`, teste `031`); o card
 abre com a data de vencimento grande e quanto falta.
 
-**Etapas do 485 (out/2026, fluxo da Keila):** Análise de documentos →
-Lodgement do visto → Skill Assessment aplicado → Visto aplicado → Aguardando
-aprovação do Skill Assessment → Aguardando agendamento do exame médico →
-Request recebido da imigração → Visto aprovado (`scripts/pipeline-485.mjs`,
-já aplicado nos 5 tipos de 485; Police Check entrou em Análise de
-documentos). Ao entrar numa etapa (`updateCaseEtapa`), o Hub atualiza o
-"Andamento da aplicação" e abre o prazo de 28 dias quando a etapa pede (exame
-médico, pedido da imigração) — regras pelo nome da etapa em
-`lib/cases/efeitos-da-etapa.ts`.
+**Etapas padrão em todos os vistos (out/2026, "as pipelines precisam ser
+padrões"):** Análise de documentos → Lodgement do visto → Skill Assessment
+aplicado → Visto aplicado → Aguardando aprovação do Skill Assessment →
+Aguardando agendamento do exame médico → Request recebido da imigração → Visto
+aprovado (`scripts/pipeline-padrao.mjs`, já aplicado nos tipos ativos; etapa
+de um visto só — Nomination, GTE, entrevista, audiência do AAT — continua no
+lado do Lodgement em que estava). Pipeline "Visão geral" agora é por etapa,
+com todos os vistos juntos (`lib/cases/pipeline-padrao.ts`); arrastar leva o
+processo à etapa de mesmo nome no visto dele. Os cards mostram o vencimento
+do visto atual em cor (vencido em vermelho). Ao entrar numa etapa
+(`updateCaseEtapa`), o Hub atualiza o "Andamento da aplicação" e abre o prazo
+de 28 dias quando a etapa pede (exame médico, pedido da imigração) — regras
+pelo nome da etapa em `lib/cases/efeitos-da-etapa.ts`. Quadro de Aplicações
+aceita arrastar entre colunas.
+
+**Excluir cliente (out/2026):** aba Dados, só admin, digitando o nome. Apaga
+cadastro, processos, tarefas, notas, acesso ao portal e documentos (arquivos
+do Storage também); cliente com invoice não sai.
 
 **Assinatura de e-mail em cartão (out/2026):** layout da KMP em Meu perfil
 (`lib/email/assinatura.ts`, ícones e logo em `public/assinatura/`), campos em

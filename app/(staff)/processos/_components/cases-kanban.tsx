@@ -4,10 +4,19 @@ import Link from "next/link";
 import { ArrowRight, PencilLine } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { destaqueDoVencimento } from "@/lib/cases/pipeline-padrao";
+
 import type { Case, CaseStage } from "@/lib/cases/types";
 import type { ConsultantOption } from "@/lib/leads/types";
 import type { Client } from "@/lib/clients/types";
 import { updateCaseEtapa } from "../actions";
+
+const DESTAQUE = {
+  vermelho: "bg-[#e5484d] text-white",
+  laranja: "bg-kmp-orange text-white",
+  amarelo: "bg-[#f0c040] text-[#4a2a00]",
+  verde: "bg-[#2f9e6a] text-white",
+} as const;
 
 // Etapas: uma cor viva por posição, na ordem dos atalhos do Início.
 const ETAPA_CORES = [
@@ -27,6 +36,7 @@ export function CasesKanban({
   clients,
   consultants,
   progresso = {},
+  hoje,
 }: {
   cases: Case[];
   stages: CaseStage[];
@@ -34,6 +44,8 @@ export function CasesKanban({
   consultants: ConsultantOption[];
   /** Tarefas da etapa atual de cada processo (pipeline por tarefas). */
   progresso?: Record<string, { feitas: number; total: number }>;
+  /** Hoje em Sydney (AAAA-MM-DD), para o vencimento do visto atual no card. */
+  hoje: string;
 }) {
   const [cases, setCases] = useState(initialCases);
   const [, startTransition] = useTransition();
@@ -87,8 +99,23 @@ export function CasesKanban({
                   key={c.id}
                   draggable
                   onDragStart={(e) => e.dataTransfer.setData("text/case-id", c.id)}
-                  className="rounded-2xl bg-white p-3 text-sm shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-white/10 dark:ring-white/10"
+                  className="overflow-hidden rounded-2xl bg-white p-3 text-sm shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-white/10 dark:ring-white/10"
                 >
+                  {(() => {
+                    const cl = clients.find((x) => x.id === c.client_id);
+                    const venc = destaqueDoVencimento(cl?.visto_atual_validade, hoje);
+                    return venc ? (
+                      <div className={`-mx-3 -mt-3 mb-2 flex items-end justify-between gap-2 px-3 py-1.5 ${DESTAQUE[venc.cor]}`}>
+                        <span className="leading-tight">
+                          <span className="block text-[10px] font-semibold uppercase tracking-wide opacity-80">
+                            Visto atual{cl?.visto_atual_subclasse ? ` ${cl.visto_atual_subclasse}` : ""} vence
+                          </span>
+                          <span className="font-heading text-base font-bold">{venc.data}</span>
+                        </span>
+                        <span className="text-xs font-semibold">{venc.texto}</span>
+                      </div>
+                    ) : null;
+                  })()}
                   {/* Nome do cliente abre o cadastro dele (aba Dados) para editar. */}
                   <Link
                     href={`/clientes/${c.client_id}?tab=dados`}

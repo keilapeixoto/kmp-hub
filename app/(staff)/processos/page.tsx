@@ -4,7 +4,6 @@ import { getClients } from "@/lib/clients/data";
 import {
   getAllCaseStages,
   getCases,
-  getCaseStatusLabels,
   getServiceTypes,
   getCaseCountsByServiceType,
 } from "@/lib/cases/data";
@@ -47,14 +46,13 @@ export default async function ProcessosPage({
     prioridade: firstValue(params.prioridade),
   };
 
-  const [cases, consultants, clients, serviceTypes, allStages, statusLabels] =
+  const [cases, consultants, clients, serviceTypes, allStages] =
     await Promise.all([
       getCases(filters),
       getConsultants(),
       getClients({}),
       getServiceTypes(),
       getAllCaseStages(),
-      getCaseStatusLabels(),
     ]);
 
   const stagesById = Object.fromEntries(allStages.map((s) => [s.id, s]));
@@ -164,21 +162,24 @@ export default async function ProcessosPage({
               clients={clients}
               consultants={consultants}
               progresso={await getProgressoDasEtapas(cases)}
+              hoje={new Intl.DateTimeFormat("en-CA", { timeZone: "Australia/Sydney" }).format(new Date())}
             />
           </>
         ) : (
           <>
             <p className="text-sm text-kmp-text/70">
-              Visão geral por status, com todos os tipos de visto juntos —
-              arraste os cards entre as colunas. Para ver as etapas de um
-              visto específico, escolha-o nas pílulas acima.
+              Todos os vistos juntos, por etapa. Arraste o card para mudar a etapa do processo; o vencimento do
+              visto atual aparece no topo do card. Para editar as etapas de um visto, escolha-o nas pílulas acima.
             </p>
             <CasesOverviewKanban
               cases={cases}
               clients={clients}
               consultants={consultants}
               serviceTypes={serviceTypes}
-              statusLabels={statusLabels}
+              etapas={allStages
+                .filter((st) => serviceTypes.some((t) => t.id === st.service_type_id && !t.arquivado))
+                .map((st) => ({ id: st.id, nome: st.nome, ordem: st.ordem, service_type_id: st.service_type_id }))}
+              hoje={new Intl.DateTimeFormat("en-CA", { timeZone: "Australia/Sydney" }).format(new Date())}
             />
           </>
         )}

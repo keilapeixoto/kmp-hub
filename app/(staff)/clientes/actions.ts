@@ -668,3 +668,71 @@ export async function salvarFotoDoCliente(clientId: string, formData: FormData):
   revalidatePath("/clientes");
   return { error: null };
 }
+
+// ---------------------------------------------------------------------------
+// Excluir cliente (out/2026, pedido da Keila). Só admin, digitando o nome.
+// Apaga de vez: processos, tarefas, notas, acesso ao portal e documentos (os
+// arquivos do Storage também). Cliente com invoice não sai (registro
+// financeiro). A auditoria registra a exclusão.
+// ---------------------------------------------------------------------------
+
+export type ExcluirClienteState = { error: string | null };
+
+export async function excluirCliente(
+  clientId: string,
+  _prev: ExcluirClienteState,
+  formData: FormData,
+): Promise<ExcluirClienteState> {
+  const role = await getCurrentUserRole();
+  if (role !== "admin") return { error: "Só admin pode excluir clientes." };
+
+  const supabase = await createClient();
+  const { data: cliente } = await supabase.from("clients").select("id, nome, foto_path").eq("id", clientId).maybeSingle();
+  if (!cliente) return { error: "Cliente não encontrado." };
+  const digitado = String(formData.get("confirmacao") ?? "").trim().toLowerCase();
+  if (digitado !== (cliente.nome as string).trim().toLowerCase()) {
+    return { error: "Digite o nome do cliente exatamente como aparece para confirmar." };
+  }
+
+  const { count: invoices } = await supabase
+    .from("invoices")
+    .select("id", { count: "exact", head: true })
+    .eq("client_id", clientId);
+  if ((invoices ?? 0) > 0) {
+    return { error: `Este cliente tem ${invoices} invoice(s) no Financeiro. Invoice é registro financeiro: não dá para excluir o cliente.` };
+  }
+
+  // Arquivos no Storage: documentos, versões antigas e foto do perfil.
+  const admin = createAdminClient();
+  const { data: docs } = await admin.from("documents").select("id, storage_path").eq("client_id", clientId);
+  const idsDocs = (docs ?? []).map((d) => d.id as string);
+  const { data: versoes } = idsDocs.length
+    ? await admin.from("document_versions").select("storage_path").in("document_id", idsDocs)
+    : { data: [] as { storage_path: string }[] };
+  const caminhos = [
+    ...new Set(
+      [
+        ...(docs ?? []).map((d) => d.storage_path as string),
+        ...(versoes ?? []).map((v) => v.storage_path as string),
+        (cliente.foto_path as string | null) ?? null,
+      ].filter((c): c is string => Boolean(c)),
+    ),
+  ];
+  for (let i = 0; i < caminhos.length; i += 100) {
+    const { error } = await admin.storage.from("documents").remove(caminhos.slice(i, i + 100));
+    if (error) {
+      console.error("[excluirCliente] storage:", error.message);
+      return { error: "Não foi possível apagar os arquivos do cliente. Nada foi excluído; tente de novo." };
+    }
+  }
+
+  const { error } = await supabase.from("clients").delete().eq("id", clientId);
+  if (error) {
+    console.error("[excluirCliente]", error.code, error.message);
+    return { error: "Os arquivos foram apagados, mas o cadastro não pôde ser excluído. Tente de novo." };
+  }
+  revalidatePath("/clientes");
+  revalidatePath("/processos");
+  revalidatePath("/vencimentos");
+  redirect("/clientes?excluido=1");
+}

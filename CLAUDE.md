@@ -315,6 +315,15 @@ aplicada; sem a tabela o painel avisa e a página não quebra; nota
 interna nunca aparece no portal). Dados em `lib/clients/perfil.ts`, contas em
 `lib/clients/perfil-calc.ts` (testes em `tests/unit/perfil-cliente.test.mjs`).
 
+**Pipeline por tarefas (out/2026):** cada etapa de cada visto pode ter
+tarefas padrão (`case_stage_tasks`, editadas em Pipeline → "Editar etapas
+desta pipeline", só admin). Ao entrar na etapa o processo ganha as tarefas;
+concluída a última, o banco passa o processo para a próxima etapa sozinho
+(triggers em `20261016150000_stage_tasks.sql`, **ainda não aplicada**). O
+processo mostra "Tarefas da etapa" com checkboxes; os cards da Pipeline
+mostram o progresso. Tarefas também são editáveis direto na lista de
+Tarefas (status, prioridade, prazo).
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

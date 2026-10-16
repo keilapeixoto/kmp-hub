@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { getStageTasks, getTarefasDaEtapa } from "@/lib/cases/stage-tasks";
+import { StageTasksCard } from "../_components/stage-tasks-card";
 import { notFound } from "next/navigation";
 import { getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
 import { getConsultants } from "@/lib/leads/data";
@@ -129,6 +131,17 @@ export default async function ProcessoDetailPage({
 
   const updateWithId = updateCase.bind(null, id);
 
+  // Pipeline por tarefas: tarefas da etapa atual e qual é a próxima etapa.
+  const etapaAtual = caseItem.etapa_id ? allStages.find((s) => s.id === caseItem.etapa_id) ?? null : null;
+  const proximaEtapa = etapaAtual
+    ? allStages
+        .filter((s) => s.service_type_id === etapaAtual.service_type_id && s.ordem > etapaAtual.ordem)
+        .sort((a, b) => a.ordem - b.ordem)[0] ?? null
+    : null;
+  const [tarefasDaEtapa, padraoDaEtapa] = etapaAtual
+    ? await Promise.all([getTarefasDaEtapa(id, etapaAtual.id), getStageTasks([etapaAtual.id])])
+    : [[], {} as Awaited<ReturnType<typeof getStageTasks>>];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -178,6 +191,17 @@ export default async function ProcessoDetailPage({
           </div>
         </div>
       </div>
+
+      {etapaAtual ? (
+        <StageTasksCard
+          caseId={id}
+          etapaNome={etapaAtual.nome}
+          proximaEtapa={proximaEtapa?.nome ?? null}
+          tarefas={tarefasDaEtapa}
+          temTarefasPadrao={(padraoDaEtapa[etapaAtual.id] ?? []).length > 0}
+          staffNameById={Object.fromEntries(teamMembers.map((m) => [m.user_id, m.nome]))}
+        />
+      ) : null}
 
       <div className="space-y-4">
         <h2 className="font-heading text-lg text-kmp-text">Documentos</h2>

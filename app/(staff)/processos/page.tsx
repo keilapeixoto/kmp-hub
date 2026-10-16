@@ -17,6 +17,7 @@ import { CasesTable } from "./_components/cases-table";
 import { PipelineTipos } from "./_components/pipeline-tipos";
 import { StagesEditor } from "./_components/stages-editor";
 import { getCurrentUserRole } from "@/lib/auth";
+import { getProgressoDasEtapas, getStageTasks } from "@/lib/cases/stage-tasks";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -151,6 +152,7 @@ export default async function ProcessosPage({
                 }, {})}
                 erro={firstValue(params.etapaErro) ?? null}
                 aberto={firstValue(params.editar) === "1"}
+                stageTasks={await getStageTasks(kanbanStages.map((s) => s.id))}
               />
             ) : null}
             <CasesKanban
@@ -158,6 +160,7 @@ export default async function ProcessosPage({
               stages={kanbanStages}
               clients={clients}
               consultants={consultants}
+              progresso={await getProgressoDasEtapas(cases)}
             />
           </>
         ) : (

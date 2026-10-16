@@ -26,11 +26,14 @@ export function CasesKanban({
   stages,
   clients,
   consultants,
+  progresso = {},
 }: {
   cases: Case[];
   stages: CaseStage[];
   clients: Client[];
   consultants: ConsultantOption[];
+  /** Tarefas da etapa atual de cada processo (pipeline por tarefas). */
+  progresso?: Record<string, { feitas: number; total: number }>;
 }) {
   const [cases, setCases] = useState(initialCases);
   const [, startTransition] = useTransition();
@@ -96,6 +99,22 @@ export function CasesKanban({
                     <PencilLine className="h-3.5 w-3.5 opacity-40 group-hover:opacity-100" />
                   </Link>
                   <p className="mt-1 text-xs text-kmp-text/60">{consultantName(c.consultor_id)}</p>
+                  {progresso[c.id] && progresso[c.id].total > 0 ? (
+                    <div className="mt-2" title="Tarefas desta etapa">
+                      <div className="flex justify-between text-[11px] text-kmp-text/60">
+                        <span>Tarefas da etapa</span>
+                        <span className="font-semibold text-kmp-text/80">
+                          {progresso[c.id].feitas}/{progresso[c.id].total}
+                        </span>
+                      </div>
+                      <div className="mt-1 h-1.5 rounded-full bg-kmp-text/10">
+                        <div
+                          className="h-1.5 rounded-full bg-kmp-orange"
+                          style={{ width: `${(progresso[c.id].feitas / progresso[c.id].total) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  ) : null}
                   <Link
                     href={`/processos/${c.id}`}
                     className="mt-2 inline-flex items-center gap-1 rounded-full bg-kmp-text/5 px-2.5 py-1 text-xs font-semibold text-kmp-text/80 hover:bg-kmp-text/10"

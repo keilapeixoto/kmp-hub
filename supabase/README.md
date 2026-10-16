@@ -343,3 +343,17 @@ Isso recria o banco do zero a partir das migrações + seed (num Postgres local
 descartável, não no projeto de dev) e roda todos os arquivos em
 `tests/database/`. Este caminho não sofre do problema acima (conexão direta,
 sem pooler) — preferível quando `psql`/Docker estiverem disponíveis.
+
+## Pipeline por tarefas (out/2026)
+
+- `migrations/20261016150000_stage_tasks.sql` — **ainda não aplicada.**
+  `case_stage_tasks`: tarefas padrão de cada etapa (só admin edita, equipe
+  lê). Ao entrar numa etapa, o processo ganha as tarefas dela (`tasks` com
+  `etapa_id`/`stage_task_id`, responsável = consultor do processo, prazo =
+  hoje + `prazo_dias`, sem duplicar). Concluídas/canceladas todas as tarefas
+  padrão da etapa atual, o processo passa para a próxima etapa (o que entra
+  no histórico e na linha do tempo do portal e gera as tarefas da etapa
+  nova). Etapa sem tarefas padrão não avança sozinha; a última não encerra o
+  processo. `public.gerar_tarefas_da_etapa(case_id)` para processos que já
+  estavam na etapa. Conferida no PGlite (etapa 1 → 2 → 3 com histórico).
+- `tests/database/027_stage_tasks.test.sql` — 11 testes.

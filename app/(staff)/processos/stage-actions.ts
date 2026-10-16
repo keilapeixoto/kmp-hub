@@ -74,3 +74,32 @@ export async function deleteStage(serviceTypeId: string, stageId: string) {
   const { error } = await supabase.from("case_stages").delete().eq("id", stageId);
   voltar(serviceTypeId, error ? "Não foi possível remover (só admin pode editar)." : undefined);
 }
+
+// ---------------------------------------------------------------------------
+// Tarefas padrão de cada etapa (case_stage_tasks). Só admin (RLS). Ao entrar
+// numa etapa, o banco cria essas tarefas no processo; concluídas todas, o
+// processo avança sozinho para a próxima etapa.
+// ---------------------------------------------------------------------------
+
+export async function addStageTask(serviceTypeId: string, stageId: string, formData: FormData) {
+  const titulo = String(formData.get("titulo") ?? "").trim();
+  const diasTexto = String(formData.get("prazo_dias") ?? "").trim();
+  if (!titulo) voltar(serviceTypeId, "Escreva o nome da tarefa.");
+  const prazo_dias = diasTexto === "" ? null : Number(diasTexto);
+  if (prazo_dias !== null && (!Number.isInteger(prazo_dias) || prazo_dias < 0 || prazo_dias > 365)) {
+    voltar(serviceTypeId, "O prazo da tarefa é em dias, de 0 a 365.");
+  }
+  const supabase = await createClient();
+  const { data: atuais } = await supabase.from("case_stage_tasks").select("ordem").eq("stage_id", stageId);
+  const ordem = Math.max(0, ...(atuais ?? []).map((t) => t.ordem as number)) + 1;
+  const { error } = await supabase
+    .from("case_stage_tasks")
+    .insert({ stage_id: stageId, titulo, prazo_dias, ordem });
+  voltar(serviceTypeId, error ? "Não foi possível criar a tarefa (só admin pode editar)." : undefined);
+}
+
+export async function deleteStageTask(serviceTypeId: string, stageTaskId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("case_stage_tasks").delete().eq("id", stageTaskId);
+  voltar(serviceTypeId, error ? "Não foi possível remover a tarefa (só admin pode editar)." : undefined);
+}

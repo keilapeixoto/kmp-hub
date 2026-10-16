@@ -191,3 +191,34 @@ export async function addClientUpdate(
   revalidatePath("/portal", "layout");
   return { error: null };
 }
+
+// ---------------------------------------------------------------------------
+// Tarefas da etapa no processo (pipeline por tarefas)
+// ---------------------------------------------------------------------------
+
+/** Cria as tarefas padrão da etapa atual (processos que já estavam na etapa). */
+export async function gerarTarefasDaEtapa(caseId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("gerar_tarefas_da_etapa", { p_case_id: caseId });
+  if (error) console.error("[gerarTarefasDaEtapa]", error.code, error.message);
+  revalidatePath(`/processos/${caseId}`);
+  revalidatePath("/processos");
+}
+
+/**
+ * Marca/desmarca uma tarefa da etapa. Ao concluir a última, o banco passa o
+ * processo para a próxima etapa sozinho (trigger avancar_etapa_quando_concluir).
+ */
+export async function marcarTarefaDaEtapa(caseId: string, taskId: string, concluida: boolean) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("tasks")
+    .update({ status: concluida ? "concluida" : "pendente" })
+    .eq("id", taskId)
+    .eq("case_id", caseId);
+  if (error) console.error("[marcarTarefaDaEtapa]", error.code, error.message);
+  revalidatePath(`/processos/${caseId}`);
+  revalidatePath("/processos");
+  revalidatePath("/tarefas");
+  return { error: error ? "Não foi possível salvar." : null };
+}

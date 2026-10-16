@@ -3,7 +3,6 @@ import { getCurrentUserId, getCurrentUserProfile, getCurrentUserRole } from "@/l
 import { getConsultants } from "@/lib/leads/data";
 import {
   getClient,
-  getClientHasPortalAccess,
   getClientRelations,
   getDistinctClientValues,
   getIdentityDocuments,
@@ -43,6 +42,7 @@ import { ClientEmailComposer } from "../_components/client-email-composer";
 import { getMinhaAssinatura, getTemplatesDeEmail } from "@/lib/email/dados";
 import { portalUrl } from "@/lib/dominios";
 import { AvisoDoCadastro } from "../_components/aviso-do-cadastro";
+import { getAcessosAoPortal } from "@/lib/clients/portal-acesso";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -84,7 +84,7 @@ export default async function ClientDetailPage({
     serviceTypes,
     allStages,
     clientFiles,
-    hasPortalAccess,
+    acessosPortal,
     statusLabels,
     staff,
     notas,
@@ -102,7 +102,7 @@ export default async function ClientDetailPage({
     getServiceTypes(),
     getAllCaseStages(),
     getDocumentsByClient(id),
-    getClientHasPortalAccess(id),
+    getAcessosAoPortal(id),
     getCaseStatusLabels(),
     getTeamMembersStaff(),
     getClientNotes(id),
@@ -189,8 +189,8 @@ export default async function ClientDetailPage({
             <ClientSummary client={client} relations={relations} documents={documents} />
             <PortalAccessCard
               clientId={id}
-              hasEmail={Boolean(client.email)}
-              hasAccess={hasPortalAccess}
+              clientEmail={client.email}
+              acessos={acessosPortal}
               canInvite={role === "admin" || role === "director"}
             />
             {client.email ? (

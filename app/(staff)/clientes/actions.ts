@@ -263,6 +263,25 @@ export async function inviteClientToPortal(
   return { error: null, success: true };
 }
 
+/** Tira o acesso de uma conta ao portal deste cliente (a conta continua existindo). */
+export async function removerAcessoAoPortal(clientId: string, accessId: string): Promise<{ error: string | null }> {
+  const role = await getCurrentUserRole();
+  if (role !== "admin" && role !== "director") return { error: "Só admin ou diretor pode mudar o acesso ao portal." };
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("client_access")
+    .delete()
+    .eq("id", accessId)
+    .eq("client_id", clientId)
+    .select("id");
+  if (error || !data?.length) {
+    console.error("[removerAcessoAoPortal]", error?.code, error?.message);
+    return { error: "Não foi possível remover o acesso." };
+  }
+  revalidatePath(`/clientes/${clientId}`);
+  return { error: null };
+}
+
 export async function renameClientFile(
   clientId: string,
   documentId: string,

@@ -125,7 +125,7 @@ export function ClientTasks({
 }) {
   const abertas = tarefas.filter((t) => t.status === "pendente" || t.status === "em_andamento").length;
   return (
-    <section className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
+    <section id="tarefas" className="scroll-mt-24 overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
       <FaixaTitulo
         titulo="Tarefas"
         cor="azul"

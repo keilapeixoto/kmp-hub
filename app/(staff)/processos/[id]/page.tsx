@@ -233,7 +233,7 @@ export default async function ProcessoDetailPage({
         />
       </div>
 
-      <div>
+      <div id="checklist" className="scroll-mt-24">
         <h2 className="mb-4 font-heading text-lg text-kmp-text">
           Checklist
         </h2>
@@ -254,7 +254,7 @@ export default async function ProcessoDetailPage({
       </div>
 
       {dataFormTemplate ? (
-        <div>
+        <div id="formulario" className="scroll-mt-24">
           <h2 className="mb-4 font-heading text-lg text-kmp-text">
             Formulário de Dados
           </h2>

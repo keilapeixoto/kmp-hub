@@ -156,6 +156,7 @@ export default async function ClientDetailPage({
         indicadores={indicadores}
         abaAtiva={tab}
         hoje={hoje}
+        processoId={processoPrincipal?.id ?? null}
       />
 
       {cadastro ? <AvisoDoCadastro cadastro={cadastro} faltou={faltou} /> : null}

@@ -27,6 +27,20 @@ export const ABAS_DO_CLIENTE: { slug: string; label: string; icon: LucideIcon }[
   { slug: "linha-do-tempo", label: "Linha do tempo", icon: History },
 ];
 
+/** Indicador clicável: leva ao lugar do processo onde se resolve aquilo. */
+function Atalho({ href, children, titulo }: { href: string | null; children: React.ReactNode; titulo: string }) {
+  if (!href) return <>{children}</>;
+  return (
+    <Link
+      href={href}
+      title={titulo}
+      className="-m-1.5 rounded-2xl p-1.5 transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+    >
+      {children}
+    </Link>
+  );
+}
+
 function Anel({ valor, label }: { valor: number | null; label: string }) {
   const r = 22;
   const c = 2 * Math.PI * r;
@@ -76,6 +90,7 @@ export function ClientHero({
   indicadores,
   abaAtiva,
   hoje,
+  processoId,
 }: {
   client: Client;
   consultoraNome: string | null;
@@ -88,7 +103,10 @@ export function ClientHero({
   };
   abaAtiva: string;
   hoje: string;
+  /** Processo em andamento principal: para onde os indicadores levam. */
+  processoId: string | null;
 }) {
+  const noProcesso = (ancora: string) => (processoId ? `/processos/${processoId}#${ancora}` : null);
   const prazo = prazoRelativo(indicadores.proximoPrazo, hoje);
   const visto = client.visto_atual_subclasse
     ? `Visto ${client.visto_atual_subclasse}${
@@ -123,18 +141,26 @@ export function ClientHero({
 
           {indicadores.processosEmAndamento > 0 ? (
             <div className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4 lg:shrink-0">
-              <Anel valor={indicadores.checklistPct} label="Checklist" />
-              <Anel valor={indicadores.formularioPct} label="Formulário" />
-              <Numero
-                valor={String(indicadores.pendentesCliente)}
-                label={indicadores.pendentesCliente === 1 ? "doc. com o cliente" : "docs. com o cliente"}
-                icon={FolderOpen}
-              />
-              <Numero
-                valor={prazo ? prazo.texto : "—"}
-                label={prazo?.atrasado ? "prazo vencido" : "próximo prazo"}
-                icon={CalendarClock}
-              />
+              <Atalho href={noProcesso("checklist")} titulo="Abrir o checklist do processo">
+                <Anel valor={indicadores.checklistPct} label="Checklist" />
+              </Atalho>
+              <Atalho href={noProcesso("formulario")} titulo="Abrir o formulário de dados">
+                <Anel valor={indicadores.formularioPct} label="Formulário" />
+              </Atalho>
+              <Atalho href={noProcesso("checklist")} titulo="Ver os documentos pedidos ao cliente">
+                <Numero
+                  valor={String(indicadores.pendentesCliente)}
+                  label={indicadores.pendentesCliente === 1 ? "doc. com o cliente" : "docs. com o cliente"}
+                  icon={FolderOpen}
+                />
+              </Atalho>
+              <Atalho href={`/clientes/${client.id}?tab=resumo#tarefas`} titulo="Ver tarefas e prazos do cliente">
+                <Numero
+                  valor={prazo ? prazo.texto : "—"}
+                  label={prazo?.atrasado ? "prazo vencido" : "próximo prazo"}
+                  icon={CalendarClock}
+                />
+              </Atalho>
             </div>
           ) : (
             <p className="rounded-2xl bg-white/15 px-4 py-3 text-sm">Nenhum processo em andamento.</p>

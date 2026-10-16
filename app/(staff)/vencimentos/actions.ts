@@ -65,3 +65,28 @@ export async function updateVisaBucketDrag(clientId: string, bucket: VisaBucket)
   await supabase.from("clients").update({ visto_atual_validade }).eq("id", clientId);
   revalidatePath("/vencimentos");
 }
+
+/** Renomeia uma coluna do radar (só admin, pelo RLS de app_settings). Vazio volta ao nome padrão. */
+export async function renomearColuna(bucket: VisaBucket, nome: string): Promise<{ error: string | null }> {
+  const { BUCKET_ORDER } = await import("@/lib/vencimentos/constants");
+  const { CHAVE_COLUNAS } = await import("@/lib/vencimentos/colunas");
+  if (!BUCKET_ORDER.includes(bucket)) return { error: "Coluna inválida." };
+  const texto = nome.trim().slice(0, 40);
+  const supabase = await createClient();
+  const { data: atual } = await supabase.from("app_settings").select("valor").eq("chave", CHAVE_COLUNAS).maybeSingle();
+  const valor = { ...((atual?.valor as Record<string, string> | null) ?? {}) };
+  if (texto) valor[bucket] = texto;
+  else delete valor[bucket];
+  const { error } = await supabase.from("app_settings").upsert({ chave: CHAVE_COLUNAS, valor }, { onConflict: "chave" });
+  if (error) {
+    console.error("[renomearColuna]", error.code, error.message);
+    return {
+      error:
+        error.code === "PGRST205" || error.code === "42P01"
+          ? "Falta aplicar a migração 20261017140000 (app_settings) no Supabase."
+          : "Só admin pode renomear as colunas.",
+    };
+  }
+  revalidatePath("/vencimentos");
+  return { error: null };
+}

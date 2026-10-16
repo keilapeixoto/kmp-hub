@@ -5,6 +5,8 @@ import { VencimentosFilters } from "./_components/vencimentos-filters";
 import { VencimentosKanban } from "./_components/vencimentos-kanban";
 import { VencimentosTabs } from "./_components/vencimentos-tabs";
 import { ImportarCarta } from "./_components/importar-carta";
+import { getNomesDasColunas } from "@/lib/vencimentos/colunas";
+import { getCurrentUserRole } from "@/lib/auth";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -74,7 +76,7 @@ export default async function VencimentosPage({
 
       <VencimentosFilters busca={busca} />
 
-      <VencimentosKanban buckets={buckets} />
+      <VencimentosKanban buckets={buckets} nomes={await getNomesDasColunas()} podeRenomear={(await getCurrentUserRole()) === "admin"} />
     </div>
   );
 }

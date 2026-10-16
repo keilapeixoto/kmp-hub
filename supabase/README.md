@@ -373,8 +373,8 @@ sem pooler) — preferível quando `psql`/Docker estiverem disponíveis.
 
 ## Radar de vistos e andamento das aplicações (out/2026)
 
-- `migrations/20261016170000_application_status.sql` — **aplicada em 2026-10-16;**
-  ** Colunas em `cases`: `aplicacao_status` (nao_enviada, enviada,
+- `migrations/20261016170000_application_status.sql` — **aplicada em 2026-10-16.**
+  Colunas em `cases`: `aplicacao_status` (nao_enviada, enviada,
   em_analise, pedido_informacao, concedida, recusada, retirada) com datas de
   envio/decisão, e `skills_status` (nao_se_aplica, a_aplicar, aplicado,
   aprovado, negado) com órgão e data. Sem política nova (as de cases cobrem).

@@ -1,18 +1,20 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Bell, LogOut, Search, Settings } from "lucide-react";
+import { LogOut, Search, Settings } from "lucide-react";
 import { logout } from "../actions";
 import { GlobalSearchInput } from "./global-search-input";
 import { ThemeToggle } from "./theme-toggle";
 import { TopNav } from "./top-nav";
 import { MenuSuspenso } from "@/components/ui/menu-suspenso";
+import { SinoNotificacoes } from "./sino-notificacoes";
+import type { GrupoDeNotificacoes } from "@/lib/notificacoes";
 
 const redondo =
   "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-kmp-surface text-kmp-text/80 shadow-sm transition hover:text-kmp-text";
 
 // Cabeçalho do redesign âmbar (out/2026): marca em pílula, abas no meio e
 // ações em botões redondos — sem menu lateral.
-export function HeaderBar({ userEmail }: { userEmail: string }) {
+export function HeaderBar({ userEmail, notificacoes }: { userEmail: string; notificacoes: GrupoDeNotificacoes[] }) {
   const inicial = (userEmail[0] ?? "K").toUpperCase();
   return (
     <header className="relative z-40 mx-auto w-full max-w-[1600px] px-6 pt-5 lg:px-10">
@@ -44,9 +46,7 @@ export function HeaderBar({ userEmail }: { userEmail: string }) {
           <Link href="/configuracoes" aria-label="Configurações" className={redondo}>
             <Settings className="h-4 w-4" />
           </Link>
-          <button type="button" aria-label="Notificações (em breve)" className={redondo}>
-            <Bell className="h-4 w-4" />
-          </button>
+          <SinoNotificacoes grupos={notificacoes} botaoClassName={redondo} />
           <ThemeToggle />
           <Link
             href="/perfil"

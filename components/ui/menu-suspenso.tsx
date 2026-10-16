@@ -41,7 +41,14 @@ export function MenuSuspenso({
   }, []);
 
   return (
-    <details ref={ref} className={className}>
+    <details
+      ref={ref}
+      className={className}
+      onToggle={(e) => {
+        // Abriu: o primeiro campo do painel já recebe o cursor (ex.: a busca).
+        if (e.currentTarget.open) e.currentTarget.querySelector<HTMLInputElement>("input:not([type=hidden])")?.focus();
+      }}
+    >
       <summary aria-label={ariaLabel} className={`${summaryClassName ?? ""} cursor-pointer list-none`}>
         {summary}
       </summary>

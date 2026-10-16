@@ -25,19 +25,36 @@ export async function search(q: string): Promise<SearchResult[]> {
     supabase.from("guides").select("id, titulo, versao").ilike("titulo", like).limit(10),
   ]);
 
+  // Processo é do cliente: aparece como detalhe do cliente (visto e
+  // situação), não como resultado separado. Lead que já virou cliente também
+  // não aparece de novo.
   const clientIds = (clients.data ?? []).map((c) => c.id);
-  const cases = clientIds.length
-    ? await supabase
-        .from("cases")
-        .select("id, client_id, status")
-        .in("client_id", clientIds)
-        .limit(10)
-    : { data: [] as { id: string; client_id: string; status: string }[] };
-
-  const clientName = new Map((clients.data ?? []).map((c) => [c.id, c.nome]));
+  const leadIds = (leads.data ?? []).map((l) => l.id);
+  const [cases, convertidos] = await Promise.all([
+    clientIds.length
+      ? supabase
+          .from("cases")
+          .select("client_id, status, service_types(nome)")
+          .in("client_id", clientIds)
+          .order("created_at", { ascending: false })
+      : Promise.resolve({ data: [] as unknown[] }),
+    leadIds.length
+      ? supabase.from("clients").select("lead_id").in("lead_id", leadIds)
+      : Promise.resolve({ data: [] as { lead_id: string | null }[] }),
+  ]);
+  const jaClientes = new Set(
+    ((convertidos.data ?? []) as { lead_id: string | null }[]).map((c) => c.lead_id).filter(Boolean),
+  );
+  const processos = new Map<string, string[]>();
+  for (const c of (cases.data ?? []) as { client_id: string; status: string; service_types: { nome: string } | null }[]) {
+    const lista = processos.get(c.client_id) ?? [];
+    lista.push(`${c.service_types?.nome ?? "Processo"} · ${c.status}`);
+    processos.set(c.client_id, lista);
+  }
 
   const results: SearchResult[] = [];
   for (const l of leads.data ?? []) {
+    if (jaClientes.has(l.id)) continue;
     results.push({
       categoria: "Lead",
       titulo: l.nome,
@@ -46,19 +63,12 @@ export async function search(q: string): Promise<SearchResult[]> {
     });
   }
   for (const c of clients.data ?? []) {
+    const lista = processos.get(c.id) ?? [];
     results.push({
       categoria: "Cliente",
       titulo: c.nome,
-      detalhe: c.pais,
+      detalhe: lista.length === 0 ? c.pais : lista.length === 1 ? lista[0] : `${lista[0]} (+${lista.length - 1})`,
       href: `/clientes/${c.id}`,
-    });
-  }
-  for (const cs of cases.data ?? []) {
-    results.push({
-      categoria: "Processo",
-      titulo: clientName.get(cs.client_id) ?? "Processo",
-      detalhe: cs.status,
-      href: `/processos/${cs.id}`,
     });
   }
   for (const t of tasks.data ?? []) {

@@ -107,7 +107,7 @@ export function GlobalSearchInput() {
                       </span>
                     </span>
                     {r.detalhe ? (
-                      <span className="shrink-0 text-xs text-kmp-text/50">
+                      <span className="max-w-[45%] truncate text-xs text-kmp-text/50">
                         {r.detalhe}
                       </span>
                     ) : null}

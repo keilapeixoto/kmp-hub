@@ -64,6 +64,7 @@ export function ServiceTypeForm({
       >
         {pending ? "Salvando…" : "Salvar"}
       </button>
+      {state.ok && !pending ? <span className="ml-3 text-sm text-emerald-700">Salvo.</span> : null}
     </form>
   );
 }

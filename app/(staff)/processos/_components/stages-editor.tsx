@@ -12,6 +12,7 @@ export function StagesEditor({
   erro,
   aberto,
   stageTasks,
+  naConfiguracao = false,
 }: {
   serviceTypeId: string;
   stages: CaseStage[];
@@ -20,12 +21,15 @@ export function StagesEditor({
   aberto: boolean;
   /** Tarefas padrão de cada etapa: concluídas todas, o processo avança sozinho. */
   stageTasks: Record<string, StageTask[]>;
+  /** Em Configurações → Tipos de serviço: sempre aberto e volta para lá. */
+  naConfiguracao?: boolean;
 }) {
+  const origem = <input type="hidden" name="origem" value={naConfiguracao ? "config" : "pipeline"} />;
   const ordenadas = [...stages].sort((a, b) => a.ordem - b.ordem);
   const botao =
     "flex h-8 w-8 items-center justify-center rounded-full bg-kmp-text/5 text-kmp-text/70 transition hover:bg-kmp-text/10 disabled:opacity-30";
   return (
-    <details open={aberto} className="rounded-3xl bg-kmp-surface p-3 shadow-sm">
+    <details open={aberto || naConfiguracao} className="rounded-3xl bg-kmp-surface p-3 shadow-sm">
       <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-kmp-text">
         <Settings2 className="h-4 w-4" /> Editar etapas desta pipeline
       </summary>
@@ -39,6 +43,7 @@ export function StagesEditor({
               {i + 1}
             </span>
             <form action={renameStage.bind(null, serviceTypeId, st.id)} className="flex min-w-0 flex-1 items-center gap-2">
+              {origem}
               <input
                 name="nome"
                 defaultValue={st.nome}
@@ -50,16 +55,19 @@ export function StagesEditor({
             </form>
             <span className="text-xs text-kmp-text/60">{contagem[st.id] ?? 0} processo(s)</span>
             <form action={moveStage.bind(null, serviceTypeId, st.id, "subir")}>
+              {origem}
               <button type="submit" aria-label="Subir etapa" disabled={i === 0} className={botao}>
                 <ArrowUp className="h-4 w-4" />
               </button>
             </form>
             <form action={moveStage.bind(null, serviceTypeId, st.id, "descer")}>
+              {origem}
               <button type="submit" aria-label="Descer etapa" disabled={i === ordenadas.length - 1} className={botao}>
                 <ArrowDown className="h-4 w-4" />
               </button>
             </form>
             <form action={deleteStage.bind(null, serviceTypeId, st.id)}>
+              {origem}
               <button type="submit" aria-label="Remover etapa" className={`${botao} hover:text-red-600`}>
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -88,6 +96,7 @@ export function StagesEditor({
                         </span>
                       ) : null}
                       <form action={deleteStageTask.bind(null, serviceTypeId, t.id)}>
+              {origem}
                         <button
                           type="submit"
                           aria-label={`Remover a tarefa ${t.titulo}`}
@@ -101,6 +110,7 @@ export function StagesEditor({
                 </ul>
               ) : null}
               <form action={addStageTask.bind(null, serviceTypeId, st.id)} className="mt-1.5 flex flex-wrap items-center gap-1.5">
+              {origem}
                 <input
                   name="titulo"
                   aria-label={`Nova tarefa da etapa ${st.nome}`}
@@ -128,6 +138,7 @@ export function StagesEditor({
         ))}
       </ol>
       <form action={addStage.bind(null, serviceTypeId)} className="mt-3 flex items-center gap-2">
+              {origem}
         <input
           name="nome"
           placeholder="Nova etapa (ex.: Aguardando documentos)"

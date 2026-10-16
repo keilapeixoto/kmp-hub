@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type ServiceTypeFormState = {
   error: string | null;
+  ok?: boolean;
 };
 
 export async function createServiceType(
@@ -69,31 +70,8 @@ export async function updateServiceType(
   }
 
   revalidatePath(`/configuracoes/servicos/${id}`);
-  return { error: null };
-}
-
-export async function addCaseStage(serviceTypeId: string, formData: FormData) {
-  const nome = formData.get("nome");
-  const ordem = formData.get("ordem");
-
-  if (typeof nome !== "string" || !nome.trim()) return;
-  const ordemNumero = Number(ordem);
-  if (!Number.isFinite(ordemNumero)) return;
-
-  const supabase = await createClient();
-  await supabase.from("case_stages").insert({
-    service_type_id: serviceTypeId,
-    nome: nome.trim(),
-    ordem: ordemNumero,
-  });
-
-  revalidatePath(`/configuracoes/servicos/${serviceTypeId}`);
-}
-
-export async function removeCaseStage(serviceTypeId: string, stageId: string) {
-  const supabase = await createClient();
-  await supabase.from("case_stages").delete().eq("id", stageId);
-  revalidatePath(`/configuracoes/servicos/${serviceTypeId}`);
+  revalidatePath("/processos");
+  return { error: null, ok: true };
 }
 
 export async function archiveServiceType(id: string) {

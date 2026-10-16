@@ -4,17 +4,23 @@ import { getCurrentUserRole } from "@/lib/auth";
 import { getCaseStages, getServiceType } from "@/lib/cases/data";
 import { createChecklistTemplate } from "../../checklists/actions";
 import { updateServiceType } from "../actions";
-import { CaseStagesPanel } from "../_components/case-stages-panel";
+import { StagesEditor } from "@/app/(staff)/processos/_components/stages-editor";
+import { getStageTasks } from "@/lib/cases/stage-tasks";
+import { createClient } from "@/lib/supabase/server";
 import { ServiceTypeForm } from "../_components/service-type-form";
 import { ArchiveServiceTypeButton } from "../_components/archive-service-type-button";
 import { DuplicateServiceTypeButton } from "../_components/duplicate-service-type-button";
 
 export default async function ServiceTypeDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
+  const sp = await searchParams;
+  const etapaErro = typeof sp.etapaErro === "string" ? sp.etapaErro : null;
 
   const serviceType = await getServiceType(id);
   if (!serviceType) notFound();
@@ -24,6 +30,17 @@ export default async function ServiceTypeDetailPage({
     getCaseStages(id),
   ]);
   const isAdmin = role === "admin";
+  const supabase = await createClient();
+  const [stageTasks, { data: casos }] = await Promise.all([
+    getStageTasks(stages.map((st) => st.id)),
+    stages.length
+      ? supabase.from("cases").select("etapa_id").in("etapa_id", stages.map((st) => st.id))
+      : Promise.resolve({ data: [] as { etapa_id: string | null }[] }),
+  ]);
+  const contagem = ((casos ?? []) as { etapa_id: string | null }[]).reduce<Record<string, number>>((acc, c) => {
+    if (c.etapa_id) acc[c.etapa_id] = (acc[c.etapa_id] ?? 0) + 1;
+    return acc;
+  }, {});
 
   const updateWithId = updateServiceType.bind(null, id);
 
@@ -57,8 +74,8 @@ export default async function ServiceTypeDetailPage({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-3xl bg-kmp-surface p-6 shadow-sm">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="h-fit rounded-3xl bg-kmp-surface p-6 shadow-sm">
           <h2 className="font-heading text-lg text-kmp-text">Dados</h2>
           <div className="mt-4">
             {isAdmin ? (
@@ -71,15 +88,30 @@ export default async function ServiceTypeDetailPage({
           </div>
         </div>
 
-        <div>
+        <div className="lg:col-span-2">
           <h2 className="mb-4 font-heading text-lg text-kmp-text">
             Etapas do pipeline
           </h2>
-          <CaseStagesPanel
-            serviceTypeId={id}
-            stages={stages}
-            isAdmin={isAdmin}
-          />
+          {isAdmin ? (
+            <StagesEditor
+              serviceTypeId={id}
+              stages={stages}
+              contagem={contagem}
+              erro={etapaErro}
+              aberto
+              stageTasks={stageTasks}
+              naConfiguracao
+            />
+          ) : (
+            <ol className="space-y-2 rounded-3xl bg-kmp-surface p-4 text-sm text-kmp-text shadow-sm">
+              {stages.map((st, i) => (
+                <li key={st.id}>
+                  {i + 1}. {st.nome}
+                </li>
+              ))}
+              <li className="pt-2 text-xs text-kmp-text/60">Só admin edita as etapas.</li>
+            </ol>
+          )}
         </div>
       </div>
 

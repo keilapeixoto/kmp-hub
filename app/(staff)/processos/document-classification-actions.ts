@@ -6,6 +6,8 @@ import { DOCUMENTS_BUCKET } from "@/lib/documents/data";
 import { getStorageSettings, validateUpload, findDuplicatesByHash } from "@/lib/storage-admin/validation";
 import { classifyDocument, type ClassificationCandidate } from "@/lib/documents/classification";
 import { standardizedFilename } from "@/lib/documents/filename";
+import { dayKeySydney } from "@/lib/appointments/timezones";
+import { classificarPeloNome, rotuloParaNome } from "@/lib/documents/classificacao-por-nome";
 import {
   DOCUMENT_CLASSIFICATION_CONFIDENCE_THRESHOLD,
   DOCUMENT_TYPE_LABELS,
@@ -120,7 +122,7 @@ export async function uploadAndClassifyDocument(
   const buffer = Buffer.from(await file.arrayBuffer());
   const classification = await classifyDocument(buffer, file.type, candidates);
 
-  const hoje = new Date().toISOString().slice(0, 10);
+  const hoje = dayKeySydney(new Date().toISOString());
   const ext = safeName.includes(".") ? (safeName.split(".").pop() as string) : "pdf";
 
   let documentType: string | null = null;
@@ -130,22 +132,42 @@ export async function uploadAndClassifyDocument(
   let nome = file.name;
   let message: string;
 
-  if ("error" in classification) {
-    // Detalhe técnico (ex.: chave de API não configurada) só no log do
-    // servidor — a equipe só precisa saber que tem que confirmar manualmente.
-    console.error(`Classificação automática falhou para ${storagePath}:`, classification.error);
-    message = `Arquivo salvo — confirme o tipo manualmente na lista abaixo.${duplicateNote}`;
-  } else {
+  const nomeDoItem = (id: string | null) => candidates.find((c) => c.id === id)?.nome ?? null;
+  // Nome padronizado: usa o item do checklist quando há (mais claro que o
+  // tipo geral, que muitas vezes é "outro").
+  const padronizado = (tipo: string, itemId: string | null) => {
+    const rotulo = nomeDoItem(itemId);
+    return standardizedFilename(clienteNome, rotulo ? rotuloParaNome(rotulo) : tipo, hoje, ext);
+  };
+
+  if (!("error" in classification) && classification.confidence >= DOCUMENT_CLASSIFICATION_CONFIDENCE_THRESHOLD) {
     documentType = classification.document_type;
     confidence = classification.confidence;
+    checklistItemId = classification.checklist_item_id;
+    pendingReview = false;
+    nome = padronizado(documentType, checklistItemId);
     const label = DOCUMENT_TYPE_LABELS[documentType] ?? documentType;
-
-    if (confidence >= DOCUMENT_CLASSIFICATION_CONFIDENCE_THRESHOLD) {
-      checklistItemId = classification.checklist_item_id;
+    message = `Classificado como "${nomeDoItem(checklistItemId) ?? label}" (${Math.round(confidence * 100)}% de confiança)${duplicateNote}`;
+  } else {
+    if ("error" in classification) {
+      // Detalhe técnico (ex.: chave de API não configurada) só no log do servidor.
+      console.error(`Classificação automática falhou para ${storagePath}:`, classification.error);
+    }
+    // Sem IA (ou IA incerta): tenta pelo nome do arquivo.
+    const porNome = classificarPeloNome(file.name, candidates);
+    if (porNome?.checklistItemId) {
+      documentType = porNome.documentType;
+      checklistItemId = porNome.checklistItemId;
       pendingReview = false;
-      nome = standardizedFilename(clienteNome, documentType, hoje, ext);
-      message = `Classificado como "${label}" (${Math.round(confidence * 100)}% de confiança)${duplicateNote}`;
+      nome = padronizado(documentType, checklistItemId);
+      message = `Identificado pelo nome do arquivo: "${porNome.rotulo}". Renomeado para ${nome}.${duplicateNote}`;
+    } else if ("error" in classification) {
+      documentType = porNome?.documentType ?? null;
+      message = `Arquivo salvo — escolha o tipo na lista abaixo (o nome é ajustado sozinho).${duplicateNote}`;
     } else {
+      documentType = classification.document_type;
+      confidence = classification.confidence;
+      const label = DOCUMENT_TYPE_LABELS[documentType] ?? documentType;
       message = `Confiança baixa (${Math.round(confidence * 100)}%) — sugestão: "${label}". Confirme o tipo na lista abaixo.${duplicateNote}`;
     }
   }
@@ -218,10 +240,13 @@ export async function confirmDocumentClassification(
 
   const nomeOriginal = doc.nome_original ?? "documento.pdf";
   const ext = nomeOriginal.includes(".") ? (nomeOriginal.split(".").pop() as string) : "pdf";
-  const hoje = new Date().toISOString().slice(0, 10);
+  const hoje = dayKeySydney(new Date().toISOString());
 
-  const nomeFinal =
-    nomePersonalizado || standardizedFilename(client?.nome ?? "cliente", documentType, hoje, ext);
+  const { data: item } = checklistItemId
+    ? await supabase.from("checklist_items").select("nome").eq("id", checklistItemId).maybeSingle()
+    : { data: null };
+  const rotulo = item?.nome ? rotuloParaNome(item.nome as string) : documentType;
+  const nomeFinal = nomePersonalizado || standardizedFilename(client?.nome ?? "cliente", rotulo, hoje, ext);
 
   const { error } = await supabase
     .from("documents")

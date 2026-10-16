@@ -49,11 +49,24 @@ export function ConfirmClassificationRow({
       </a>
       {suggestedType ? (
         <p className="mt-0.5 text-xs text-kmp-text/60">
-          Sugestão da IA: {suggestedType} ({Math.round((suggestedConfidence ?? 0) * 100)}% de
+          Sugestão: {suggestedType} ({Math.round((suggestedConfidence ?? 0) * 100)}% de
           confiança)
         </p>
       ) : null}
       <div className="mt-2 flex flex-wrap items-center gap-2">
+        <select
+          value={checklistItemId}
+          onChange={(e) => setChecklistItemId(e.target.value)}
+          disabled={pending}
+          className="rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
+        >
+          <option value="">Qual item do checklist é?</option>
+          {checklistItemOptions.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.nome}
+            </option>
+          ))}
+        </select>
         <select
           value={documentType}
           onChange={(e) => setDocumentType(e.target.value)}
@@ -74,19 +87,6 @@ export function ConfirmClassificationRow({
           placeholder="Nome do arquivo (opcional)"
           className="min-w-[180px] flex-1 rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
         />
-        <select
-          value={checklistItemId}
-          onChange={(e) => setChecklistItemId(e.target.value)}
-          disabled={pending}
-          className="rounded-md border border-kmp-divider px-2 py-1 text-xs text-kmp-text"
-        >
-          <option value="">Sem vínculo com item do checklist</option>
-          {checklistItemOptions.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.nome}
-            </option>
-          ))}
-        </select>
         <button
           type="button"
           disabled={pending}

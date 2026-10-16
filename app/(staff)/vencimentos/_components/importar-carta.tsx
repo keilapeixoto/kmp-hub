@@ -104,23 +104,36 @@ function ImportarCartaEtapas({ reiniciar }: { reiniciar: () => void }) {
               <input id="carta-sub" name="subclasse" required defaultValue={carta.subclasse ?? ""} className={campo} />
             </div>
             <div>
-              <label htmlFor="carta-venc" className={rotulo}>Vencimento do visto</label>
+              <label htmlFor="carta-venc" className={rotulo}>
+                {carta.permanente ? "Vencimento da autorização de viagem" : "Vencimento do visto"}
+              </label>
               <input
                 id="carta-venc"
                 name="validade"
                 type="date"
-                required
-                defaultValue={carta.dataVencimento ?? carta.permanenciaAte ?? ""}
+                defaultValue={carta.validadeSugerida ?? ""}
                 className={campo}
               />
-              {!carta.dataVencimento && carta.permanenciaAte ? (
-                <p className="mt-1 text-xs text-kmp-text/60">Preenchido com o &quot;stay until&quot; da carta.</p>
-              ) : null}
+              <p className="mt-1 text-xs text-kmp-text/60">
+                {carta.permanente
+                  ? "Visto permanente não vence; esta é a data da autorização de viagem (travel facility), que entra no radar."
+                  : carta.ponte
+                    ? "Bridging visa não tem data: pode deixar em branco."
+                    : !carta.dataVencimento && carta.permanenciaAte
+                      ? "Preenchido com o \"stay until\" da carta."
+                      : !carta.dataVencimento && carta.entradaAte
+                        ? "Preenchido com o \"Must not arrive after\" (validade do visto; cada estadia tem o limite da carta)."
+                        : "Em branco, o cliente vai para \"Sem data\" no radar."}
+              </p>
             </div>
           </div>
           <p className="text-xs text-kmp-text/60">
             Concessão: {dataBr(carta.dataConcessao)}
             {carta.stream ? ` · Stream: ${carta.stream}` : ""}
+            {carta.ponte
+              ? ` · Bridging ${carta.ponte}${carta.aplicacaoSubclasse ? `, ligado à aplicação do ${carta.aplicacaoSubclasse}` : ""}`
+              : ""}
+            {carta.permanente ? " · Visto permanente" : ""}
             {carta.passaporte ? " · Passaporte encontrado na carta" : ""}
           </p>
 

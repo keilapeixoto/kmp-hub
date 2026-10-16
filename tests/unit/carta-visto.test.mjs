@@ -82,6 +82,117 @@ Length of stay 3 months, stay until 10 January 2027`);
   assert.equal(r.permanenciaAte, "2027-01-10");
 });
 
+// Mesma estrutura de uma carta real de visto permanente (190), dados inventados.
+const PERMANENTE = `
+Dear Ana SOUZA
+We have granted you a Skilled - Nominated (subclass 190) visa on 12 September 2026.
+Visa status
+Skilled - Nominated (subclass 190): Granted
+Visa conditions and travel
+Date of grant 12 September 2026
+For first entry, arrive by 01 March 2027
+Must not arrive after 12 September 2031
+Length of stay Indefinite from the date of entry
+Travel facility until 12 September 2031. For more information:
+Visa holder
+Name Ana Maria SOUZA
+Date of birth 03 April 1995
+Visa Skilled - Nominated (subclass 190)
+Date of grant 12 September 2026
+Visa grant number 1234567890123
+Passport (or other travel
+document) number
+FX1234567
+Passport (or other travel
+document) country
+BRAZIL
+Transaction reference number EGO1234567
+Check your visa details in VEVO.
+`;
+
+test("lerCartaDoVisto: carta real de visto permanente (formato do Home Affairs)", () => {
+  const r = lerCartaDoVisto(PERMANENTE);
+  assert.equal(r.tipo, "grant"); // cita VEVO no fim, mas é carta de concessão
+  assert.equal(r.nome, "Ana Maria Souza");
+  assert.equal(r.passaporte, "FX1234567");
+  assert.equal(r.subclasse, "190");
+  assert.equal(r.permanente, true);
+  assert.equal(r.dataConcessao, "2026-09-12");
+  assert.equal(r.dataVencimento, null); // visto permanente não vence
+  assert.equal(r.viagemAte, "2031-09-12");
+  assert.deepEqual(r.avisos, []);
+});
+
+// Estrutura de uma carta real de Bridging A ligada a um Partner 820, dados inventados.
+const PONTE = `
+Dear Ana SOUZA
+We have given you a Bridging A visa associated with your Partner (subclass 820) application which is being processed.
+Application status
+Partner (subclass 820) application: Being processed
+Student (Temporary) visa: In effect
+Bridging A visa: Not in effect
+Visa holder
+Status Not in effect
+Name Ana Maria SOUZA
+Date of birth 03 April 1995
+Comes into effect after Student (Temporary) visa ceases on 30 June 2027
+Travel No Travel
+Bridging visa conditions No conditions
+Date of bridging visa grant 05 August 2026
+Bridging visa grant number 1234567890123
+Transaction reference number EGO1234567
+`;
+
+test("lerCartaDoVisto: bridging visa ligado a outra aplicação", () => {
+  const r = lerCartaDoVisto(PONTE);
+  assert.equal(r.tipo, "grant");
+  assert.equal(r.ponte, "A");
+  assert.equal(r.subclasse, "010"); // o visto concedido é o Bridging A, não o 820
+  assert.equal(r.aplicacaoSubclasse, "820");
+  assert.equal(r.nome, "Ana Maria Souza");
+  assert.equal(r.dataConcessao, "2026-08-05");
+  assert.equal(r.dataVencimento, null);
+  assert.equal(r.permanente, false);
+  assert.match(r.avisos.join(" "), /não tem data de vencimento/);
+});
+
+// Estrutura de uma carta real de visitante (600), dados inventados.
+const VISITANTE = `
+Dear Ana SOUZA
+We have granted you a Visitor (subclass 600) visa on 10 October 2026.
+Visa status
+Visitor (subclass 600): Granted
+Visa conditions
+8101 - No work
+8201 - 3 months study
+Visa details and travel
+Date of grant 10 October 2026
+Must not arrive after 10 October 2027
+Length of stay 3 month(s) from the date of each entry
+Travel Multiple entries
+Visa holder
+Name Ana Maria SOUZA
+Date of birth 03 April 1995
+Visa Visitor (subclass 600)
+Stream Tourist
+Date of grant 10 October 2026
+Visa grant number 1234567890123
+Passport (or other travel
+document) number
+FX1234567
+`;
+
+test("lerCartaDoVisto: visitante usa 'Must not arrive after' como validade", () => {
+  const r = lerCartaDoVisto(VISITANTE);
+  assert.equal(r.subclasse, "600");
+  assert.equal(r.stream, "Tourist");
+  assert.equal(r.dataVencimento, null);
+  assert.equal(r.entradaAte, "2027-10-10");
+  assert.equal(r.validadeSugerida, "2027-10-10");
+  assert.equal(r.passaporte, "FX1234567");
+  assert.equal(r.avisos.length, 0);
+});
+
 test("lerCartaDoVisto: texto que não é carta de visto", () => {
   const r = lerCartaDoVisto("Fatura de energia elétrica\nTotal a pagar 120,00");
   assert.equal(r.tipo, null);

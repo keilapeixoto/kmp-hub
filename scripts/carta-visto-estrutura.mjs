@@ -58,5 +58,11 @@ console.log({
   dataConcessao: achou(r.dataConcessao),
   dataVencimento: achou(r.dataVencimento),
   permanenciaAte: achou(r.permanenciaAte),
+  permanente: r.permanente,
+  viagemAte: achou(r.viagemAte),
+  entradaAte: achou(r.entradaAte),
+  validadeSugerida: achou(r.validadeSugerida),
+  ponte: r.ponte ?? "não",
+  aplicacaoSubclasse: r.aplicacaoSubclasse ?? "—",
   avisos: r.avisos,
 });

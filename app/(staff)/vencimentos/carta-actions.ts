@@ -84,7 +84,9 @@ export async function salvarCartaVisto(_prev: SalvarCartaState, formData: FormDa
 
   if (!destino) return erro("Escolha o cliente ou \"Criar cliente novo\".");
   if (!subclasse || !/^\d{3}$/.test(subclasse)) return erro("A subclasse tem 3 números (ex.: 500).");
-  if (!validade || !/^\d{4}-\d{2}-\d{2}$/.test(validade)) return erro("Informe a data de vencimento do visto.");
+  // Sem data é permitido (bridging visa, permanente sem autorização de viagem):
+  // o cliente vai para a coluna "Sem data" do radar.
+  if (validade && !/^\d{4}-\d{2}-\d{2}$/.test(validade)) return erro("Data de vencimento inválida.");
 
   const supabase = await createClient();
   if (destino === "novo") {

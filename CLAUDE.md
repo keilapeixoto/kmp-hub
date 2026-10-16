@@ -341,9 +341,11 @@ lê grant notice ou VEVO (PDF lido no servidor e não guardado), mostra os
 dados para conferir e cria o cliente ou atualiza um existente. Aba
 "Aplicações": quadro por situação no Department (cases.aplicacao_status) com
 pedido de informação aberto (de case_deadlines) e skills assessment; o
-processo tem o card "Andamento da aplicação". Leitura da carta testada só
-com texto sintético — ajustar com `scripts/carta-visto-estrutura.mjs` numa
-carta real (mostra só os rótulos). Migração `20261016170000_application_status.sql`.
+processo tem o card "Andamento da aplicação". Leitura da carta conferida em 3
+cartas reais (visitante 600: validade = "Must not arrive after"; permanente
+190: não vence, entra a data da autorização de viagem; Bridging A ligado a
+820: subclasse 010, sem data). Carta com rótulo novo: rodar
+`scripts/carta-visto-estrutura.mjs` (mostra só os rótulos) e ajustar. Migração `20261016170000_application_status.sql`.
 
 **Agenda ligada ao Google Calendar (out/2026):** a Agenda mostra os
 compromissos do Hub junto com os eventos do Google Calendar de quem está

@@ -13,6 +13,7 @@ import {
 import { DEGRADE } from "@/components/ui/vivid";
 import type { Client } from "@/lib/clients/types";
 import { iniciais, prazoRelativo } from "@/lib/clients/perfil-calc";
+import { FotoDoCliente } from "./foto-do-cliente";
 
 // Cabeçalho do perfil do cliente (out/2026, referência visual da Keila):
 // faixa na cor de Clientes com avatar, nome, visto e consultora; à direita,
@@ -91,6 +92,7 @@ export function ClientHero({
   abaAtiva,
   hoje,
   processoId,
+  fotoUrl,
 }: {
   client: Client;
   consultoraNome: string | null;
@@ -105,6 +107,7 @@ export function ClientHero({
   hoje: string;
   /** Processo em andamento principal: para onde os indicadores levam. */
   processoId: string | null;
+  fotoUrl: string | null;
 }) {
   const noProcesso = (ancora: string) => (processoId ? `/processos/${processoId}#${ancora}` : null);
   const prazo = prazoRelativo(indicadores.proximoPrazo, hoje);
@@ -122,16 +125,13 @@ export function ClientHero({
       <div className={`bg-gradient-to-br ${DEGRADE.lilas} px-5 py-5 text-white sm:px-6`}>
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-4">
-            <span
-              aria-hidden="true"
-              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl bg-white font-heading text-xl font-bold sm:h-20 sm:w-20 sm:text-2xl text-kmp-clientes-deep shadow-md"
-            >
-              {iniciais(client.nome)}
-            </span>
+            <FotoDoCliente clientId={client.id} fotoUrl={fotoUrl} iniciais={iniciais(client.nome)} />
             <div className="min-w-0">
               <h1 className="break-words font-heading text-2xl font-semibold leading-tight sm:text-3xl">{client.nome}</h1>
               <p className="mt-1 text-sm text-white/85">
-                {[visto ?? "Sem visto atual cadastrado", local].filter(Boolean).join(" · ")}
+                {[visto ?? (client.visto_aplicado ? `Aplicou: ${client.visto_aplicado}` : "Sem visto atual cadastrado"), local]
+                  .filter(Boolean)
+                  .join(" · ")}
               </p>
               <p className="mt-0.5 text-sm text-white/85">
                 Responsável: <span className="font-semibold text-white">{consultoraNome ?? "—"}</span>

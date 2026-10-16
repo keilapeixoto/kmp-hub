@@ -95,6 +95,7 @@ export function ClientsTable({
                     etapas={proc ? (etapasPorServico[proc.principal.serviceTypeId] ?? []) : []}
                     servicos={servicos}
                     statusLabels={statusLabels}
+                    vistoAplicado={client.visto_aplicado ?? null}
                   />
                   <ResponsavelNaLista
                     clientId={client.id}

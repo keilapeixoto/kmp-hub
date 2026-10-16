@@ -19,6 +19,14 @@ export type Client = {
   visto_atual_subclasse: string | null;
   visto_atual_validade: string | null;
   visto_alerta_limite_dias: number | null;
+  // Migração 20261017130000 (opcionais: antes dela as colunas não existem).
+  nomes?: string | null;
+  sobrenome?: string | null;
+  endereco_origem?: string | null;
+  endereco_australia?: string | null;
+  foto_path?: string | null;
+  visto_aplicado?: string | null;
+  visto_aplicado_origem?: string | null;
   created_at: string;
   updated_at: string;
 };

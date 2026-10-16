@@ -18,8 +18,11 @@ export function ProcessoNaLista({
   etapas,
   servicos,
   statusLabels,
+  vistoAplicado,
 }: {
   clientId: string;
+  /** Visto da pasta da KEY MIGRATION (ou digitado), quando ainda não há processo. */
+  vistoAplicado?: string | null;
   processo: { caseId: string; servico: string; status: string; etapaId: string | null; total: number } | null;
   etapas: Opcao[];
   servicos: Opcao[];
@@ -30,7 +33,12 @@ export function ProcessoNaLista({
 
   if (!processo) {
     return (
-      <div className="min-w-0">
+      <div className="min-w-0 space-y-1">
+        {vistoAplicado ? (
+          <p className="truncate text-sm font-medium text-kmp-text" title="Visto aplicado (pasta da KEY MIGRATION ou cadastro)">
+            {vistoAplicado}
+          </p>
+        ) : null}
         <select
           aria-label="Abrir processo"
           defaultValue=""

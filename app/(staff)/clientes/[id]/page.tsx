@@ -18,7 +18,7 @@ import { getPerfilDoCliente } from "@/lib/clients/perfil";
 import { haQuantoTempo, indicadoresDoCliente } from "@/lib/clients/perfil-calc";
 import { getClientNotes } from "@/lib/clients/notas";
 import { dayKeySydney } from "@/lib/appointments/timezones";
-import { getDocumentsByClient } from "@/lib/documents/data";
+import { getDocumentsByClient, getSignedDocumentUrl } from "@/lib/documents/data";
 import { getClientTimeline } from "@/lib/timeline/data";
 import { updateClientRecord } from "../actions";
 import { ClientCasesPanel } from "../_components/client-cases-panel";
@@ -157,6 +157,7 @@ export default async function ClientDetailPage({
         abaAtiva={tab}
         hoje={hoje}
         processoId={processoPrincipal?.id ?? null}
+        fotoUrl={client.foto_path ? await getSignedDocumentUrl(client.foto_path) : null}
       />
 
       {cadastro ? <AvisoDoCadastro cadastro={cadastro} faltou={faltou} /> : null}

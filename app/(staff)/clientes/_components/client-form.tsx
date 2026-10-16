@@ -38,16 +38,34 @@ export function ClientForm({
         </h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label htmlFor="nome" className={labelClass}>
-              Nome *
+            <label htmlFor="nomes" className={labelClass}>
+              Nome(s) *
             </label>
             <input
-              id="nome"
-              name="nome"
+              id="nomes"
+              name="nomes"
               required
-              defaultValue={client?.nome ?? ""}
+              placeholder="Como no passaporte (Given names)"
+              defaultValue={client?.nomes ?? (client?.sobrenome ? "" : (client?.nome ?? ""))}
               className={inputClass}
             />
+          </div>
+          <div>
+            <label htmlFor="sobrenome" className={labelClass}>
+              Sobrenome
+            </label>
+            <input
+              id="sobrenome"
+              name="sobrenome"
+              placeholder="Como no passaporte (Family name)"
+              defaultValue={client?.sobrenome ?? ""}
+              className={inputClass}
+            />
+            {client && !client.nomes && !client.sobrenome ? (
+              <p className="mt-1 text-xs text-amber-700">
+                Cadastro antigo: o nome completo está em &quot;Nome(s)&quot;. Separe o sobrenome e salve.
+              </p>
+            ) : null}
           </div>
           <div>
             <label htmlFor="data_nascimento" className={labelClass}>
@@ -178,6 +196,38 @@ export function ClientForm({
       </section>
 
       <section>
+        <h2 className="font-heading text-lg text-kmp-text">Endereços</h2>
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="endereco_origem" className={labelClass}>
+              Endereço no país de origem
+            </label>
+            <textarea
+              id="endereco_origem"
+              name="endereco_origem"
+              rows={3}
+              placeholder="Rua, número, complemento, cidade, estado, CEP"
+              defaultValue={client?.endereco_origem ?? ""}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label htmlFor="endereco_australia" className={labelClass}>
+              Endereço na Austrália
+            </label>
+            <textarea
+              id="endereco_australia"
+              name="endereco_australia"
+              rows={3}
+              placeholder="Street, suburb, state, postcode"
+              defaultValue={client?.endereco_australia ?? ""}
+              className={inputClass}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section>
         <h2 className="font-heading text-lg text-kmp-text">
           Situação e objetivos
         </h2>
@@ -253,6 +303,21 @@ export function ClientForm({
           .
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="sm:col-span-3">
+            <label htmlFor="visto_aplicado" className={labelClass}>
+              Visto aplicado / a aplicar
+            </label>
+            <input
+              id="visto_aplicado"
+              name="visto_aplicado"
+              placeholder="ex.: 485 · aplicado"
+              defaultValue={client?.visto_aplicado ?? ""}
+              className={inputClass}
+            />
+            {client?.visto_aplicado_origem ? (
+              <p className="mt-1 text-xs text-kmp-text/60">Veio de: {client.visto_aplicado_origem}</p>
+            ) : null}
+          </div>
           <div>
             <label htmlFor="visto_atual_subclasse" className={labelClass}>
               Subclasse

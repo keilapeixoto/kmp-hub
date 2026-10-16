@@ -39,15 +39,34 @@ const TEXT_FIELDS = [
   "visto_atual_subclasse",
   "visto_atual_validade",
   "visto_alerta_limite_dias",
+  "nomes",
+  "sobrenome",
+  "endereco_origem",
+  "endereco_australia",
+  "visto_aplicado",
 ] as const;
+
+/** Colunas da migração 20261017130000: se ela ainda não foi aplicada, grava sem elas. */
+const CAMPOS_NOVOS = ["nomes", "sobrenome", "endereco_origem", "endereco_australia", "visto_aplicado"];
+function semCamposNovos<T extends Record<string, unknown>>(dados: T): T {
+  const copia = { ...dados };
+  for (const k of CAMPOS_NOVOS) delete copia[k];
+  return copia;
+}
+const colunaNaoExiste = (code?: string) => code === "PGRST204" || code === "42703";
 
 function readClientFields(formData: FormData) {
   const fields: Record<string, string | null> = {};
 
   for (const key of TEXT_FIELDS) {
+    if (!formData.has(key)) continue;
     const value = formData.get(key);
     fields[key] =
       typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+  }
+  // Nome completo de exibição = nome(s) + sobrenome, como no passaporte.
+  if (fields.nomes || fields.sobrenome) {
+    fields.nome = [fields.nomes, fields.sobrenome].filter(Boolean).join(" ");
   }
 
   return fields;
@@ -69,11 +88,14 @@ export async function createClientRecord(
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("clients")
     .insert(insertData)
     .select("id")
     .single();
+  if (error && colunaNaoExiste(error.code)) {
+    ({ data, error } = await supabase.from("clients").insert(semCamposNovos(insertData)).select("id").single());
+  }
 
   if (error || !data) {
     return {
@@ -102,15 +124,14 @@ export async function updateClientRecord(
   if (!auth.user) return { error: "Sua sessão expirou. Entre de novo." };
 
   const { data: antes } = await supabase.from("clients").select("email").eq("id", id).maybeSingle();
-  const { error } = await supabase
-    .from("clients")
-    .update(
-      camposParaAtualizar(fields, {
-        usuarioId: auth.user.id,
-        consultorNoFormulario: formData.has("consultor_id"),
-      }),
-    )
-    .eq("id", id);
+  const dados = camposParaAtualizar(fields, {
+    usuarioId: auth.user.id,
+    consultorNoFormulario: formData.has("consultor_id"),
+  });
+  let { error } = await supabase.from("clients").update(dados).eq("id", id);
+  if (error && colunaNaoExiste(error.code)) {
+    ({ error } = await supabase.from("clients").update(semCamposNovos(dados)).eq("id", id));
+  }
 
   if (error) {
     console.error("[updateClientRecord] falhou:", error.code, error.message);
@@ -608,5 +629,42 @@ export async function criarProcessoRapido(clientId: string, serviceTypeId: strin
   revalidatePath("/clientes");
   revalidatePath(`/clientes/${clientId}`);
   revalidatePath("/processos");
+  return { error: null };
+}
+
+// ---------------------------------------------------------------------------
+// Foto do cliente (bucket privado documents, cliente_id/perfil/...)
+// ---------------------------------------------------------------------------
+
+const FOTO_TIPOS: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+
+export async function salvarFotoDoCliente(clientId: string, formData: FormData): Promise<{ error: string | null }> {
+  const foto = formData.get("foto");
+  if (!(foto instanceof File) || foto.size === 0) return { error: "Escolha uma foto." };
+  const ext = FOTO_TIPOS[foto.type];
+  if (!ext) return { error: "Use JPG, PNG ou WEBP." };
+  if (foto.size > 5 * 1024 * 1024) return { error: "A foto passa de 5 MB." };
+
+  const supabase = await createClient();
+  const { data: cliente } = await supabase.from("clients").select("id").eq("id", clientId).maybeSingle();
+  if (!cliente) return { error: "Cliente não encontrado." };
+
+  const caminho = `${clientId}/perfil/foto-${Date.now()}.${ext}`;
+  const { error: erroUpload } = await supabase.storage.from("documents").upload(caminho, foto, { contentType: foto.type });
+  if (erroUpload) {
+    console.error("[salvarFotoDoCliente] upload:", erroUpload.message);
+    return { error: "Não foi possível enviar a foto." };
+  }
+  const { error } = await supabase.from("clients").update({ foto_path: caminho }).eq("id", clientId);
+  if (error) {
+    console.error("[salvarFotoDoCliente] gravar:", error.code, error.message);
+    return {
+      error: colunaNaoExiste(error.code)
+        ? "Falta aplicar a migração 20261017130000 no Supabase."
+        : "Não foi possível salvar a foto.",
+    };
+  }
+  revalidatePath(`/clientes/${clientId}`);
+  revalidatePath("/clientes");
   return { error: null };
 }

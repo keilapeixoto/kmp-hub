@@ -1,3 +1,4 @@
+import { podeCriarEventos } from "@/lib/google/agenda-calc";
 import { redirect } from "next/navigation";
 import { Mail } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
@@ -82,7 +83,19 @@ export default async function IntegracoesPage({
             </div>
           </div>
           {connection ? (
-            <DisconnectGoogleButton />
+            <div className="flex shrink-0 flex-col items-end gap-2">
+              {!podeCriarEventos(connection.scope) ? (
+                <a
+                  href="/api/google/connect"
+                  className="flex items-center gap-2 rounded-full bg-kmp-primary px-4 py-2 text-sm font-medium text-kmp-on-primary transition hover:opacity-90"
+                  title="Pede a permissão nova para o Hub criar eventos na sua agenda"
+                >
+                  <GoogleLogo className="h-4 w-4" />
+                  Reconectar para criar eventos
+                </a>
+              ) : null}
+              <DisconnectGoogleButton />
+            </div>
           ) : (
             <a
               href="/api/google/connect"
@@ -96,10 +109,10 @@ export default async function IntegracoesPage({
         <div className="mt-4 flex items-start gap-2 rounded-md bg-kmp-graphite/5 p-3 text-xs text-kmp-graphite/60">
           <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <p>
-            Pedimos acesso de leitura à agenda, leitura de não lidos e envio
-            de e-mail — nunca excluímos ou alteramos nada na sua conta
-            Google. O token fica guardado só no servidor, nunca é exposto ao
-            navegador.
+            Pedimos acesso aos eventos da agenda (ver e criar os compromissos
+            que você marca no Hub), leitura de não lidos e envio de e-mail —
+            nunca excluímos nada na sua conta Google. O token fica guardado só
+            no servidor, nunca é exposto ao navegador.
           </p>
         </div>
       </div>

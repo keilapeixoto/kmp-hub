@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { zonedTimeToUtc } from "@/lib/appointments/timezones";
+import { getCurrentUserId } from "@/lib/auth";
+import { createCalendarEvent } from "@/lib/google/calendar";
+import { getGoogleConnection, getValidAccessToken } from "@/lib/google/connections";
+import { corpoDoEvento, podeCriarEventos } from "@/lib/google/agenda-calc";
 
 export type AppointmentFormState = {
   error: string | null;
@@ -58,8 +62,58 @@ export async function createAppointment(
     return { error: "Não foi possível criar o compromisso." };
   }
 
+  // Google Calendar (opcional): cria o evento na agenda de quem está criando
+  // e guarda o id no compromisso. Falhar aqui não desfaz o compromisso.
+  let avisoGoogle = "";
+  if (formData.get("google_criar") === "on") {
+    avisoGoogle = await criarEventoNoGoogle(data.id, {
+      titulo: insertData.titulo as string,
+      inicio,
+      fim: (insertData.fim as string | null) ?? null,
+      clientId: (insertData.client_id as string | undefined) ?? null,
+      convidar: formData.get("google_convidar") === "on",
+    });
+  }
+
   revalidatePath("/agenda");
-  redirect(`/agenda/${data.id}`);
+  redirect(`/agenda/${data.id}${avisoGoogle}`);
+}
+
+async function criarEventoNoGoogle(
+  appointmentId: string,
+  e: { titulo: string; inicio: string; fim: string | null; clientId: string | null; convidar: boolean },
+): Promise<string> {
+  const userId = await getCurrentUserId();
+  if (!userId) return "?google=erro";
+  const conexao = await getGoogleConnection(userId).catch(() => null);
+  if (!conexao || !podeCriarEventos(conexao.scope)) return "?google=erro";
+  const token = await getValidAccessToken(userId).catch(() => null);
+  if (!token) return "?google=erro";
+
+  const supabase = await createClient();
+  let cliente: { nome: string; email: string | null } | null = null;
+  if (e.clientId) {
+    const { data } = await supabase.from("clients").select("nome, email").eq("id", e.clientId).maybeSingle();
+    cliente = data ? { nome: data.nome as string, email: (data.email as string | null) ?? null } : null;
+  }
+  const convidarEmail = e.convidar && cliente?.email ? cliente.email : null;
+  const criado = await createCalendarEvent(
+    token,
+    corpoDoEvento({
+      titulo: e.titulo,
+      inicio: e.inicio,
+      fim: e.fim,
+      descricao: cliente ? `Cliente: ${cliente.nome}` : null,
+      convidarEmail,
+    }),
+    Boolean(convidarEmail),
+  );
+  if (criado.erro || !criado.id) {
+    console.error("[criarEventoNoGoogle]", criado.erro);
+    return "?google=erro";
+  }
+  await supabase.from("appointments").update({ google_event_id: criado.id }).eq("id", appointmentId);
+  return "?google=ok";
 }
 
 export async function saveAppointmentSummary(

@@ -345,6 +345,17 @@ processo tem o card "Andamento da aplicação". Leitura da carta testada só
 com texto sintético — ajustar com `scripts/carta-visto-estrutura.mjs` numa
 carta real (mostra só os rótulos). Migração `20261016170000_application_status.sql`.
 
+**Agenda ligada ao Google Calendar (out/2026):** a Agenda mostra os
+compromissos do Hub junto com os eventos do Google Calendar de quem está
+logado (30 dias; evento só do Google tem a etiqueta "Google" e abre lá). Ao
+criar compromisso, "Adicionar ao meu Google Calendar" cria o evento e guarda
+`appointments.google_event_id`; "Enviar convite ao cliente" é opcional
+(desmarcado — o Google manda e-mail ao cliente). A permissão do Google passou
+de `calendar.readonly` para `calendar.events`: quem conectou antes precisa
+reconectar uma vez (botão "Reconectar para criar eventos" em Integrações;
+`lib/google/agenda-calc.ts podeCriarEventos`). Sem migração (a coluna
+`google_event_id` já existia).
+
 ## Dados de demonstração
 
 Registros fictícios levam `is_demo = true` (migração

@@ -3,9 +3,17 @@ import { getClients } from "@/lib/clients/data";
 import { getLeads } from "@/lib/leads/data";
 import { createAppointment } from "../actions";
 import { AppointmentForm } from "../_components/appointment-form";
+import { getCurrentUserId } from "@/lib/auth";
+import { getGoogleConnection } from "@/lib/google/connections";
+import { podeCriarEventos } from "@/lib/google/agenda-calc";
 
 export default async function NovoCompromissoPage() {
-  const [clients, leads] = await Promise.all([getClients({}), getLeads({})]);
+  const userId = await getCurrentUserId();
+  const [clients, leads, conexao] = await Promise.all([
+    getClients({}),
+    getLeads({}),
+    userId ? getGoogleConnection(userId).catch(() => null) : Promise.resolve(null),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -26,6 +34,7 @@ export default async function NovoCompromissoPage() {
           action={createAppointment}
           clients={clients}
           leads={leads}
+          google={{ conectado: Boolean(conexao), podeCriar: podeCriarEventos(conexao?.scope ?? null) }}
         />
       </div>
     </div>

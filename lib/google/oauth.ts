@@ -9,7 +9,9 @@ const AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
 const TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
 
 export const GOOGLE_SCOPES = [
-  "https://www.googleapis.com/auth/calendar.readonly",
+  // Ler e criar eventos (antes só calendar.readonly; quem conectou antes
+  // precisa reconectar uma vez para o Hub criar eventos — out/2026).
+  "https://www.googleapis.com/auth/calendar.events",
   "https://www.googleapis.com/auth/gmail.readonly",
   "https://www.googleapis.com/auth/gmail.send",
   "openid",

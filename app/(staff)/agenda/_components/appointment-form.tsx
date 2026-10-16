@@ -16,6 +16,7 @@ export function AppointmentForm({
   action,
   clients,
   leads,
+  google = { conectado: false, podeCriar: false },
 }: {
   action: (
     prevState: AppointmentFormState,
@@ -23,6 +24,8 @@ export function AppointmentForm({
   ) => Promise<AppointmentFormState>;
   clients: Client[];
   leads: Lead[];
+  /** Situação do Google Calendar de quem está criando (ver lib/google/agenda.ts). */
+  google?: { conectado: boolean; podeCriar: boolean };
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
 
@@ -114,6 +117,31 @@ export function AppointmentForm({
           </select>
         </div>
       </div>
+
+      <fieldset className="space-y-2 rounded-2xl bg-kmp-text/5 p-4">
+        <legend className="px-1 text-sm font-medium text-kmp-text">Google Calendar</legend>
+        {google.podeCriar ? (
+          <>
+            <label className="flex items-center gap-2 text-sm text-kmp-text">
+              <input type="checkbox" name="google_criar" defaultChecked />
+              Adicionar ao meu Google Calendar
+            </label>
+            <label className="flex items-center gap-2 text-sm text-kmp-text">
+              <input type="checkbox" name="google_convidar" />
+              Enviar convite ao cliente (para o e-mail do cadastro)
+            </label>
+            <p className="text-xs text-kmp-text/60">
+              O convite é um e-mail que o Google manda ao cliente. Só vai se esta opção estiver marcada.
+            </p>
+          </>
+        ) : (
+          <p className="text-sm text-kmp-text/70">
+            {google.conectado
+              ? "Para criar o evento também no Google, reconecte sua conta em Configurações → Integrações."
+              : "Conecte sua conta Google em Configurações → Integrações para criar o evento também lá."}
+          </p>
+        )}
+      </fieldset>
 
       {state.error ? (
         <p role="alert" className="text-sm text-red-600">

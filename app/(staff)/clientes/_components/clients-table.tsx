@@ -1,36 +1,41 @@
 import Link from "next/link";
 import { Users } from "lucide-react";
-import { Etiqueta, FaixaTitulo, type CorViva } from "@/components/ui/vivid";
+import { FaixaTitulo } from "@/components/ui/vivid";
 import type { Client } from "@/lib/clients/types";
 import { iniciais } from "@/lib/clients/perfil-calc";
+import { ProcessoNaLista, ResponsavelNaLista } from "./linha-controles";
 
 // Lista de clientes no mesmo visual do perfil (out/2026): linha com iniciais,
 // nome e contato, país, processo em andamento e responsável.
 
 export type ProcessoDaLista = {
+  caseId: string;
+  serviceTypeId: string;
   servico: string;
   status: string;
   etapa: string | null;
+  etapaId: string | null;
 };
 
-const COR_DO_STATUS: Record<string, CorViva> = {
-  ativo: "verde",
-  pausado: "amarelo",
-  concluido: "azul",
-  cancelado: "cinza",
-};
 
 export function ClientsTable({
   clients,
   staffNameById,
   processoPorCliente,
   statusLabels,
+  etapasPorServico,
+  servicos,
+  podeTrocarResponsavel,
 }: {
   clients: Client[];
   staffNameById: Record<string, string>;
   processoPorCliente: Record<string, { principal: ProcessoDaLista; total: number }>;
   statusLabels: Record<string, string>;
+  etapasPorServico: Record<string, { id: string; nome: string }[]>;
+  servicos: { id: string; nome: string }[];
+  podeTrocarResponsavel: boolean;
 }) {
+  const equipe = Object.entries(staffNameById).map(([id, nome]) => ({ id, nome }));
   return (
     <section className="overflow-hidden rounded-3xl bg-kmp-surface p-5 shadow-sm">
       <FaixaTitulo
@@ -54,58 +59,49 @@ export function ClientsTable({
           <ul className="divide-y divide-kmp-divider">
             {clients.map((client) => {
               const proc = processoPorCliente[client.id];
-              const responsavel = staffNameById[client.consultor_id] ?? "—";
               return (
-                <li key={client.id}>
-                  <Link
-                    href={`/clientes/${client.id}`}
-                    className="grid grid-cols-1 gap-2 rounded-2xl px-3 py-3 transition hover:bg-kmp-text/5 md:grid-cols-[minmax(0,1.6fr)_minmax(0,0.8fr)_minmax(0,1.6fr)_minmax(0,1fr)] md:items-center md:gap-4"
-                  >
-                    <span className="flex min-w-0 items-center gap-3">
-                      <span
-                        aria-hidden="true"
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#9184f2]/20 text-sm font-semibold text-[#4334b0] dark:text-[#cdc6fa]"
-                      >
-                        {iniciais(client.nome)}
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block truncate font-medium text-kmp-text">{client.nome}</span>
-                        <span className="block truncate text-xs text-kmp-text/60">
-                          {client.email ?? client.telefone ?? "Sem contato cadastrado"}
-                        </span>
-                      </span>
+                <li
+                  key={client.id}
+                  className="grid grid-cols-1 gap-2 rounded-2xl px-3 py-3 transition hover:bg-kmp-text/5 md:grid-cols-[minmax(0,1.6fr)_minmax(0,0.8fr)_minmax(0,1.6fr)_minmax(0,1fr)] md:items-center md:gap-4"
+                >
+                  <Link href={`/clientes/${client.id}`} className="group flex min-w-0 items-center gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#9184f2]/20 text-sm font-semibold text-[#4334b0] dark:text-[#cdc6fa]"
+                    >
+                      {iniciais(client.nome)}
                     </span>
-                    <span className="text-sm text-kmp-text/75">{client.pais ?? "—"}</span>
                     <span className="min-w-0">
-                      {proc ? (
-                        <span className="flex flex-wrap items-center gap-2">
-                          <span className="truncate text-sm font-medium text-kmp-text">{proc.principal.servico}</span>
-                          <Etiqueta cor={COR_DO_STATUS[proc.principal.status] ?? "cinza"}>
-                            {statusLabels[proc.principal.status] ?? proc.principal.status}
-                          </Etiqueta>
-                          {proc.total > 1 ? (
-                            <span className="text-xs text-kmp-text/60">+{proc.total - 1}</span>
-                          ) : null}
-                          {proc.principal.etapa ? (
-                            <span className="block w-full truncate text-xs text-kmp-text/60">
-                              {proc.principal.etapa}
-                            </span>
-                          ) : null}
-                        </span>
-                      ) : (
-                        <span className="text-sm text-kmp-text/50">Sem processo</span>
-                      )}
-                    </span>
-                    <span className="flex min-w-0 items-center gap-2 text-sm text-kmp-text/80">
-                      <span
-                        aria-hidden="true"
-                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-kmp-text/10 text-xs font-semibold text-kmp-text/70"
-                      >
-                        {iniciais(responsavel)}
+                      <span className="block truncate font-medium text-kmp-text group-hover:text-kmp-orange">{client.nome}</span>
+                      <span className="block truncate text-xs text-kmp-text/60">
+                        {client.email ?? client.telefone ?? "Sem contato cadastrado"}
                       </span>
-                      <span className="truncate">{responsavel}</span>
                     </span>
                   </Link>
+                  <span className="text-sm text-kmp-text/75">{client.pais ?? "—"}</span>
+                  <ProcessoNaLista
+                    clientId={client.id}
+                    processo={
+                      proc
+                        ? {
+                            caseId: proc.principal.caseId,
+                            servico: proc.principal.servico,
+                            status: proc.principal.status,
+                            etapaId: proc.principal.etapaId,
+                            total: proc.total,
+                          }
+                        : null
+                    }
+                    etapas={proc ? (etapasPorServico[proc.principal.serviceTypeId] ?? []) : []}
+                    servicos={servicos}
+                    statusLabels={statusLabels}
+                  />
+                  <ResponsavelNaLista
+                    clientId={client.id}
+                    atual={client.consultor_id}
+                    equipe={equipe}
+                    podeEditar={podeTrocarResponsavel}
+                  />
                 </li>
               );
             })}

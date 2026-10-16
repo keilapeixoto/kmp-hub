@@ -8,6 +8,7 @@ import {
   getTeamMembersStaff,
 } from "@/lib/cases/data";
 import type { ClientFilters } from "@/lib/clients/types";
+import { getCurrentUserRole } from "@/lib/auth";
 import { ClientsFilters } from "./_components/clients-filters";
 import { ClientsTable, type ProcessoDaLista } from "./_components/clients-table";
 
@@ -49,15 +50,26 @@ export default async function ClientesPage({
   const staffNameById = Object.fromEntries(staff.map((m) => [m.user_id, m.nome]));
   const servicoPorId = Object.fromEntries(serviceTypes.map((st) => [st.id, st.nome]));
   const etapaPorId = Object.fromEntries(stages.map((s) => [s.id, s.nome]));
+  const etapasPorServico: Record<string, { id: string; nome: string }[]> = {};
+  for (const st of [...stages].sort((a, b) => a.ordem - b.ordem)) {
+    (etapasPorServico[st.service_type_id] ??= []).push({ id: st.id, nome: st.nome });
+  }
+  const servicosAtivos = serviceTypes
+    .filter((st) => !st.arquivado && !st.nome.startsWith("[DEMO]"))
+    .map((st) => ({ id: st.id, nome: st.nome }));
+  const role = await getCurrentUserRole();
 
   // getCases já vem do mais recente para o mais antigo.
   const processoPorCliente: Record<string, { principal: ProcessoDaLista; total: number }> = {};
   for (const c of cases) {
     const atual = processoPorCliente[c.client_id];
     const item: ProcessoDaLista = {
+      caseId: c.id,
+      serviceTypeId: c.service_type_id,
       servico: servicoPorId[c.service_type_id] ?? "Processo",
       status: c.status,
       etapa: c.etapa_id ? (etapaPorId[c.etapa_id] ?? null) : null,
+      etapaId: c.etapa_id,
     };
     if (!atual) {
       processoPorCliente[c.client_id] = { principal: item, total: 1 };
@@ -101,6 +113,9 @@ export default async function ClientesPage({
         staffNameById={staffNameById}
         processoPorCliente={processoPorCliente}
         statusLabels={statusLabels}
+        etapasPorServico={etapasPorServico}
+        servicos={servicosAtivos}
+        podeTrocarResponsavel={role === "admin" || role === "director"}
       />
     </div>
   );

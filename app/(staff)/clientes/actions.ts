@@ -7,6 +7,7 @@ import { camposParaAtualizar } from "@/lib/clients/update-fields";
 import { portalUrl } from "@/lib/dominios";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sincronizarAcessoComEmail } from "@/lib/clients/portal-acesso";
+import { criarProcessoComChecklist } from "@/lib/cases/criar";
 import { getCurrentUserId, getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
 import { getValidAccessToken } from "@/lib/google/connections";
 import { sendGmailRaw } from "@/lib/google/gmail";
@@ -568,4 +569,44 @@ export async function deleteClientNote(clientId: string, noteId: string) {
   const { error } = await supabase.from("client_notes").delete().eq("id", noteId);
   if (error) console.error("[deleteClientNote]", error.code, error.message);
   revalidatePath(`/clientes/${clientId}`);
+}
+
+// ---------------------------------------------------------------------------
+// Edição direto da lista de clientes
+// ---------------------------------------------------------------------------
+
+/** Troca o responsável do cliente (e dos processos em andamento dele). */
+export async function atualizarResponsavelDoCliente(clientId: string, consultorId: string): Promise<{ error: string | null }> {
+  if (!consultorId) return { error: "Escolha o responsável." };
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("clients").update({ consultor_id: consultorId }).eq("id", clientId).select("id");
+  if (error || !data?.length) {
+    console.error("[atualizarResponsavelDoCliente]", error?.code, error?.message);
+    return { error: "Sem permissão para trocar o responsável deste cliente." };
+  }
+  await supabase
+    .from("cases")
+    .update({ consultor_id: consultorId })
+    .eq("client_id", clientId)
+    .in("status", ["ativo", "pausado"]);
+  revalidatePath("/clientes");
+  revalidatePath(`/clientes/${clientId}`);
+  revalidatePath("/processos");
+  return { error: null };
+}
+
+/** Abre um processo (primeira etapa + checklist) para quem ainda não tem. */
+export async function criarProcessoRapido(clientId: string, serviceTypeId: string): Promise<{ error: string | null }> {
+  if (!serviceTypeId) return { error: "Escolha o visto." };
+  const supabase = await createClient();
+  const { data: cliente } = await supabase.from("clients").select("consultor_id").eq("id", clientId).maybeSingle();
+  const userId = await getCurrentUserId();
+  const consultorId = (cliente?.consultor_id as string | undefined) ?? userId;
+  if (!consultorId) return { error: "Sua sessão expirou. Entre de novo." };
+  const { caseId } = await criarProcessoComChecklist(supabase, { clientId, serviceTypeId, consultorId });
+  if (!caseId) return { error: "Não foi possível criar o processo." };
+  revalidatePath("/clientes");
+  revalidatePath(`/clientes/${clientId}`);
+  revalidatePath("/processos");
+  return { error: null };
 }

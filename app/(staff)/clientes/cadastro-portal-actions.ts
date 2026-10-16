@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUserId, getCurrentUserRole } from "@/lib/auth";
 import { inviteClientToPortal } from "./actions";
+import { criarProcessoComChecklist } from "@/lib/cases/criar";
 
 // Cadastro de cliente novo em um passo: cliente + processo (na primeira etapa)
 // + checklist do tipo de serviço + convite do portal. Substitui o formulário
@@ -56,10 +57,7 @@ export async function cadastrarClienteComPortal(
     return { erro: "Já existe um cliente com esse e-mail. Abra o perfil dele e crie o processo por lá.", valores };
   }
 
-  const [{ data: tipo }, { data: etapas }] = await Promise.all([
-    supabase.from("service_types").select("id, checklist_template_id").eq("id", servico).maybeSingle(),
-    supabase.from("case_stages").select("id").eq("service_type_id", servico).order("ordem").limit(1),
-  ]);
+  const { data: tipo } = await supabase.from("service_types").select("id").eq("id", servico).maybeSingle();
   if (!tipo) return { erro: "Tipo de visto não encontrado.", valores };
 
   const { data: cliente, error: erroCliente } = await supabase
@@ -79,49 +77,8 @@ export async function cadastrarClienteComPortal(
   }
   const clienteId = cliente.id as string;
 
-  const { data: caso, error: erroCaso } = await supabase
-    .from("cases")
-    .insert({
-      client_id: clienteId,
-      service_type_id: servico,
-      consultor_id: consultor,
-      etapa_id: etapas?.[0]?.id ?? null,
-    })
-    .select("id")
-    .single();
-
-  const avisos: string[] = [];
-  if (erroCaso || !caso) {
-    console.error("[cadastrarClienteComPortal] processo:", erroCaso?.code, erroCaso?.message);
-    avisos.push("processo");
-  } else if (tipo.checklist_template_id) {
-    const { data: checklist, error } = await supabase
-      .from("checklists")
-      .insert({ case_id: caso.id, checklist_template_id: tipo.checklist_template_id })
-      .select("id")
-      .single();
-    if (error || !checklist) {
-      console.error("[cadastrarClienteComPortal] checklist:", error?.code, error?.message);
-      avisos.push("checklist");
-    } else {
-      // Obrigatórios já vão como pedidos ("Pedidos para você" no portal); os
-      // condicionais ficam em "Quando tiver em mãos".
-      const { data: obrigatorios } = await supabase
-        .from("checklist_template_items")
-        .select("id")
-        .eq("checklist_template_id", tipo.checklist_template_id)
-        .eq("obrigatorio", true);
-      const ids = (obrigatorios ?? []).map((i) => i.id as string);
-      if (ids.length) {
-        const { error: erroPedido } = await supabase
-          .from("checklist_items")
-          .update({ status: "solicitado" })
-          .eq("checklist_id", checklist.id)
-          .in("template_item_id", ids);
-        if (erroPedido) console.error("[cadastrarClienteComPortal] pedir itens:", erroPedido.code, erroPedido.message);
-      }
-    }
-  }
+  const { falhou } = await criarProcessoComChecklist(supabase, { clientId: clienteId, serviceTypeId: servico, consultorId: consultor });
+  const avisos: string[] = [...falhou];
 
   if (convidar && podeConvidar) {
     const convite = await inviteClientToPortal(clienteId, { error: null, success: false });

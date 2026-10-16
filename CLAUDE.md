@@ -242,6 +242,17 @@ ImmiAccount (da KMP) não vira e-mail do cliente; avisos de dados suspeitos
 gravar: `node scripts/dry-run-import-record.mjs "/caminho/Application.pdf"`
 (valores mascarados). Dependência nova: `unpdf`.
 
+**Importar o e-mail do formulário antigo (out/2026):** o mesmo "Preencher a
+partir de um PDF" do card do formulário aceita o e-mail "Nova Solicitação de
+Visto Turista" do formulário avulso (HTML + Web3Forms) salvo em PDF pelo
+Gmail (`lib/formulario-antigo/parse.ts`, mesmas regras: só campos vazios,
+PDF não guardado). Divide o nome no primeiro espaço (avisa para conferir),
+traz as declarações (são do próprio cliente para esta aplicação) e lista os
+documentos que o cliente anexou — os arquivos nunca vinham: o zip falhava no
+celular ("The object can not be found here", foto que não estava no
+aparelho). Testar sem gravar: `node scripts/dry-run-formulario-antigo.mjs
+"/caminho/e-mail.pdf"` (valores mascarados).
+
 **Formulário do visto 600 completo (out/2026):** o "Formulário Visto de
 Turista (Subclass 600) — Coleta de Dados" ganhou 35 perguntas (perfil, saúde,
 caráter, viagem) lidas de `scripts/visa-600-new-fields.json` — o mesmo arquivo

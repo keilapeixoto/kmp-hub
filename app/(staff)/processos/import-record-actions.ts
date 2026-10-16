@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { extractText, getDocumentProxy } from "unpdf";
 import { createClient } from "@/lib/supabase/server";
 import { mapRecordTo600 } from "@/lib/record-of-responses/map-600";
+import { ehEmailDoFormularioAntigo, mapEmailTo600 } from "@/lib/formulario-antigo/parse";
 import { salvarRespostasEmBlocos } from "@/lib/case-forms/save";
 import {
   getCaseFormTemplateForCase,
@@ -53,9 +54,14 @@ export async function importPreviousApplication(caseId: string, formData: FormDa
   } catch {
     voltar(caseId, { importErro: "Não consegui ler esse PDF." });
   }
-  if (!texto.includes("Record of") || !texto.includes("Responses")) {
+  // Dois formatos: o "Record of Responses" do ImmiAccount e o e-mail do
+  // formulário avulso antigo (HTML + Web3Forms) salvo em PDF.
+  const ehRecord = texto.includes("Record of") && texto.includes("Responses");
+  const ehEmailAntigo = !ehRecord && ehEmailDoFormularioAntigo(texto);
+  if (!ehRecord && !ehEmailAntigo) {
     voltar(caseId, {
-      importErro: 'Esse PDF não parece ser o "Record of Responses" do ImmiAccount.',
+      importErro:
+        'Esse PDF não parece ser o "Record of Responses" do ImmiAccount nem o e-mail do formulário antigo.',
     });
   }
 
@@ -69,7 +75,7 @@ export async function importPreviousApplication(caseId: string, formData: FormDa
     for (const field of await getCaseFormFields(step.id)) porRotulo.set(field.label, field.id);
   }
 
-  const { campos, avisos } = mapRecordTo600(texto);
+  const { campos, avisos } = ehEmailAntigo ? mapEmailTo600(texto) : mapRecordTo600(texto);
 
   // formulário do processo (cria se o cliente ainda não abriu)
   let caseFormId: string | null = null;

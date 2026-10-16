@@ -19,12 +19,13 @@ export function ImportRecordForm({
   return (
     <div className="mt-4 border-t border-kmp-divider pt-4">
       <p className="mb-1 text-xs font-medium text-kmp-text/60">
-        Preencher a partir de uma aplicação anterior
+        Preencher a partir de um PDF
       </p>
       <p className="mb-2 text-xs text-kmp-text/50">
-        Envie o PDF &quot;Record of Responses&quot; que o ImmiAccount gera depois que a
-        aplicação é enviada. O arquivo não fica guardado — só as respostas, e só nos
-        campos que ainda estão vazios.
+        Envie o &quot;Record of Responses&quot; de uma aplicação anterior (ImmiAccount) ou o
+        e-mail &quot;Nova Solicitação de Visto Turista&quot; do formulário antigo, salvo em PDF
+        pelo Gmail. O arquivo não fica guardado — só as respostas, e só nos campos que
+        ainda estão vazios.
       </p>
       <form action={action} className="flex flex-wrap items-center gap-3 text-xs">
         <input

@@ -1,3 +1,4 @@
+import { listaDeFusos, listaDePaises } from "@/lib/geo";
 import { notFound } from "next/navigation";
 import { getCurrentUserId, getCurrentUserProfile, getCurrentUserRole } from "@/lib/auth";
 import { getConsultants } from "@/lib/leads/data";
@@ -227,6 +228,8 @@ export default async function ClientDetailPage({
             canAssignConsultant={consultants.length > 0}
             currentUserNome={profile?.nome ?? ""}
             distinctPaises={paises}
+            paises={listaDePaises()}
+            fusos={listaDeFusos()}
             distinctSituacoes={situacoes}
           />
         </div>

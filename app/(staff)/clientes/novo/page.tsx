@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { listaDeFusos, listaDePaises } from "@/lib/geo";
 import { getCurrentUserProfile } from "@/lib/auth";
 import { getConsultants } from "@/lib/leads/data";
 import { getDistinctClientValues } from "@/lib/clients/data";
@@ -34,6 +35,8 @@ export default async function NovoClientePage() {
           canAssignConsultant={consultants.length > 0}
           currentUserNome={profile?.nome ?? ""}
           distinctPaises={paises}
+          paises={listaDePaises()}
+          fusos={listaDeFusos()}
           distinctSituacoes={situacoes}
         />
       </div>

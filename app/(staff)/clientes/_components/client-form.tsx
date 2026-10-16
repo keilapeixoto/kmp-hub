@@ -4,6 +4,8 @@ import { useActionState } from "react";
 import type { ConsultantOption } from "@/lib/leads/types";
 import type { Client } from "@/lib/clients/types";
 import type { ClientFormState } from "../actions";
+import { lerEndereco, type Fuso, type Pais } from "@/lib/geo";
+import { EnderecoCampos, FusoSelect, PaisSelect } from "./campos-geo";
 
 const initialState: ClientFormState = { error: null };
 
@@ -17,16 +19,20 @@ export function ClientForm({
   consultants,
   canAssignConsultant,
   currentUserNome,
-  distinctPaises,
   distinctSituacoes,
+  paises,
+  fusos,
 }: {
   action: (prevState: ClientFormState, formData: FormData) => Promise<ClientFormState>;
   client?: Client;
   consultants: ConsultantOption[];
   canAssignConsultant: boolean;
   currentUserNome: string;
-  distinctPaises: string[];
   distinctSituacoes: string[];
+  /** Não usado mais: o país agora é lista fixa (lib/geo.ts). */
+  distinctPaises?: string[];
+  paises: Pais[];
+  fusos: Fuso[];
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
 
@@ -81,14 +87,9 @@ export function ClientForm({
           </div>
           <div>
             <label htmlFor="nacionalidade" className={labelClass}>
-              Nacionalidade
+              Nacionalidade (país de cidadania)
             </label>
-            <input
-              id="nacionalidade"
-              name="nacionalidade"
-              defaultValue={client?.nacionalidade ?? ""}
-              className={inputClass}
-            />
+            <PaisSelect id="nacionalidade" name="nacionalidade" valor={client?.nacionalidade} paises={paises} />
           </div>
         </div>
       </section>
@@ -140,20 +141,9 @@ export function ClientForm({
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="pais" className={labelClass}>
-              País
+              País onde mora
             </label>
-            <input
-              id="pais"
-              name="pais"
-              list="clientes-paises-lista"
-              defaultValue={client?.pais ?? ""}
-              className={inputClass}
-            />
-            <datalist id="clientes-paises-lista">
-              {distinctPaises.map((valor) => (
-                <option key={valor} value={valor} />
-              ))}
-            </datalist>
+            <PaisSelect id="pais" name="pais" valor={client?.pais} paises={paises} />
           </div>
           <div>
             <label htmlFor="cidade" className={labelClass}>
@@ -170,13 +160,7 @@ export function ClientForm({
             <label htmlFor="fuso_horario" className={labelClass}>
               Fuso horário
             </label>
-            <input
-              id="fuso_horario"
-              name="fuso_horario"
-              placeholder="ex.: America/Sao_Paulo"
-              defaultValue={client?.fuso_horario ?? ""}
-              className={inputClass}
-            />
+            <FusoSelect valor={client?.fuso_horario} fusos={fusos} />
           </div>
           <div>
             <label htmlFor="idioma_preferencial" className={labelClass}>
@@ -197,33 +181,20 @@ export function ClientForm({
 
       <section>
         <h2 className="font-heading text-lg text-kmp-text">Endereços</h2>
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="endereco_origem" className={labelClass}>
-              Endereço no país de origem
-            </label>
-            <textarea
-              id="endereco_origem"
-              name="endereco_origem"
-              rows={3}
-              placeholder="Rua, número, complemento, cidade, estado, CEP"
-              defaultValue={client?.endereco_origem ?? ""}
-              className={inputClass}
-            />
-          </div>
-          <div>
-            <label htmlFor="endereco_australia" className={labelClass}>
-              Endereço na Austrália
-            </label>
-            <textarea
-              id="endereco_australia"
-              name="endereco_australia"
-              rows={3}
-              placeholder="Street, suburb, state, postcode"
-              defaultValue={client?.endereco_australia ?? ""}
-              className={inputClass}
-            />
-          </div>
+        <div className="mt-4 grid grid-cols-1 gap-4">
+          <EnderecoCampos
+            name="endereco_origem"
+            titulo="Endereço no país de origem"
+            inicial={lerEndereco(client?.endereco_origem, client?.pais ?? "Brasil")}
+            paises={paises}
+          />
+          <EnderecoCampos
+            name="endereco_australia"
+            titulo="Endereço na Austrália"
+            inicial={lerEndereco(client?.endereco_australia, "Austrália")}
+            paises={paises}
+            paisFixo="Austrália"
+          />
         </div>
       </section>
 

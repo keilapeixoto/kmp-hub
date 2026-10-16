@@ -23,3 +23,6 @@ playwright/.auth/
 playwright-report/
 test-results/
 blob-report/
+
+# Arquivos temporários de teste (sessão de usuário de teste) — nunca versionar
+public/tmp-*
